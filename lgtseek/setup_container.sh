@@ -9,7 +9,8 @@ function quit_setup {
 # MAIN
 #########################
 
-cp docker-compose.yml docker-compose.prod.yml
+# Copy the template over to a production version of the docker-compose file
+cp docker-compose.tmpl.yml docker-compose.prod.yml
 
 printf "\nWelcome to the LGTSeek Docker installer. Please follow the prompts below that will help the Docker container access your usable data.\n"
 
