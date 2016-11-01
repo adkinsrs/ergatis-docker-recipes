@@ -2,7 +2,6 @@ version: '2'
 services:
 
   ergatis:
-    #image: lgtseek
     image: adkinsrs/lgtseek
     links:
       - mongo
@@ -14,7 +13,6 @@ services:
       - ./output_data:/mnt/output_data
       - ./split_multifasta.fsa.list:/mnt/split_multifasta.fsa.list
       - ./pipeline_builder:/var/www/html/pipeline_builder
-#      - ./lib/perl5/GiTaxon.pm:/opt/ergatis/lib/perl5/GiTaxon.pm
     volumes_from:
       - mongodata
 
@@ -34,9 +32,3 @@ services:
       - /data/db
     command: --break-mongo
 
-# NOT IN USE
-  #swarm:
-  #  image: swarm
-
-  #workflow:
-  #  image: adkinsrs/workflow
