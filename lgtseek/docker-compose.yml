@@ -9,10 +9,10 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./input_data:/mnt/input_data:ro
-      - ./output_data:/mnt/output_data
-      - ./split_multifasta.fsa.list:/mnt/split_multifasta.fsa.list
-      - ./pipeline_builder:/var/www/html/pipeline_builder
+      - ###DONOR_MNT###:/mnt/input_data/donor_ref:ro
+      - ###HOST_MNT###:/mnt/input_data/host_ref:ro
+      - ###REFSEQ_MNT###:/mnt/input_data/refseq_ref:ro
+      - ###OUTPUT_DATA###:/mnt/output_data
     volumes_from:
       - mongodata
 
@@ -31,4 +31,3 @@ services:
     volumes:
       - /data/db
     command: --break-mongo
-

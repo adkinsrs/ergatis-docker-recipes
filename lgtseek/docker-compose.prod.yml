@@ -1,0 +1,10 @@
+version: '2'
+services:
+
+  ergatis:
+    image: adkinsrs/lgtseek
+    volumes:
+      - ###DONOR_MNT###:/mnt/input_data/donor_ref:ro
+      - ###HOST_MNT###:/mnt/input_data/host_ref:ro
+      - ###REFSEQ_MNT###:/mnt/input_data/refseq_ref:ro
+      - ###OUTPUT_DATA###:/mnt/output_data
