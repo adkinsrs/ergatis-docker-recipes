@@ -1,3 +1,4 @@
+docker-compose.prod.yml
 /input_data/*
 /input_data/donor_ref/*
 /input_data/host_ref/*
