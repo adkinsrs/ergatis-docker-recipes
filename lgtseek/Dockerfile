@@ -212,11 +212,20 @@ RUN mkdir -p /opt/projects/$PROJECT \
 VOLUME /opt/projects/$PROJECT/output_repository
 
 #--------------------------------------------------------------------------------
+# PIPELINE_CHANGES - Files that need to deviate from the installed lgtseek pipeline in order to function in Docker
+
+COPY changed_pipeline_files/blast2lca.lgt.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/blast2lca.lgt.config
+COPY changed_pipeline_files/blast_lgt_finder.lgt.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/blast_lgt_finder.lgt.config
+COPY changed_pipeline_files/sam2lca.lgt.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/sam2lca.lgt.config
+COPY changed_pipeline_files/sam2lca.mb.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/sam2lca.mb.config
+
+#--------------------------------------------------------------------------------
 # SCRIPTS -- Any addition post-setup scripts that need to be run
 
 # These are just scripts I am using to create and run the pipeline without using the UI
-COPY configure_pipeline.sh /opt/scripts/configure_pipeline.sh
-COPY run_pipeline.sh /opt/scripts/run_pipeline.sh
+# For testing purposes
+#COPY configure_pipeline.sh /opt/scripts/configure_pipeline.sh
+#COPY run_pipeline.sh /opt/scripts/run_pipeline.sh
 
 
 # Lastly change to root directory
