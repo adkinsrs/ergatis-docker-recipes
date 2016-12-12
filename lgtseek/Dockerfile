@@ -227,7 +227,6 @@ COPY changed_pipeline_files/sam2lca.mb.config /opt/ergatis/pipeline_templates/LG
 #COPY configure_pipeline.sh /opt/scripts/configure_pipeline.sh
 #COPY run_pipeline.sh /opt/scripts/run_pipeline.sh
 
-
 # Lastly change to root directory
 #CMD ["/bin/bash"]
 WORKDIR /
