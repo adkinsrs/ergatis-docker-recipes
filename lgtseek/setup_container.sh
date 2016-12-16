@@ -24,7 +24,7 @@ fi
 if [[ -z $donor_mnt ]]; then
     donor_mnt='./input_data/donor_ref'
 fi
-sed -i '' "s|###DONOR_MNT###|$donor_mnt|" docker-compose.prod.yml
+sed -i.bak "s|###DONOR_MNT###|$donor_mnt|" docker-compose.prod.yml
 
 # Second ask for location of host reference directory
 printf  "\nSecond, if you have a host reference genome or multiple genomes to align against, please specify the directory they are located.  If you wish to skip alignment to a host, then leave blank.\n"
@@ -36,7 +36,7 @@ fi
 if [[ -z $host_mnt ]]; then
     host_mnt='./input_data/host_ref'
 fi
-sed -i '' "s|###HOST_MNT###|$host_mnt|" docker-compose.prod.yml
+sed -i.bak "s|###HOST_MNT###|$host_mnt|" docker-compose.prod.yml
 
 # Third ask for location of Refseq reference directory
 printf  "\nFirst, if you have a RefSeq reference genome or multiple genomes to align against, please specify the directory they are located.  This directory is required.\n"
@@ -49,7 +49,7 @@ done
 if [[ $refseq_mnt == 'q' ]] || [[ $refseq_mnt == 'quit' ]]; then
     quit_setup
 fi
-sed -i '' "s|###REFSEQ_MNT###|$refseq_mnt|" docker-compose.prod.yml
+sed -i.bak "s|###REFSEQ_MNT###|$refseq_mnt|" docker-compose.prod.yml
 
 # Next, ask where the output data should be written to
 printf  "\nLastly, what directory should LGTView output be written to?  Note that if you close the Docker container, this output data may disappear, so it is recommended it be copied to a more permanent directory location.  If left blank, the output will be located at './output_data'\n"
@@ -61,7 +61,7 @@ fi
 if [[ -z $output_dir ]]; then
     output_dir='./output_data'
 fi
-sed -i '' "s|###OUTPUT_DATA###|$output_dir|" docker-compose.prod.yml
+sed -i.bak "s|###OUTPUT_DATA###|$output_dir|" docker-compose.prod.yml
 
 # Time to determine what Docker host will run the container
 printf  "\nWhat IP is the docker host machine on?  Leave blank if you are using local resources for the host (localhost)\n"
@@ -73,7 +73,7 @@ fi
 if [[ -z $ip_address ]]; then
     ip_address='localhost'
 fi
-sed -i '' "s|###IP_HOST###|$ip_address|" docker-compose.prod.yml
+sed -i.bak "s|###IP_HOST###|$ip_address|" docker-compose.prod.yml
 
 
 # Next, figure out the BLAST db and if local/remote
@@ -122,10 +122,10 @@ if [[ ! $remote ]]; then
     done
 fi
 
-sed -i '' "s|###BLAST_PATH###|$blast_path|" docker-compose.prod.yml
-sed -i '' "s|###BLAST_DB###|$blast_db|" docker-compose.prod.yml
+sed -i.bak "s|###BLAST_PATH###|$blast_path|" docker-compose.prod.yml
+sed -i.bak "s|###BLAST_DB###|$blast_db|" docker-compose.prod.yml
 
-sed -i '' "s|###REMOTE###|$remote|" docker-compose.prod.yml
+sed -i.bak "s|###REMOTE###|$remote|" docker-compose.prod.yml
 
 printf  "\nGoing to build and run the Docker containers now....."
 
@@ -148,5 +148,7 @@ printf  "Next it's time to customize some things within the container\n\n";
 
 printf  "\nDocker container is ready for use!\n"
 printf  "In order to build the LGTSeek pipeline please point your browser to http://${ip_address}:8080/pipeline_builder\n"
+
+rm docker-compose.prod.yml.bak
 
 exit 0

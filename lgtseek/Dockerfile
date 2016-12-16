@@ -24,8 +24,11 @@ ARG NCBI_BLAST_DOWNLOAD_URL=ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/
 ARG HTSLIB_VERSION=1.3.1
 ARG HTSLIB_DOWNLOAD_URL=https://github.com/samtools/htslib/archive/${HTSLIB_VERSION}.tar.gz
 
-ARG PICARD_VERSION=2.5.0
-ARG PICARD_DOWNLOAD_URL=https://github.com/broadinstitute/picard/archive/${PICARD_VERSION}.tar.gz
+#ARG HTSJDK_VERSION=2.7.0
+#ARG HTSJDK_DOWNLOAD_URL=https://github.com/samtools/htsjdk/archive/${HTSJDK_VERSION}.tar.gz
+
+#ARG PICARD_VERSION=2.5.0
+#ARG PICARD_DOWNLOAD_URL=https://github.com/broadinstitute/picard/archive/${PICARD_VERSION}.tar.gz
 
 ARG PRINSEQ_VERSION=0.20.4
 ARG PRINSEQ_DOWNLOAD_URL=http://mirror.ufs.ac.za/applications/prinseq/standalone/prinseq-lite-${PRINSEQ_VERSION}.tar.gz
@@ -112,30 +115,17 @@ RUN curl -SL $SAMTOOLS_DOWNLOAD_URL -o samtools.tar.gz \
 
 #--------------------------------------------------------------------------------
 # PICARD -- install in /opt/packages/picard
+# This downloads the latest version of Picard-tools
 
-RUN mkdir -p /usr/src/picard_tools
+# Update certificates (so gradlew doesn't break)
+RUN update-ca-certificates -f 
 
-# Clone out htsjdk. First turn off git ssl verification
-WORKDIR /usr/src/picard_tools
+WORKDIR /usr/src
 RUN git config --global http.sslVerify false \
-	&& git clone https://github.com/samtools/htsjdk.git
-WORKDIR /usr/src/picard_tools/htsjdk
-RUN ./gradlew jar
-
-# Build the distribution jar, clean up everything else
-WORKDIR /usr/src/picard_tools
-RUN curl -SL $PICARD_DOWNLOAD_URL -o picard.tar.gz \
-	&& tar --strip-components=1 -xvzf picard.tar.gz -C /usr/src/picard_tools \
-	&& rm picard.tar.gz \
-	&& ant clean all \
-    && mv dist/picard.jar picard.jar \
-    && mv src/scripts/picard/docker_helper.sh docker_helper.sh \
-    && ant clean \
-    && rm -rf htsjdk \
-    && rm -rf src \
-    && rm -rf lib \
-    && rm build.xml \
-	&& ln -s /usr/src/picard_tools /opt/packages/picard
+	&& git clone https://github.com/broadinstitute/picard.git
+WORKDIR /usr/src/picard
+RUN ./gradlew shadowJar -Djavax.net.ssl.trustAnchors=/etc/ssl/certs/java/cacerts \
+	&& ln -s /usr/src/picard /opt/packages/picard
 
 #--------------------------------------------------------------------------------
 # PRINSEQ -- install in /opt/packages/prinseq
