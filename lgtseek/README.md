@@ -16,7 +16,7 @@ If you wish to both configure and start a Docker container, then run
 setup_container.sh
 ```
 
-This script will prompt you on various ways to set up your mounted volumes, and configure a couple components in the LGTSeek pipeline, mainly BLAST-related components.  These changes are written to a docker-compose file which is then used to start the container.
+This script will prompt you on various ways to set up your mounted volumes, and configure a couple components in the LGTSeek pipeline, mainly BLAST-related components.  These changes are written to a custom docker-compose file which the shell script will then use to create containers from a few Docker images.  After the setup_container.sh script is run, proceed to the "After the container starts..." section.
 
 ## Starting a Docker container using Docker Compose
 To run a Docker container (from within the "lgtseek" directory):
