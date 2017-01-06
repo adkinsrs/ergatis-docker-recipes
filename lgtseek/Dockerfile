@@ -40,21 +40,23 @@ ARG SAMTOOLS_DOWNLOAD_URL=https://github.com/samtools/samtools/archive/${SAMTOOL
 ARG SRA_VERSION=2.7.0
 ARG SRA_DOWNLOAD_URL=https://github.com/ncbi/sra-tools/archive/${SRA_VERSION}.tar.gz
 
-### OpenJDK-8-JDK is natively not available for Ubuntu 14.04 so we need a workaround here
-# Install the python script required for "add-apt-repository"
-RUN apt-get update && apt-get install -y software-properties-common
-# Setup the openjdk 8 repo
-RUN add-apt-repository ppa:openjdk-r/ppa
-# Install java8
-RUN apt-get update && apt-get install -y openjdk-8-jdk
+# 1) Install the python script required for "add-apt-repository"
+# 2) Setup the openjdk 8 repo
+### NOTE: OpenJDK-8-JDK is natively not available for Ubuntu 14.04 so we need a workaround here
+# 3) Install java8
+# 4) Lets install the other stuff now
 
-# Lets install the other stuff now
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends software-properties-common \
+	&& add-apt-repository ppa:openjdk-r/ppa \
+	&& apt-get update && apt-get install -y --no-install-recommends openjdk-8-jdk \
 	ant \
+	automake \
+	autotools-dev \
 	libmagic-dev \
 	libxml2 \
 	&& apt-get clean autoclean \
-	&& apt-get autoremove -y
+	&& apt-get autoremove -y \
+	&& rm -rf /var/lib/apt/lists/*
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
@@ -69,10 +71,19 @@ RUN cpanm --force \
 #RUN cpanm --force CJFIELDS/BioPerl-1.6.924.tar.gz
 #RUN cpanm --mirror-only --mirror https://stratopan.com/MeNoSeeGood/Manatee/master BioPerl
 
+# Create directories needed for installs (putting here to reduce layers created)
+RUN mkdir -p /usr/src/bwa \
+	&& mkdir -p /usr/src/htslib \
+	&& mkdir -p /usr/src/samtools \
+	&& mkdir -p /usr/src/prinseq \
+	&& mkdir -p /usr/src/ncbi/sratoolkit \
+	&& mkdir -p /opt/packages/sra-tools \
+	&& mkdir -p /usr/src/ncbi
+
+
 #--------------------------------------------------------------------------------
 # BWA -- install in /opt/packages/bwa
 
-RUN mkdir -p /usr/src/bwa
 WORKDIR /usr/src/bwa
 
 RUN curl -SL $BWA_DOWNLOAD_URL -o bwa.tar.gz \
@@ -85,7 +96,6 @@ RUN curl -SL $BWA_DOWNLOAD_URL -o bwa.tar.gz \
 #--------------------------------------------------------------------------------
 # HTSLIB -- install in /opt/packages/htslib (required for Samtools)
 
-RUN mkdir -p /usr/src/htslib7yy
 WORKDIR /usr/src/htslib
 
 RUN curl -SL $HTSLIB_DOWNLOAD_URL -o htslib.tar.gz \
@@ -98,7 +108,6 @@ RUN curl -SL $HTSLIB_DOWNLOAD_URL -o htslib.tar.gz \
 # Had to consult this to get it to build https://github.com/samtools/samtools/issues/500
 # Also had to grab an updated "configure.ac" file since it patched a bug with the --without-curses options in ./configure
 
-RUN mkdir -p /usr/src/samtools
 WORKDIR /usr/src/samtools
 
 RUN curl -SL $SAMTOOLS_DOWNLOAD_URL -o samtools.tar.gz \
@@ -109,7 +118,7 @@ RUN curl -SL $SAMTOOLS_DOWNLOAD_URL -o samtools.tar.gz \
 	&& wget -O ./configure.ac https://raw.githubusercontent.com/samtools/samtools/develop/configure.ac \
 	&& aclocal -I./autoconf \
 	&& autoconf \
-	&&./configure --without-curses --prefix=/opt/packages/samtools \
+	&& ./configure --without-curses --prefix=/opt/packages/samtools \
 	&& make \
 	&& make install
 
@@ -117,11 +126,12 @@ RUN curl -SL $SAMTOOLS_DOWNLOAD_URL -o samtools.tar.gz \
 # PICARD -- install in /opt/packages/picard
 # This downloads the latest version of Picard-tools
 
-# Update certificates (so gradlew doesn't break)
-RUN update-ca-certificates -f 
-
 WORKDIR /usr/src
-RUN git config --global http.sslVerify false \
+
+# 1) Update certificates (so gradlew doesn't break)
+# 2) Clone latest version of PicardTools from GitHub and install
+RUN update-ca-certificates -f \
+	&& git config --global http.sslVerify false \
 	&& git clone https://github.com/broadinstitute/picard.git
 WORKDIR /usr/src/picard
 RUN ./gradlew shadowJar -Djavax.net.ssl.trustAnchors=/etc/ssl/certs/java/cacerts \
@@ -130,7 +140,6 @@ RUN ./gradlew shadowJar -Djavax.net.ssl.trustAnchors=/etc/ssl/certs/java/cacerts
 #--------------------------------------------------------------------------------
 # PRINSEQ -- install in /opt/packages/prinseq
 
-RUN mkdir -p /usr/src/prinseq
 WORKDIR /usr/src/prinseq
 
 RUN curl -SL $PRINSEQ_DOWNLOAD_URL -o prinseq.tar.gz \
@@ -141,15 +150,12 @@ RUN curl -SL $PRINSEQ_DOWNLOAD_URL -o prinseq.tar.gz \
 #--------------------------------------------------------------------------------
 # SRA_TOOKKIT -- install in /opt/packages/sra-tools
 
-RUN mkdir -p /usr/src/ncbi/sratoolkit
-RUN mkdir -p /opt/packages/sra-tools
-RUN mkdir -p /usr/src/ncbi
 WORKDIR /usr/src/ncbi
 
 # First install some dependenciea
 # Clone the Git repos first
-RUN git clone https://github.com/ncbi/ncbi-vdb.git
-RUN git clone https://github.com/ncbi/ngs.git
+RUN git clone https://github.com/ncbi/ncbi-vdb.git \
+	&& git clone https://github.com/ncbi/ngs.git
 
 # Install NCBI-vdb
 WORKDIR /usr/src/ncbi/ncbi-vdb
@@ -196,7 +202,7 @@ RUN mkdir -p /opt/projects/$PROJECT \
 	&& mkdir /opt/projects/$PROJECT/workflow/runtime \
 	&& mkdir /opt/projects/$PROJECT/workflow/runtime/pipeline \
 	&& touch /opt/projects/$PROJECT/workflow/project_id_repository/valid_id_repository \
-    && cp /tmp/project.config /opt/projects/$PROJECT/workflow/.
+	&& cp /tmp/project.config /opt/projects/$PROJECT/workflow/.
 
 # Making this as a volume in case we'd like to pass this data to another image
 VOLUME /opt/projects/$PROJECT/output_repository
