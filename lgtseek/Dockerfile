@@ -215,6 +215,7 @@ COPY changed_pipeline_files/blast2lca.lgt.config /opt/ergatis/pipeline_templates
 COPY changed_pipeline_files/blast_lgt_finder.lgt.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/blast_lgt_finder.lgt.config
 COPY changed_pipeline_files/sam2lca.lgt.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/sam2lca.lgt.config
 COPY changed_pipeline_files/sam2lca.mb.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/sam2lca.mb.config
+COPY changed_pipeline_files/sam2lca.xml /opt/ergatis/docs/sam2lca.xml
 
 #--------------------------------------------------------------------------------
 # SCRIPTS -- Any addition post-setup scripts that need to be run

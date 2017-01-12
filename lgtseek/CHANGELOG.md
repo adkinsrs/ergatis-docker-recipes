@@ -2,6 +2,10 @@
 
 Note: This CHANGELOG is reflective of Docker versions, not the GitHub tags of the Ergatis-Docker repository
 
+## v1.2
+* LGTSeek pipeline code now is pulled from the ergatis-pipelines:lgtseek Github repo.  Any changes in files that need to occur for Docker to function happen in ./changed\_pipeline\_files
+* Optimized Dockerfile to reduce number of layers, mostly by concatenating RUN commands
+
 ## v1.1
 * Added new starting input - BAM file
   * This is an alternative to providing an SRA ID
