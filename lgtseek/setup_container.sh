@@ -16,31 +16,37 @@ printf "\nWelcome to the LGTSeek Docker installer. Please follow the prompts bel
 
 # Get Use-Case information to pare down setup options
 printf "\nFirst, let's figure out which LGTSeek Use Case you wish to employ\n"
+printf "Use Case 1 - Good donor reference and good LGT-free host reference\n"
+printf "Use Case 2 - Good donor reference but unknown host reference\n"
+printf "Use Case 3 - Good host reference but unknown donor reference\n"
 
-PS3="Select a Use Case # (1-3) or 4 to Quit): "
-options=("Use Case 1 - Good donor reference and good LGT-free host reference" "Use Case 2 - Good donor reference but unknown host reference" "Use Case 3 - Good host reference but unknown donor reference" "Quit setup")
+PS3="Select a Use Case # (1-3 or 4 to quit) and press ENTER: "
+options=("Use Case 1" "Use Case 2" "Use Case 3" "Quit")
 use_case=''
 select opt in "${options[@]}"
 do
    case $opt in
-        "1")
+        "Use Case 1")
             echo "Use case 1 chosen"
              use_case=1
+             break
             ;;
-        "2")
+        "Use Case 2")
             echo "Use case 2 chosen"
             use_case=2
+            break
             ;;
-        "3")
+        "Use Case 3")
             echo "Use case 3 chosen"
             use_case=3
+            break
             ;;
-        "4")
+        "Quit")
             quit_setup
             ;;
         *) echo "invalid option... choose again (1-3 or 'q' to quit)."
-	    continue
-	    ;;
+            continue
+            ;;
     esac
 done
 
@@ -93,25 +99,28 @@ fi
 
 # Next, need to determine input format
 printf "\nNext, which type of input do you plan to use?\n"
-PS3="Select an input type(1-3 or 'q' to quit): "
-options=("SRA" "FASTQ" "BAM" "Quit setup")
+PS3="Select an input type(1-3 or 4 to quit) and press ENTER: "
+options=("SRA" "FASTQ" "BAM" "Quit")
 input=''
 select opt in "${options[@]}"
 do
    case $opt in
-        "1")
+        "SRA")
             echo "SRA input chosen"
             input='SRA'
+            break
             ;;
-        "2")
+        "FASTQ")
             echo "FASTQ input chosen"
             input='FASTQ'
+            break
             ;;
-        "3")
+        "BAM")
             echo "BAM input chosen"
             input='BAM'
+            break
             ;;
-        "4")
+        "Quit")
             quit_setup
             ;;
         *) echo "invalid option... choose again (1-3 or 'q' to quit)."

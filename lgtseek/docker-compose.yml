@@ -4,15 +4,18 @@ services:
 # docker-compose.yml is for development purposes.
 # To create a production version of docker-compose.yml, run the setup_container.sh script which uses docker-compose.tmpl.yml to build it
   ergatis:
-    build: .
-    #image: adkinsrs/lgtseek
+    #build: .
+    image: adkinsrs/lgtseek
     links:
       - mongo
     mem_limit: 5120000000
     ports:
       - "8080:80"
     volumes:
-      - ./input_data:/mnt/input_data:ro
+      - ./input_data/donor_ref:/mnt/input_data/donor_ref:ro
+      - ./input_data/host_ref:/mnt/input_data/host_ref:ro
+      - ./input_data/refseq_ref:/mnt/input_data/refseq_ref:ro
+      - ./input_data/input_source:/mnt/input_data/input_source:ro
       - ./output_data:/mnt/output_data
       - ./split_multifasta.fsa.list:/mnt/split_multifasta.fsa.list
       - ./pipeline_builder:/var/www/html/pipeline_builder
