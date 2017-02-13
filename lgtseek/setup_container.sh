@@ -94,8 +94,10 @@ if [[ $use_case == '3' ]]; then
 	sed -i.bak "s|###REFSEQ_MNT###|$refseq_mnt|" docker-compose.prod.yml
 fi
 
+# Next, need to determine input format (coming soon)
+
 # Next, ask where the output data should be written to
-printf  "\nLastly, what directory should LGTView output be written to?  Note that if you close the Docker container, this output data may disappear, so it is recommended it be copied to a more permanent directory location.  If left blank, the output will be located at './output_data'\n"
+printf  "\nNext, what directory should LGTView output be written to?  Note that if you close the Docker container, this output data may disappear, so it is recommended it be copied to a more permanent directory location.  If left blank, the output will be located at './output_data'\n"
 printf  "Type 'quit' or 'q' to exit setup.\n[OUTPUT_DIRECTORY]: "
 read output_dir
 if [[ $output_dir == 'q' ]] || [[ $output_dir == 'quit' ]]; then
