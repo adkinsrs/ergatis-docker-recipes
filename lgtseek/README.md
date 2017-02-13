@@ -15,8 +15,7 @@ Before running the pipeline, you must know the directory paths of your input dat
 * Host reference (FASTA)
 * RefSeq reference (FASTA)
 
-### Use Case 4 - Good donor reference but LGT-infected host reference
-(coming soon)
+### Use Case 4 - Good donor reference but LGT-infected host reference - (coming soon)
 
 For each reference, a single fasta-formatted file will be accepted, or a list file containing the paths of fasta-formatted files in the same directory (the list file must end in .list). 
 
