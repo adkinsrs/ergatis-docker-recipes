@@ -34,7 +34,7 @@ ARG PRINSEQ_VERSION=0.20.4
 ARG PRINSEQ_DOWNLOAD_URL=http://mirror.ufs.ac.za/applications/prinseq/standalone/prinseq-lite-${PRINSEQ_VERSION}.tar.gz
 #ARG PRINSEQ_DOWNLOAD_URL=https://sourceforge.net/projects/prinseq/files/standalone/prinseq-lite-${PRINSEQ_VERSION}.tar.gz
 
-ARG SAMTOOLS_VERSION=1.3
+ARG SAMTOOLS_VERSION=1.3.1
 ARG SAMTOOLS_DOWNLOAD_URL=https://github.com/samtools/samtools/archive/${SAMTOOLS_VERSION}.tar.gz
 
 ARG SRA_VERSION=2.7.0
@@ -52,6 +52,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends software-proper
 	ant \
 	automake \
 	autotools-dev \
+	libncurses5-dev \
+	libncursesw5-dev \
 	libmagic-dev \
 	libxml2 \
 	ncbi-blast+ \
@@ -107,7 +109,6 @@ RUN curl -SL $HTSLIB_DOWNLOAD_URL -o htslib.tar.gz \
 #--------------------------------------------------------------------------------
 # SAMTOOLS -- install in /opt/packages/samtools
 # Had to consult this to get it to build https://github.com/samtools/samtools/issues/500
-# Also had to grab an updated "configure.ac" file since it patched a bug with the --without-curses options in ./configure
 
 WORKDIR /usr/src/samtools
 
@@ -115,11 +116,12 @@ RUN curl -SL $SAMTOOLS_DOWNLOAD_URL -o samtools.tar.gz \
 	&& tar --strip-components=1 -xvzf samtools.tar.gz -C /usr/src/samtools \
 	&& rm samtools.tar.gz \
 	&& mkdir autoconf \
-	&& wget -O autoconf/ax_with_htslib.m4 https://github.com/samtools/samtools/files/62424/ax_with_htslib.m4.txt \
-	&& wget -O ./configure.ac https://raw.githubusercontent.com/samtools/samtools/develop/configure.ac \
+	&& wget -O autoconf/ax_with_htslib.m4 https://raw.githubusercontent.com/samtools/samtools/develop/m4/ax_with_htslib.m4 \
+	&& wget -O autoconf/ax_with_curses.m4 https://raw.githubusercontent.com/samtools/samtools/develop/m4/ax_with_curses.m4 \
+	#&& wget -O ./configure.ac https://raw.githubusercontent.com/samtools/samtools/develop/configure.ac \
 	&& aclocal -I./autoconf \
 	&& autoconf \
-	&& ./configure --without-curses --prefix=/opt/packages/samtools \
+	&& ./configure --prefix=/opt/packages/samtools \
 	&& make \
 	&& make install
 
