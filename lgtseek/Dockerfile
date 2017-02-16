@@ -223,13 +223,6 @@ COPY changed_pipeline_files/sam2lca.xml /opt/ergatis/docs/sam2lca.xml
 #--------------------------------------------------------------------------------
 # SCRIPTS -- Any addition post-setup scripts that need to be run
 
-# These are just scripts I am using to create and run the pipeline without using the UI
-# For testing purposes
-#COPY configure_pipeline.sh /opt/scripts/configure_pipeline.sh
-#COPY run_pipeline.sh /opt/scripts/run_pipeline.sh
-
-# Lastly change to root directory
-#CMD ["/bin/bash"]
 WORKDIR /
 # ... and start apache as root
 USER root
