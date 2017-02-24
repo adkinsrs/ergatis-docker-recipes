@@ -2,3 +2,7 @@
 	path = lgtseek/submodule
 	url = https://github.com/adkinsrs/ergatis-pipelines.git
 	branch = lgtseek
+[submodule "rnaseq/submodule"]
+	path = rnaseq/submodule
+	url = https://github.com/adkinsrs/ergatis-pipelines.git
+	branch = rnaseq

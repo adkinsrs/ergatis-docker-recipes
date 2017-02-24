@@ -23,7 +23,7 @@ services:
       - mongodata
 
   mongo:
-    image: mongo:2.6
+    image: mongo:3.0.4
     volumes_from:
       - mongodata
     ports:
@@ -33,7 +33,7 @@ services:
 # Mongodata is necessary for persistent data storage
 # MongoDB normally wipes data when shut down
   mongodata:
-    image: mongo:2.6
+    image: mongo:3.0.4
     volumes:
       - /data/db
     command: --break-mongo

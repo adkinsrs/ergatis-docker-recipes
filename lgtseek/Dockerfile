@@ -209,7 +209,7 @@ RUN mkdir -p /opt/projects/$PROJECT \
 	&& cp /tmp/project.config /opt/projects/$PROJECT/workflow/.
 
 # Making this as a volume in case we'd like to pass this data to another image
-VOLUME /opt/projects/$PROJECT/output_repository
+VOLUME /opt/projects/$PROJECT/output_repository/gather_lgtview_files/
 
 #--------------------------------------------------------------------------------
 # PIPELINE_CHANGES - Files that need to deviate from the installed lgtseek pipeline in order to function in Docker
