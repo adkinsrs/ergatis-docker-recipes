@@ -27,7 +27,7 @@ ARG HTSLIB_DOWNLOAD_URL=https://github.com/samtools/htslib/archive/${HTSLIB_VERS
 #ARG HTSJDK_VERSION=2.7.0
 #ARG HTSJDK_DOWNLOAD_URL=https://github.com/samtools/htsjdk/archive/${HTSJDK_VERSION}.tar.gz
 
-#ARG PICARD_VERSION=2.5.0
+ARG PICARD_VERSION=2.6.0
 #ARG PICARD_DOWNLOAD_URL=https://github.com/broadinstitute/picard/archive/${PICARD_VERSION}.tar.gz
 
 ARG PRINSEQ_VERSION=0.20.4
@@ -137,7 +137,8 @@ RUN update-ca-certificates -f \
 	&& git config --global http.sslVerify false \
 	&& git clone https://github.com/broadinstitute/picard.git
 WORKDIR /usr/src/picard
-RUN ./gradlew shadowJar -Djavax.net.ssl.trustAnchors=/etc/ssl/certs/java/cacerts \
+RUN git checkout tags/$PICARD_VERSION \ 
+	&& ./gradlew shadowJar -Djavax.net.ssl.trustAnchors=/etc/ssl/certs/java/cacerts \
 	&& ln -s /usr/src/picard /opt/packages/picard
 
 #--------------------------------------------------------------------------------
