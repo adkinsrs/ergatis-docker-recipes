@@ -10,7 +10,7 @@ function quit_setup {
 #########################
 
 # Copy the template over to a production version of the docker-compose file
-cp docker-compose.tmpl.yml docker_templates/docker-compose.yml
+cp docker_templates/docker-compose.yml.tmpl docker_templates/docker-compose.yml
 
 printf "\nWelcome to the LGTSeek Docker installer. Please follow the prompts below that will help the Docker container access your usable data.\n"
 
@@ -143,8 +143,64 @@ if [[ $input == 'FASTQ' ]] || [[ $input == 'BAM' ]]; then
 	sed -i "s|###INPUT_MNT###|$input_mnt|" docker_templates/docker-compose.yml
 fi
 
+if [[ $use_case == '2' ]] || [[ $use_case == '3' ]]; then
+    # Copy template to production 
+    cp docker_templates/blastn_plus.nt.config.tmpl docker_templates/blastn_plus.nt.config
+    # Next, figure out the BLAST db and if local/remote
+    printf  "\nWhat reference database would you like to use for BLASTN querying?  Default is 'nt'\n"
+    printf  "Type 'quit' or 'q' to exit setup.\n[BLAST_DATABASE]: "
+    read blast_db
+    if [[ $blast_db == 'q' ]] || [[ $blast_db == 'quit' ]]; then
+        quit_setup
+    fi
+    if [[ -z $blast_db ]]; then
+        blast_db="nt"
+    fi
+
+    printf  "\nWould you like to query against a remote database from the NCBI servers?  Using a remote database saves you from having to have a pre-formatted database exist on your local machine, but is not recommended if you anticipate a lot of queries or have sensitive data. Please enter 'Y' (default) if you would like to use the remote NCBI database or 'N' if you would prefer querying against a local database\n"
+    printf  "Type 'quit' or 'q' to exit setup.\n[REMOTE_BLAST]: "
+    read y_n
+    if [[ -z $y_n ]]; then
+        remote=1
+    fi
+
+    while [[ ! $y_n =~ ^[YyNn]$ ]] && [[ ! $y_n =~ "^q*" ]]; do
+        printf  "\nPlease enter 'yes' (Y) or 'no' (N).\n[REMOTE_BLAST]: "
+        read y_n
+    done
+
+    if [[ $y_n == 'q' ]] || [[ $y_n == 'quit' ]]; then
+        quit_setup
+    fi
+
+    if [[ $y_n =~ ^[Yy]$ ]]; then
+        remote=1
+    else
+        remote=0
+    fi
+
+    if [[ $remote ]]; then
+        blast_dir=''
+    fi
+    if [[ ! $remote ]]; then
+        printf  "\nYou chose to use a local pre-formatted database.  Please provide the database path (leave out the database name).\n"
+        printf  "Type 'quit' or 'q' to exit setup.\n[DB_DIRECTORY]: "
+        read blast_dir
+        while [[ -z $blast_dir ]]; do
+            printf  "\nThe directory path to the database is required.  Please enter one.\n[DB_DIRECTORY]: "
+            read blast_dir
+        done
+        blast_db="/${blast_db}"
+    fi
+
+    blast_path=${blast_dir}${blast_db}
+
+    sed -i "s|###REMOTE###|$remote|" docker_templates/blastn_plus.nt.config
+    sed -i "s|###BLAST_DB###|$blast_path|" docker_templates/blastn_plus.nt.config
+fi
+
 # Next, ask where the output data should be written to
-printf  "\nNext, what directory should LGTView output be written to?  Note that if you close the Docker container, this output data may disappear, so it is recommended it be copied to a more permanent directory location.  If left blank, the output will be located at './output_data'\n"
+printf  "\nNext, what directory should LGTSeek output be written to?  Note that if you close the Docker container, this output data may disappear, so it is recommended it be copied to a more permanent directory location.  If left blank, the output will be located at './output_data'\n"
 printf  "Type 'quit' or 'q' to exit setup.\n[OUTPUT_DIRECTORY]: "
 read output_dir
 if [[ $output_dir == 'q' ]] || [[ $output_dir == 'quit' ]]; then
@@ -156,72 +212,16 @@ fi
 sed -i "s|###OUTPUT_DATA###|$output_dir|" docker_templates/docker-compose.yml
 
 # Time to determine what Docker host will run the container
-#printf  "\nWhat IP is the docker host machine on?  Leave blank if you are using local resources for the host (localhost)\n"
-#printf  "Type 'quit' or 'q' to exit setup.\n[RUN_LOCALLY]: "
-#read ip_address
-#if [[ $ip_address == 'q' ]] || [[ $ip_address == 'quit' ]]; then
-#    quit_setup
-#fi
-#if [[ -z $ip_address ]]; then
+printf  "\nWhat IP is the docker host machine on?  Leave blank if you are using local resources for the host (localhost)\n"
+printf  "Type 'quit' or 'q' to exit setup.\n[RUN_LOCALLY]: "
+read ip_address
+if [[ $ip_address == 'q' ]] || [[ $ip_address == 'quit' ]]; then
+    quit_setup
+fi
+if [[ -z $ip_address ]]; then
     ip_address='localhost'
-#fi
+fi
 sed -i "s|###IP_HOST###|$ip_address|" docker_templates/docker-compose.yml
-
-
-# Next, figure out the BLAST db and if local/remote
-printf  "\nWhat reference database would you like to use for BLASTN querying?  Default is 'nt'\n"
-printf  "Type 'quit' or 'q' to exit setup.\n[BLAST_DATABASE]: "
-read blast_db
-if [[ $blast_db == 'q' ]] || [[ $blast_db == 'quit' ]]; then
-    quit_setup
-fi
-if [[ -z $blast_db ]]; then
-    blast_db="nt"
-fi
-
-printf  "\nWould you like to query against a remote database from the NCBI servers?  Using a remote database saves you from having to have a pre-formatted database exist on your local machine, but is not recommended if you anticipate a lot of queries or have sensitive data. Please enter 'Y' (default) if you would like to use the remote NCBI database or 'N' if you would prefer querying against a local database\n"
-printf  "Type 'quit' or 'q' to exit setup.\n[REMOTE_BLAST]: "
-read y_n
-if [[ -z $y_n ]]; then
-    remote=1
-fi
-
-while [[ ! $y_n =~ ^[YyNn]$ ]] && [[ ! $y_n =~ "^q*" ]]; do
-    printf  "\nPlease enter 'yes' (Y) or 'no' (N).\n[REMOTE_BLAST]: "
-    read y_n
-done
-
-if [[ $y_n == 'q' ]] || [[ $y_n == 'quit' ]]; then
-    quit_setup
-fi
-
-if [[ $y_n =~ ^[Yy]$ ]]; then
-    remote=1
-else
-    remote=0
-fi
-
-if [[ $remote ]]; then
-    blast_dir=''
-fi
-if [[ ! $remote ]]; then
-    printf  "\nYou chose to use a local pre-formatted database.  Please provide the database path (leave out the database name).\n"
-    printf  "Type 'quit' or 'q' to exit setup.\n[DB_DIRECTORY]: "
-    read blast_dir
-    while [[ -z $blast_dir ]]; do
-        printf  "\nThe directory path to the database is required.  Please enter one.\n[DB_DIRECTORY]: "
-        read blast_dir
-    done
-    blast_db="/${blast_db}"
-fi
-
-blast_path=${blast_dir}${blast_db}
-
-sed -i "s|###BLAST_DB###|$blast_path|" docker_templates/software.config
-
-sed -i "s|###REMOTE###|$remote|" docker_templates/docker-compose.yml
-
-printf  "\nGoing to build and run the Docker containers now....."
 
 # Now, establish the following Docker containers:
 # 1. ergatis_lgtseek_1
@@ -232,13 +232,14 @@ printf  "\nGoing to build and run the Docker containers now....."
 #  - A container to establish persistent MongoDB dataa
 
 # Default docker_templates/docker-compose.yml was written to so no need to specify -f
+printf  "\nGoing to build and run the Docker containers now....."
 docker-compose -f ./docker_templates/docker-compose.yml up -d
 
 printf  "Docker container is done building!\n"
 printf  "Next it's time to customize some things within the container\n\n";
 
-### TODO:
-# 1) Use Blast DB information to fix blast-plus template configs
+# I don't like hard-coding this
+docker cp ./docker_templates/blastn_plus.nt.config docker_templates_ergatis_1:/opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/
 
 printf  "\nDocker container is ready for use!\n"
 printf  "In order to build the LGTSeek pipeline please point your browser to http://${ip_address}:8080/pipeline_builder\n"
