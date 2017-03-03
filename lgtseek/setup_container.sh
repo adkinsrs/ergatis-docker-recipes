@@ -10,7 +10,7 @@ function quit_setup {
 #########################
 
 # Copy the template over to a production version of the docker-compose file
-cp docker-compose.tmpl.yml docker-compose.yml
+cp docker-compose.tmpl.yml docker_templates/docker-compose.yml
 
 printf "\nWelcome to the LGTSeek Docker installer. Please follow the prompts below that will help the Docker container access your usable data.\n"
 
@@ -64,7 +64,7 @@ if [[ $use_case == '1' ]] || [[ $use_case == '2' ]]; then
 	if [[ $donor_mnt == 'q' ]] || [[ $donor_mnt == 'quit' ]]; then
 	    quit_setup
 	fi
-	sed -i "s|###DONOR_MNT###|$donor_mnt|" docker-compose.yml
+	sed -i "s|###DONOR_MNT###|$donor_mnt|" docker_templates/docker-compose.yml
 fi
 
 # Second ask for location of host reference directory
@@ -79,7 +79,7 @@ if [[ $use_case == '1' ]] || [[ $use_case == '3' ]]; then
 	if [[ $host_mnt == 'q' ]] || [[ $host_mnt == 'quit' ]]; then
 	    quit_setup
 	fi
-	sed -i "s|###HOST_MNT###|$host_mnt|" docker-compose.yml
+	sed -i "s|###HOST_MNT###|$host_mnt|" docker_templates/docker-compose.yml
 fi
 
 # Third ask for location of Refseq reference directory
@@ -94,7 +94,7 @@ if [[ $use_case == '3' ]]; then
 	if [[ $refseq_mnt == 'q' ]] || [[ $refseq_mnt == 'quit' ]]; then
 	    quit_setup
 	fi
-	sed -i "s|###REFSEQ_MNT###|$refseq_mnt|" docker-compose.yml
+	sed -i "s|###REFSEQ_MNT###|$refseq_mnt|" docker_templates/docker-compose.yml
 fi
 
 # Next, need to determine input format
@@ -140,7 +140,7 @@ if [[ $input == 'FASTQ' ]] || [[ $input == 'BAM' ]]; then
 	if [[ $input_mnt == 'q' ]] || [[ $input_mnt == 'quit' ]]; then
 	    quit_setup
 	fi
-	sed -i "s|###INPUT_MNT###|$input_mnt|" docker-compose.yml
+	sed -i "s|###INPUT_MNT###|$input_mnt|" docker_templates/docker-compose.yml
 fi
 
 # Next, ask where the output data should be written to
@@ -153,7 +153,7 @@ fi
 if [[ -z $output_dir ]]; then
     output_dir='./output_data'
 fi
-sed -i "s|###OUTPUT_DATA###|$output_dir|" docker-compose.yml
+sed -i "s|###OUTPUT_DATA###|$output_dir|" docker_templates/docker-compose.yml
 
 # Time to determine what Docker host will run the container
 #printf  "\nWhat IP is the docker host machine on?  Leave blank if you are using local resources for the host (localhost)\n"
@@ -165,7 +165,7 @@ sed -i "s|###OUTPUT_DATA###|$output_dir|" docker-compose.yml
 #if [[ -z $ip_address ]]; then
     ip_address='localhost'
 #fi
-sed -i "s|###IP_HOST###|$ip_address|" docker-compose.yml
+sed -i "s|###IP_HOST###|$ip_address|" docker_templates/docker-compose.yml
 
 
 # Next, figure out the BLAST db and if local/remote
@@ -202,22 +202,24 @@ else
 fi
 
 if [[ $remote ]]; then
-    blast_path=''
+    blast_dir=''
 fi
 if [[ ! $remote ]]; then
     printf  "\nYou chose to use a local pre-formatted database.  Please provide the database path (leave out the database name).\n"
     printf  "Type 'quit' or 'q' to exit setup.\n[DB_DIRECTORY]: "
-    read blast_path
-    while [[ -z $blast_path ]]; do
+    read blast_dir
+    while [[ -z $blast_dir ]]; do
         printf  "\nThe directory path to the database is required.  Please enter one.\n[DB_DIRECTORY]: "
-        read blast_path
+        read blast_dir
     done
+    blast_db="/${blast_db}"
 fi
 
-sed -i "s|###BLAST_PATH###|$blast_path|" docker-compose.yml
-sed -i "s|###BLAST_DB###|$blast_db|" docker-compose.yml
+blast_path=${blast_dir}${blast_db}
 
-sed -i "s|###REMOTE###|$remote|" docker-compose.yml
+sed -i "s|###BLAST_DB###|$blast_path|" docker_templates/software.config
+
+sed -i "s|###REMOTE###|$remote|" docker_templates/docker-compose.yml
 
 printf  "\nGoing to build and run the Docker containers now....."
 
@@ -229,15 +231,14 @@ printf  "\nGoing to build and run the Docker containers now....."
 # 3. ergatis_mongodata_1
 #  - A container to establish persistent MongoDB dataa
 
-# Default docker-compose.yml was written to so no need to specify -f
-docker-compose up -d
+# Default docker_templates/docker-compose.yml was written to so no need to specify -f
+docker-compose -f ./docker_templates/docker-compose.yml up -d
 
 printf  "Docker container is done building!\n"
 printf  "Next it's time to customize some things within the container\n\n";
 
 ### TODO:
 # 1) Use Blast DB information to fix blast-plus template configs
-# 2) Use docker host IP in the blast_lgt_finder, blast2lca, and sam2lca template configs
 
 printf  "\nDocker container is ready for use!\n"
 printf  "In order to build the LGTSeek pipeline please point your browser to http://${ip_address}:8080/pipeline_builder\n"
