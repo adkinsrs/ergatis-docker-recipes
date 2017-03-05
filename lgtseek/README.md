@@ -58,5 +58,5 @@ In your internet browser, you can access the Ergatis homepage by navigating to [
 ## Stopping the container
 To stop the container, and free up valuable CPU and memory resources, run the following:
 ```
-docker-compose down -v
+docker-compose -f docker_templates/docker-compose.yml down -v
 ```

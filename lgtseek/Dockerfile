@@ -46,9 +46,9 @@ ARG SRA_DOWNLOAD_URL=https://github.com/ncbi/sra-tools/archive/${SRA_VERSION}.ta
 # 3) Install java8
 # 4) Lets install the other stuff now
 
-RUN apt-get update && apt-get install -y --no-install-recommends software-properties-common \
+RUN apt-get -q update && apt-get -q install -y --no-install-recommends software-properties-common \
 	&& add-apt-repository ppa:openjdk-r/ppa \
-	&& apt-get update && apt-get install -y --no-install-recommends openjdk-8-jdk \
+	&& apt-get -q update && apt-get -q install -y --no-install-recommends openjdk-8-jdk \
 	ant \
 	automake \
 	autotools-dev \
@@ -57,8 +57,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends software-proper
 	libmagic-dev \
 	libxml2 \
 	ncbi-blast+ \
-	&& apt-get clean autoclean \
-	&& apt-get autoremove -y \
+	&& apt-get -q clean autoclean \
+	&& apt-get -q autoremove -y \
 	&& rm -rf /var/lib/apt/lists/*
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
