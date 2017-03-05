@@ -18,8 +18,8 @@ ARG PROJECT=lgtseek
 ARG BWA_VERSION=0.7.15
 ARG BWA_DOWNLOAD_URL=https://github.com/lh3/bwa/archive/v${BWA_VERSION}.tar.gz
 
-ARG NCBI_BLAST_VERSION=2.2.9
-ARG NCBI_BLAST_DOWNLOAD_URL=ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/${NCBI_BLAST_VERSION}/blast-${NCBI_BLAST_VERSION}-amd64-linux.tar.gz
+ARG NCBI_BLAST_VERSION=2.6.0
+ARG NCBI_BLAST_DOWNLOAD_URL=ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/${NCBI_BLAST_VERSION}/ncbi-blast-${NCBI_BLAST_VERSION}+-x64-linux.tar.gz
 
 ARG HTSLIB_VERSION=1.3.1
 ARG HTSLIB_DOWNLOAD_URL=https://github.com/samtools/htslib/archive/${HTSLIB_VERSION}.tar.gz
@@ -56,7 +56,6 @@ RUN apt-get -q update && apt-get -q install -y --no-install-recommends software-
 	libncursesw5-dev \
 	libmagic-dev \
 	libxml2 \
-	ncbi-blast+ \
 	&& apt-get -q clean autoclean \
 	&& apt-get -q autoremove -y \
 	&& rm -rf /var/lib/apt/lists/*
@@ -81,7 +80,7 @@ RUN mkdir -p /usr/src/bwa \
 	&& mkdir -p /usr/src/prinseq \
 	&& mkdir -p /usr/src/ncbi/sratoolkit \
 	&& mkdir -p /opt/packages/sra-tools \
-	&& mkdir -p /usr/src/ncbi
+	&& mkdir -p /usr/src/ncbi/blast
 
 
 #--------------------------------------------------------------------------------
@@ -188,6 +187,12 @@ RUN curl -SL $SRA_DOWNLOAD_URL -o sra.tar.gz \
 
 #--------------------------------------------------------------------------------
 # NCBI_BLAST+ -- Installed via apt-getExecs in /usr/bin/
+
+WORKDIR /usr/src/ncbi/blast
+RUN curl -SL $NCBI_BLAST_DOWNLOAD_URL -o blast.tar.gz \
+	&& tar --strip-components=1 -xvzf blast.tar.gz -C /usr/src/ncbi/blast \
+	&& rm blast.tar.gz \ 
+	&& ln -s /usr/src/ncbi/blast/ncbi-blast-$NCBI_BLAST_VERSION+/bin/* /usr/bin/
 
 #--------------------------------------------------------------------------------
 # PROJECT REPOSITORY SETUP
