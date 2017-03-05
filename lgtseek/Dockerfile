@@ -40,14 +40,15 @@ ARG SAMTOOLS_DOWNLOAD_URL=https://github.com/samtools/samtools/archive/${SAMTOOL
 ARG SRA_VERSION=2.7.0
 ARG SRA_DOWNLOAD_URL=https://github.com/ncbi/sra-tools/archive/${SRA_VERSION}.tar.gz
 
-# 1) Install the python script required for "add-apt-repository"
+# 1) Install the scripts required for "add-apt-repository"
 # 2) Setup the openjdk 8 repo
 ### NOTE: OpenJDK-8-JDK is natively not available for Ubuntu 14.04 so we need a workaround here
-# 3) Install java8
+# 3) Install java8 and python2.7
 # 4) Lets install the other stuff now
 
 RUN apt-get -q update && apt-get -q install -y --no-install-recommends software-properties-common \
 	&& add-apt-repository ppa:openjdk-r/ppa \
+	&& add-apt-repository ppa:fkrull/deadsnakes \
 	&& apt-get -q update && apt-get -q install -y --no-install-recommends openjdk-8-jdk \
 	ant \
 	automake \
@@ -56,6 +57,7 @@ RUN apt-get -q update && apt-get -q install -y --no-install-recommends software-
 	libncursesw5-dev \
 	libmagic-dev \
 	libxml2 \
+	python2.7 \
 	&& apt-get -q clean autoclean \
 	&& apt-get -q autoremove -y \
 	&& rm -rf /var/lib/apt/lists/*
