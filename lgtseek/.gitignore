@@ -8,4 +8,3 @@ docker-compose.prod.yml
 !/input_data/host_ref/.placeholder
 !/input_data/refseq_ref/.placeholder
 !/database/.placeholder
-/taxdump/*
