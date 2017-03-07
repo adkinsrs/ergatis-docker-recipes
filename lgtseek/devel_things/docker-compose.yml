@@ -19,6 +19,7 @@ services:
       - ../input_data/refseq_ref:/mnt/input_data/refseq_ref:ro
       - ../input_data/input_source:/mnt/input_data/input_source:ro
       - ../output_data:/mnt/output_data
+      - ./blastn_plus.nt.config:/opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/blastn_plus.nt.config
 #      - ../split_multifasta.fsa.list:/mnt/split_multifasta.fsa.list
 #      - ../pipeline_builder:/var/www/html/pipeline_builder
     volumes_from:

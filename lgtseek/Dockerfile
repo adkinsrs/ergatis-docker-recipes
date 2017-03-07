@@ -27,7 +27,7 @@ ARG HTSLIB_DOWNLOAD_URL=https://github.com/samtools/htslib/archive/${HTSLIB_VERS
 #ARG HTSJDK_VERSION=2.7.0
 #ARG HTSJDK_DOWNLOAD_URL=https://github.com/samtools/htsjdk/archive/${HTSJDK_VERSION}.tar.gz
 
-ARG PICARD_VERSION=2.6.0
+ARG PICARD_VERSION=2.9.0
 #ARG PICARD_DOWNLOAD_URL=https://github.com/broadinstitute/picard/archive/${PICARD_VERSION}.tar.gz
 
 ARG PRINSEQ_VERSION=0.20.4
@@ -43,12 +43,12 @@ ARG SRA_DOWNLOAD_URL=https://github.com/ncbi/sra-tools/archive/${SRA_VERSION}.ta
 # 1) Install the scripts required for "add-apt-repository"
 # 2) Setup the openjdk 8 repo
 ### NOTE: OpenJDK-8-JDK is natively not available for Ubuntu 14.04 so we need a workaround here
-# 3) Install java8 and python2.7
+# 3) Install java8
 # 4) Lets install the other stuff now
 
 RUN apt-get -q update && apt-get -q install -y --no-install-recommends software-properties-common \
 	&& add-apt-repository ppa:openjdk-r/ppa \
-	&& add-apt-repository ppa:fkrull/deadsnakes \
+#	&& add-apt-repository ppa:fkrull/deadsnakes \
 	&& apt-get -q update && apt-get -q install -y --no-install-recommends openjdk-8-jdk \
 	ant \
 	automake \
@@ -57,10 +57,11 @@ RUN apt-get -q update && apt-get -q install -y --no-install-recommends software-
 	libncursesw5-dev \
 	libmagic-dev \
 	libxml2 \
-	python2.7 \
+#	python2.7 \
 	&& apt-get -q clean autoclean \
 	&& apt-get -q autoremove -y \
-	&& rm -rf /var/lib/apt/lists/*
+	&& rm -rf /var/lib/apt/lists/* \
+	&& ln -s /usr/bin/python3 /usr/bin/python
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
@@ -194,7 +195,7 @@ WORKDIR /usr/src/ncbi/blast
 RUN curl -SL $NCBI_BLAST_DOWNLOAD_URL -o blast.tar.gz \
 	&& tar --strip-components=1 -xvzf blast.tar.gz -C /usr/src/ncbi/blast \
 	&& rm blast.tar.gz \ 
-	&& ln -s /usr/src/ncbi/blast/ncbi-blast-$NCBI_BLAST_VERSION+/bin/* /usr/bin/
+	&& ln -s /usr/src/ncbi/blast/bin/* /usr/bin/
 
 #--------------------------------------------------------------------------------
 # PROJECT REPOSITORY SETUP
