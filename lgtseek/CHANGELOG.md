@@ -2,6 +2,11 @@
 
 Note: This CHANGELOG is reflective of Docker versions, not the GitHub tags of the Ergatis-Docker repository
 
+## v1.3 (March 8, 2017)
+* Redesigned the pipeline creation UI to be more user friendly
+* Redesigned the setup\_container.sh script
+* Lots of modifications for the pipelines in the 3 currently working use cases
+
 ## v1.2
 * LGTSeek pipeline code now is pulled from the ergatis-pipelines:lgtseek Github repo.  Any changes in files that need to occur for Docker to function happen in ./changed\_pipeline\_files
 * Optimized Dockerfile to reduce number of layers, mostly by concatenating RUN commands
