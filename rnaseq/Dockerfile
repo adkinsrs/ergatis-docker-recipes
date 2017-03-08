@@ -41,6 +41,9 @@ VOLUME /opt/projects/$PROJECT/output_repository
 #--------------------------------------------------------------------------------
 # PIPELINE_CHANGES - Files that need to deviate from the installed lgtseek pipeline in order to function in Docker
 
+# Set number of parallel runs for changed files
+RUN num_cores=$(grep -c ^processor /proc/cpuinfo) \
+	&& find /opt/ergatis/pipeline_templates -type f -exec /usr/bin/perl -pi -e 's/\$;NODISTRIB\$;\s?=\s?0/\$;NODISTRIB\$;='$num_cores'/g' {} \;
 #--------------------------------------------------------------------------------
 # SCRIPTS -- Any addition post-setup scripts that need to be run
 

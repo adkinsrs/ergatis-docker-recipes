@@ -65,14 +65,17 @@ RUN mkdir -p /opt/projects/$PROJECT \
 VOLUME /opt/projects/$PROJECT/output_repository
 
 #--------------------------------------------------------------------------------
+# PIPELINE_CHANGES - Files that need to deviate from the installed lgtseek pipeline in order to function in Docker
+
+# Set number of parallel runs for changed files
+RUN num_cores=$(grep -c ^processor /proc/cpuinfo) \
+	&& find /opt/ergatis/pipeline_templates -type f -exec /usr/bin/perl -pi -e 's/\$;NODISTRIB\$;\s?=\s?0/\$;NODISTRIB\$;='$num_cores'/g' {} \;
+
+#--------------------------------------------------------------------------------
 # SCRIPTS -- Any addition post-setup scripts that need to be run
 
-# These are just scripts I am using to create and run the pipeline without using the UI
-#COPY configure_pipeline.sh /opt/scripts/configure_pipeline.sh
-#COPY run_pipeline.sh /opt/scripts/run_pipeline.sh
 
 # Lastly change to root directory
-#CMD ["/bin/bash"]
 WORKDIR /
 # ... and start apache as root
 USER root
