@@ -55,8 +55,23 @@ The access the UI to create your pipeline, please go to
 
 In your internet browser, you can access the Ergatis homepage by navigating to [http://localhost:8080/ergatis/](http://localhost:8080/ergatis/).  This is where you can view monitor pipelines that have already been started
 
+##Pausing and unpausing the container bundle
+To stop and save progress
+```
+docker-compose -f docker_templates/docker_compose.yml stop
+```
+To start back up and resume progress
+```
+docker-compose -f docker_templates/docker_compose.yml start
+```
+
+NOTE:  The setup_container.sh shell script created a custom docker_compose.yml file in the ./docker_templates directory.  If you do not wish to use the -f option to provide the path to this file, you can simply “cd” into the docker_templates directory and run docker_compose without the -f option.
+
 ## Stopping the container
 To stop the container, and free up valuable CPU and memory resources, run the following:
 ```
 docker-compose -f docker_templates/docker-compose.yml down -v
 ```
+
+## More detailed instructions
+For a more detailed set of instructions, please visit [https://docs.google.com/document/d/13ZQ2eNf3HPPNXuexkLK203dKZzjHdm12DP2yF1PLdDY/edit?usp=sharing](the LGTSeek Docker image Google Doc page)
