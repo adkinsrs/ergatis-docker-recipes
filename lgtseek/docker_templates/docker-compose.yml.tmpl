@@ -15,6 +15,7 @@ services:
       - ###HOST_MNT###:/mnt/input_data/host_ref:ro
       - ###REFSEQ_MNT###:/mnt/input_data/refseq_ref:ro
       - ###INPUT_MNT###:/mnt/input_data/input_source:ro
+      - ###BLAST_DB_DIR###:/mnt/blast:ro
       - ###OUTPUT_DATA###:/mnt/output_data
     volumes_from:
       - mongodata

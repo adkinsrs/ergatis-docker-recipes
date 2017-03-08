@@ -10,7 +10,8 @@ function quit_setup {
 #########################
 
 # Copy the template over to a production version of the docker-compose file
-cp docker_templates/docker-compose.yml.tmpl docker_templates/docker-compose.yml
+docker_compose=./docker_templates/docker-compose.yml
+cp ${docker_compose}.tmpl $docker_compose
 
 printf "\nWelcome to the LGTSeek Docker installer. Please follow the prompts below that will help the Docker container access your usable data.\n"
 
@@ -21,7 +22,7 @@ printf "Use Case 2 - Good donor reference but unknown host reference\n"
 printf "Use Case 3 - Good host reference but unknown donor reference\n"
 
 PS3="Select a Use Case # (1-3 or 4 to quit) and press ENTER: "
-options=("Use Case 1" "Use Case 2" "Use Case 3" "Quit")
+options=("Use Case 1" "Use Case 2" "Use Case 3" "Exit Setup")
 use_case=''
 select opt in "${options[@]}"
 do
@@ -41,16 +42,16 @@ do
             use_case=3
             break
             ;;
-        "Quit")
+        "Exit Setup")
             quit_setup
             ;;
-        *) echo "invalid option... choose again (1-3 or 'q' to quit)."
+        *) echo "invalid option... choose again (1-3 or 4 to quit)."
             continue
             ;;
     esac
 done
 
-printf "\nNext it's time to specify where the reference and input files are located\n"
+printf "\nNext it's time to specify where the reference and input files are located.\n"
 
 # First ask for location of donor reference directory
 if [[ $use_case == '1' ]] || [[ $use_case == '2' ]]; then
@@ -64,7 +65,14 @@ if [[ $use_case == '1' ]] || [[ $use_case == '2' ]]; then
 	if [[ $donor_mnt == 'q' ]] || [[ $donor_mnt == 'quit' ]]; then
 	    quit_setup
 	fi
-	sed -i "s|###DONOR_MNT###|$donor_mnt|" docker_templates/docker-compose.yml
+# Handle relative directory paths (file name has to be relative to docker-compose file location)
+	if [[ $donor_mnt == ..* ]]; then 
+		donor_mnt=../$donor_mnt
+	elif [[ $donor_mnt == .* ]]
+		donor_mnt=.$donor_mnt
+	fi
+# Make the in-place substitution using perl
+	perl -i -pe "s|###DONOR_MNT###|$donor_mnt|" $docker_compose
 fi
 
 # Second ask for location of host reference directory
@@ -79,7 +87,12 @@ if [[ $use_case == '1' ]] || [[ $use_case == '3' ]]; then
 	if [[ $host_mnt == 'q' ]] || [[ $host_mnt == 'quit' ]]; then
 	    quit_setup
 	fi
-	sed -i "s|###HOST_MNT###|$host_mnt|" docker_templates/docker-compose.yml
+	if [[ $host_mnt == ..* ]]; then 
+		host_mnt=../$host_mnt
+	elif [[ $host_mnt == .* ]]
+		host_mnt=.$host_mnt
+	fi
+	perl -i -pe "s|###HOST_MNT###|$host_mnt|" $docker_compose
 fi
 
 # Third ask for location of Refseq reference directory
@@ -94,13 +107,18 @@ if [[ $use_case == '3' ]]; then
 	if [[ $refseq_mnt == 'q' ]] || [[ $refseq_mnt == 'quit' ]]; then
 	    quit_setup
 	fi
-	sed -i "s|###REFSEQ_MNT###|$refseq_mnt|" docker_templates/docker-compose.yml
+	if [[ $refseq_mnt == ..* ]]; then 
+		refseq_mnt=../$refseq_mnt
+	elif [[ $refseq_mnt == .* ]]
+		refseq_mnt=.$refseq_mnt
+	fi
+	perl -i -pe "s|###REFSEQ_MNT###|$refseq_mnt|" $docker_compose
 fi
 
 # Next, need to determine input format
 printf "\nNext, which type of input do you plan to use?\n"
-PS3="Select an input type(1-3 or 4 to quit) and press ENTER: "
-options=("SRA" "FASTQ" "BAM" "Quit")
+PS3="Select an input type (1-3 or 4 to quit) and press ENTER: "
+options=("SRA" "FASTQ" "BAM" "Exit Setup")
 input=''
 select opt in "${options[@]}"
 do
@@ -120,10 +138,10 @@ do
             input='BAM'
             break
             ;;
-        "Quit")
+        "Exit Setup")
             quit_setup
             ;;
-        *) echo "invalid option... choose again (1-3 or 'q' to quit)."
+        *) echo "invalid option... choose again (1-3 or 4 to quit)."
 	    continue
 	    ;;
     esac
@@ -140,12 +158,18 @@ if [[ $input == 'FASTQ' ]] || [[ $input == 'BAM' ]]; then
 	if [[ $input_mnt == 'q' ]] || [[ $input_mnt == 'quit' ]]; then
 	    quit_setup
 	fi
-	sed -i "s|###INPUT_MNT###|$input_mnt|" docker_templates/docker-compose.yml
+	if [[ $input_mnt == ..* ]]; then 
+		input_mnt=../$input_mnt
+	elif [[ $input_mnt == .* ]]
+		input_mnt=.$input_mnt
+	fi
+	perl -i -pe "s|###INPUT_MNT###|$input_mnt|" $docker_compose
 fi
 
 if [[ $use_case == '2' ]] || [[ $use_case == '3' ]]; then
     # Copy template to production 
-    cp docker_templates/blastn_plus.nt.config.tmpl docker_templates/blastn_plus.nt.config
+    blastn_plus_config=./docker_templates/blastn_plus.nt.config
+    cp ${blastn_plus_config}.tmpl $blastn_plus_config
     # Next, figure out the BLAST db and if local/remote
     printf  "\nWhat reference database would you like to use for BLASTN querying?  Default is 'nt'\n"
     printf  "Type 'quit' or 'q' to exit setup.\n[BLAST_DATABASE]: "
@@ -179,10 +203,9 @@ if [[ $use_case == '2' ]] || [[ $use_case == '3' ]]; then
         remote=0
     fi
 
-    if [[ $remote ]]; then
+    if [[ $remote == '1' ]]; then
         blast_dir=''
-    fi
-    if [[ ! $remote ]]; then
+    else
         printf  "\nYou chose to use a local pre-formatted database.  Please provide the database path (leave out the database name).\n"
         printf  "Type 'quit' or 'q' to exit setup.\n[DB_DIRECTORY]: "
         read blast_dir
@@ -190,13 +213,16 @@ if [[ $use_case == '2' ]] || [[ $use_case == '3' ]]; then
             printf  "\nThe directory path to the database is required.  Please enter one.\n[DB_DIRECTORY]: "
             read blast_dir
         done
-        blast_db="/${blast_db}"
+        if [[ $blast_dir == ..* ]]; then 
+            blast_dir=../$blast_dir
+        elif [[ $blast_dir == .* ]]
+            blast_dir=.$blast_dir
+        fi
     fi
 
-    blast_path=${blast_dir}${blast_db}
-
-    sed -i "s|###REMOTE###|$remote|" docker_templates/blastn_plus.nt.config
-    sed -i "s|###BLAST_DB###|$blast_path|" docker_templates/blastn_plus.nt.config
+    perl -i -pe "s|###REMOTE###|$remote|" $blastn_plus_config
+    perl -i -pe "s|###BLAST_DB_DIR###|$blast_dir|" $docker_compose
+    perl -i -pe "s|###BLAST_DB###|/mnt/blast/$blast_db|" $blastn_plus_config
 fi
 
 # Next, ask where the output data should be written to
@@ -209,7 +235,12 @@ fi
 if [[ -z $output_dir ]]; then
     output_dir='./output_data'
 fi
-sed -i "s|###OUTPUT_DATA###|$output_dir|" docker_templates/docker-compose.yml
+if [[ $output_dir == ..* ]]; then 
+    output_dir=../$output_dir
+elif [[ $output_dir == .* ]]
+    output_dir=.$output_dir
+fi
+perl -i -pe "s|###OUTPUT_DATA###|$output_dir|" $docker_compose
 
 # Time to determine what Docker host will run the container
 printf  "\nWhat IP is the docker host machine on?  Leave blank if you are using local resources for the host (localhost)\n"
@@ -221,7 +252,10 @@ fi
 if [[ -z $ip_address ]]; then
     ip_address='localhost'
 fi
-sed -i "s|###IP_HOST###|$ip_address|" docker_templates/docker-compose.yml
+perl -i -pe "s|###IP_HOST###|$ip_address|" $docker_compose
+
+# Remove leftover template ### lines from compose file
+perl -i -ne 'print unless /###/;' $docker_compose
 
 # Now, establish the following Docker containers:
 # 1. ergatis_lgtseek_1
@@ -233,13 +267,13 @@ sed -i "s|###IP_HOST###|$ip_address|" docker_templates/docker-compose.yml
 
 # Default docker_templates/docker-compose.yml was written to so no need to specify -f
 printf  "\nGoing to build and run the Docker containers now....."
-docker-compose -f ./docker_templates/docker-compose.yml up -d
+docker-compose -f $docker_compose up -d
 
 printf  "Docker container is done building!\n"
 printf  "Next it's time to customize some things within the container\n\n";
 
 # I don't like hard-coding this
-docker cp ./docker_templates/blastn_plus.nt.config docker_templates_ergatis_1:/opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/
+docker cp $blastn_plus_config dockertemplates_ergatis_1:/opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/
 
 printf  "\nDocker container is ready for use!\n"
 printf  "In order to build the LGTSeek pipeline please point your browser to http://${ip_address}:8080/pipeline_builder\n"
