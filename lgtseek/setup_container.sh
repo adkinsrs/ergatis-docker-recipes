@@ -266,7 +266,7 @@ perl -i -ne 'print unless /###/;' $docker_compose
 #  - A container to establish persistent MongoDB dataa
 
 # Default docker_templates/docker-compose.yml was written to so no need to specify -f
-printf  "\nGoing to build and run the Docker containers now....."
+printf  "\nGoing to build and run the Docker containers now.....\n"
 docker-compose -f $docker_compose up -d
 
 printf  "Docker container is done building!\n"

@@ -230,14 +230,14 @@ COPY changed_pipeline_files/sam2lca.lgt.config /opt/ergatis/pipeline_templates/L
 COPY changed_pipeline_files/sam2lca.mb.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/sam2lca.mb.config
 COPY changed_pipeline_files/sam2lca.xml /opt/ergatis/docs/sam2lca.xml
 
-# Set number of parallel runs for changed files
-RUN num_cores=$(grep -c ^processor /proc/cpuinfo) \
-	&& find /opt/ergatis/pipeline_templates -type f -exec /usr/bin/perl -pi -e 's/\$;NODISTRIB\$;\s?=\s?0/\$;NODISTRIB\$;='$num_cores'/g' {} \;
-
 #--------------------------------------------------------------------------------
 # SCRIPTS -- Any addition post-setup scripts that need to be run
 
 WORKDIR /
 # ... and start apache as root
 USER root
+# Set number of parallel runs for changed files
+RUN num_cores=$(grep -c ^processor /proc/cpuinfo) \
+	&& find /opt/ergatis/pipeline_templates -type f -exec /usr/bin/perl -pi -e 's/\$;NODISTRIB\$;\s?=\s?0/\$;NODISTRIB\$;='$num_cores'/g' {} \;
+
 CMD ["/usr/sbin/apachectl", "-D", "FOREGROUND"]
