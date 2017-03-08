@@ -68,7 +68,7 @@ if [[ $use_case == '1' ]] || [[ $use_case == '2' ]]; then
 # Handle relative directory paths (file name has to be relative to docker-compose file location)
 	if [[ $donor_mnt == ..* ]]; then 
 		donor_mnt=../$donor_mnt
-	elif [[ $donor_mnt == .* ]]
+	elif [[ $donor_mnt == .* ]]; then
 		donor_mnt=.$donor_mnt
 	fi
 # Make the in-place substitution using perl
@@ -89,7 +89,7 @@ if [[ $use_case == '1' ]] || [[ $use_case == '3' ]]; then
 	fi
 	if [[ $host_mnt == ..* ]]; then 
 		host_mnt=../$host_mnt
-	elif [[ $host_mnt == .* ]]
+	elif [[ $host_mnt == .* ]]; then
 		host_mnt=.$host_mnt
 	fi
 	perl -i -pe "s|###HOST_MNT###|$host_mnt|" $docker_compose
@@ -109,7 +109,7 @@ if [[ $use_case == '3' ]]; then
 	fi
 	if [[ $refseq_mnt == ..* ]]; then 
 		refseq_mnt=../$refseq_mnt
-	elif [[ $refseq_mnt == .* ]]
+	elif [[ $refseq_mnt == .* ]]; then
 		refseq_mnt=.$refseq_mnt
 	fi
 	perl -i -pe "s|###REFSEQ_MNT###|$refseq_mnt|" $docker_compose
@@ -160,7 +160,7 @@ if [[ $input == 'FASTQ' ]] || [[ $input == 'BAM' ]]; then
 	fi
 	if [[ $input_mnt == ..* ]]; then 
 		input_mnt=../$input_mnt
-	elif [[ $input_mnt == .* ]]
+	elif [[ $input_mnt == .* ]]; then
 		input_mnt=.$input_mnt
 	fi
 	perl -i -pe "s|###INPUT_MNT###|$input_mnt|" $docker_compose
@@ -215,7 +215,7 @@ if [[ $use_case == '2' ]] || [[ $use_case == '3' ]]; then
         done
         if [[ $blast_dir == ..* ]]; then 
             blast_dir=../$blast_dir
-        elif [[ $blast_dir == .* ]]
+        elif [[ $blast_dir == .* ]]; then
             blast_dir=.$blast_dir
         fi
     fi
@@ -237,7 +237,7 @@ if [[ -z $output_dir ]]; then
 fi
 if [[ $output_dir == ..* ]]; then 
     output_dir=../$output_dir
-elif [[ $output_dir == .* ]]
+elif [[ $output_dir == .* ]]; then
     output_dir=.$output_dir
 fi
 perl -i -pe "s|###OUTPUT_DATA###|$output_dir|" $docker_compose
