@@ -1,5 +1,11 @@
 # LGTSeek pipeline
 
+First things first...
+```
+git clone https://github.com/adkinsrs/ergatis-docker-recipes.git
+cd ./ergatis-docker-recipes/lgtseek
+```
+
 ## Setting up volumes for input_data
 
 Before running the pipeline, you must know the directory paths of your input data and of your reference data, as these directories will be mounted with the LGTSeeek container in order to share information from the host to the container.  What needs to be passed in is dependent on which LGTSeek use-case you wish to use:
