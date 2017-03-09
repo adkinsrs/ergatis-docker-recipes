@@ -81,4 +81,4 @@ Pending issues
 * Currently the setup\_container.sh script filters questions by use-case, and writes the corresponding docker-compose based on the chosen use-case.  So the resulting LGTSeek Docker container is designed for the chosen use-case in mind.  If a user wants to run a pipeline using  “use-case 1” and then wants to another pipeline using “use-case 3”, the user will need to run setup\_container.sh again
 * Currently choosing “Y” (for yes) to perform a NCBI BlastN query against the remote “nt” database, is very unstable and may not even work.  NCBI will restrict the number of queries and can cut off access to the server to the user if they feel that user is overloading their servers.  It is highly recommended right now to select “N” (for no) and provide a path to a database stored locally.
 * Not all components in the pipelines are optimized for multithreading.
-
+* Even though there is an option to specify a different IP (such as from a docker-machine host) in setup_container.sh, this has not been tested fully with the pipeline.  For now, just use ‘localhost’

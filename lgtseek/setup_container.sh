@@ -5,6 +5,12 @@ function quit_setup {
     exit 0
 }
 
+### COLORS ###
+ESC_SEQ='\x1b['
+COL_RESET=$ESC_SEQ'0m'
+COL_GREEN=$ESC_SEQ'32;1m'
+COL_BLUE=$ESC_SEQ'34;1m'
+
 #########################
 # MAIN
 #########################
@@ -56,10 +62,10 @@ printf "\nNext it's time to specify where the reference and input files are loca
 # First ask for location of donor reference directory
 if [[ $use_case == '1' ]] || [[ $use_case == '2' ]]; then
 	printf  "\nPlease specify the directory that the donor reference genome(s) is located.\n"
-	printf  "Type 'quit' or 'q' to exit setup.\n[DONOR_DIRECTORY]: "
+	printf  "Type 'quit' or 'q' to exit setup.\n$COL_GREEN[DONOR_DIRECTORY]$COL_RESET: "
 	read donor_mnt
 	while [[ -z $donor_mnt ]]; do
-	    printf  "\nThe donor reference genome directory path is required.  Please enter one.\n[DONOR_DIRECTORY]: "
+	    printf  "\nThe donor reference genome directory path is required.  Please enter one.\n$COL_GREEN[DONOR_DIRECTORY]$COL_RESET: " 
 	    read donor_mnt
 	done
 	if [[ $donor_mnt == 'q' ]] || [[ $donor_mnt == 'quit' ]]; then
@@ -78,10 +84,10 @@ fi
 # Second ask for location of recipient reference directory
 if [[ $use_case == '1' ]] || [[ $use_case == '3' ]]; then
 	printf  "\nPlease specify the directory that the recipient reference genome(s) is located.\n"
-	printf  "Type 'quit' or 'q' to exit setup.\n[RECIPIENT_DIRECTORY]: "
+	printf  "Type 'quit' or 'q' to exit setup.\n$COL_GREEN[RECIPIENT_DIRECTORY]$COL_RESET: "
 	read recipient_mnt
 	while [[ -z $recipient_mnt ]]; do
-	    printf  "\nThe recipient reference genome directory path is required.  Please enter one.\n[RECIPIENT_DIRECTORY]: "
+	    printf  "\nThe recipient reference genome directory path is required.  Please enter one.\n$COL_GREEN[RECIPIENT_DIRECTORY]$COL_RESET: "
 	    read recipient_mnt
 	done
 	if [[ $recipient_mnt == 'q' ]] || [[ $recipient_mnt == 'quit' ]]; then
@@ -98,10 +104,10 @@ fi
 # Third ask for location of Refseq reference directory
 if [[ $use_case == '3' ]]; then
 	printf  "\nPlease specify the directory that the RefSeq reference genomes are located.\n"
-	printf  "Type 'quit' or 'q' to exit setup.\n[REFSEQ_DIRECTORY]: "
+	printf  "Type 'quit' or 'q' to exit setup.\n$COL_GREEN[REFSEQ_DIRECTORY]$COL_RESET: "
 	read refseq_mnt
 	while [[ -z $refseq_mnt ]]; do
-	    printf  "\nThe RefSeq reference genome directory path is required.  Please enter one.\n[REFSEQ_DIRECTORY]: "
+	    printf  "\nThe RefSeq reference genome directory path is required.  Please enter one.\n$COL_GREEN[REFSEQ_DIRECTORY]$COL_RESET: "
 	    read refseq_mnt
 	done
 	if [[ $refseq_mnt == 'q' ]] || [[ $refseq_mnt == 'quit' ]]; then
@@ -149,10 +155,10 @@ done
 
 if [[ $input == 'FASTQ' ]] || [[ $input == 'BAM' ]]; then
 	printf  "\nPlease specify the directory that the ${input} file is located in?.\n"
-	printf  "Type 'quit' or 'q' to exit setup.\n[INPUT_DIRECTORY]: "
+	printf  "Type 'quit' or 'q' to exit setup.\n$COL_GREEN[INPUT_DIRECTORY]$COL_RESET: "
 	read input_mnt
 	while [[ -z $input_mnt ]]; do
-	    printf  "\nThe ${input} file directory path is required.  Please enter one.\n[INPUT_DIRECTORY]: "
+	    printf  "\nThe ${input} file directory path is required.  Please enter one.\n$COL_GREEN[INPUT_DIRECTORY]$COL_RESET: "
 	    read input_mnt
 	done
 	if [[ $input_mnt == 'q' ]] || [[ $input_mnt == 'quit' ]]; then
@@ -172,7 +178,7 @@ if [[ $use_case == '2' ]] || [[ $use_case == '3' ]]; then
     cp ${blastn_plus_config}.tmpl $blastn_plus_config
     # Next, figure out the BLAST db and if local/remote
     printf  "\nWhat reference database would you like to use for BLASTN querying?  Default is 'nt'\n"
-    printf  "Type 'quit' or 'q' to exit setup.\n[BLAST_DATABASE]: "
+    printf  "Type 'quit' or 'q' to exit setup.\n$COL_GREEN[BLAST_DATABASE]$COL_RESET: "
     read blast_db
     if [[ $blast_db == 'q' ]] || [[ $blast_db == 'quit' ]]; then
         quit_setup
@@ -182,14 +188,14 @@ if [[ $use_case == '2' ]] || [[ $use_case == '3' ]]; then
     fi
 
     printf  "\nWould you like to query against a remote database from the NCBI servers?  Using a remote database saves you from having to have a pre-formatted database exist on your local machine, but is not recommended if you anticipate a lot of queries or have sensitive data. Please enter 'Y' (default) if you would like to use the remote NCBI database or 'N' if you would prefer querying against a local database\n"
-    printf  "Type 'quit' or 'q' to exit setup.\n[REMOTE_BLAST]: "
+    printf  "Type 'quit' or 'q' to exit setup.\n$COL_GREEN[REMOTE_BLAST]$COL_RESET: "
     read y_n
     if [[ -z $y_n ]]; then
         remote=1
     fi
 
     while [[ ! $y_n =~ ^[YyNn]$ ]] && [[ ! $y_n =~ "^q*" ]]; do
-        printf  "\nPlease enter 'yes' (Y) or 'no' (N).\n[REMOTE_BLAST]: "
+        printf  "\nPlease enter 'yes' (Y) or 'no' (N).\n$COL_GREEN[REMOTE_BLAST]$COL_RESET: "
         read y_n
     done
 
@@ -207,10 +213,10 @@ if [[ $use_case == '2' ]] || [[ $use_case == '3' ]]; then
         blast_dir=''
     else
         printf  "\nYou chose to use a local pre-formatted database.  Please provide the database path (leave out the database name).\n"
-        printf  "Type 'quit' or 'q' to exit setup.\n[DB_DIRECTORY]: "
+        printf  "Type 'quit' or 'q' to exit setup.\n$COL_GREEN[DB_DIRECTORY]$COL_RESET: "
         read blast_dir
         while [[ -z $blast_dir ]]; do
-            printf  "\nThe directory path to the database is required.  Please enter one.\n[DB_DIRECTORY]: "
+            printf  "\nThe directory path to the database is required.  Please enter one.\n$COL_GREEN[DB_DIRECTORY]$COL_RESET: "
             read blast_dir
         done
         if [[ $blast_dir == ..* ]]; then 
@@ -227,7 +233,7 @@ fi
 
 # Next, ask where the output data should be written to
 printf  "\nNext, what directory should LGTSeek output be written to?  Note that if you close the Docker container, this output data may disappear, so it is recommended it be copied to a more permanent directory location.  If left blank, the output will be located at './output_data'\n"
-printf  "Type 'quit' or 'q' to exit setup.\n[OUTPUT_DIRECTORY]: "
+printf  "Type 'quit' or 'q' to exit setup.\n$COL_GREEN[OUTPUT_DIRECTORY]$COL_RESET: "
 read output_dir
 if [[ $output_dir == 'q' ]] || [[ $output_dir == 'quit' ]]; then
     quit_setup
@@ -244,7 +250,7 @@ perl -i -pe "s|###OUTPUT_DATA###|$output_dir|" $docker_compose
 
 # Time to determine what Docker host will run the container
 printf  "\nWhat IP is the docker host machine on?  Leave blank if you are using local resources for the host (localhost)\n"
-printf  "Type 'quit' or 'q' to exit setup.\n[RUN_LOCALLY]: "
+printf  "Type 'quit' or 'q' to exit setup.\n$COL_GREEN[RUN_LOCALLY]$COL_RESET: "
 read ip_address
 if [[ $ip_address == 'q' ]] || [[ $ip_address == 'quit' ]]; then
     quit_setup
@@ -276,6 +282,6 @@ printf  "Next it's time to customize some things within the container\n\n";
 docker cp $blastn_plus_config dockertemplates_ergatis_1:/opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/
 
 printf  "\nDocker container is ready for use!\n"
-printf  "In order to build the LGTSeek pipeline please point your browser to http://${ip_address}:8080/pipeline_builder\n"
+printf  "In order to build the LGTSeek pipeline please point your browser to $COL_BLUEhttp://${ip_address}:8080/pipeline_builder$COL_RESET\n"
 
 exit 0
