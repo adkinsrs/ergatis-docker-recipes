@@ -12,7 +12,7 @@ services:
       - "8080:80"
     volumes:
       - ###DONOR_MNT###:/mnt/input_data/donor_ref:ro
-      - ###HOST_MNT###:/mnt/input_data/host_ref:ro
+      - ###RECIPIENT_MNT###:/mnt/input_data/recipient_ref:ro
       - ###REFSEQ_MNT###:/mnt/input_data/refseq_ref:ro
       - ###INPUT_MNT###:/mnt/input_data/input_source:ro
       - ###BLAST_DB_DIR###:/mnt/blast:ro
