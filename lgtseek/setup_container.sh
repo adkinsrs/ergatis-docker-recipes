@@ -17,9 +17,9 @@ printf "\nWelcome to the LGTSeek Docker installer. Please follow the prompts bel
 
 # Get Use-Case information to pare down setup options
 printf "\nFirst, let's figure out which LGTSeek Use Case you wish to employ\n"
-printf "Use Case 1 - Good donor reference and good LGT-free host reference\n"
-printf "Use Case 2 - Good donor reference but unknown host reference\n"
-printf "Use Case 3 - Good host reference but unknown donor reference\n"
+printf "Use Case 1 - Good donor reference and good LGT-free recipient reference\n"
+printf "Use Case 2 - Good donor reference but unknown recipient reference\n"
+printf "Use Case 3 - Good recipient reference but unknown donor reference\n"
 
 PS3="Select a Use Case # (1-3 or 4 to quit) and press ENTER: "
 options=("Use Case 1" "Use Case 2" "Use Case 3" "Exit Setup")
@@ -75,24 +75,24 @@ if [[ $use_case == '1' ]] || [[ $use_case == '2' ]]; then
 	perl -i -pe "s|###DONOR_MNT###|$donor_mnt|" $docker_compose
 fi
 
-# Second ask for location of host reference directory
+# Second ask for location of recipient reference directory
 if [[ $use_case == '1' ]] || [[ $use_case == '3' ]]; then
-	printf  "\nPlease specify the directory that the host reference genome(s) is located.\n"
-	printf  "Type 'quit' or 'q' to exit setup.\n[HOST_DIRECTORY]: "
-	read host_mnt
-	while [[ -z $host_mnt ]]; do
-	    printf  "\nThe host reference genome directory path is required.  Please enter one.\n[HOST_DIRECTORY]: "
-	    read host_mnt
+	printf  "\nPlease specify the directory that the recipient reference genome(s) is located.\n"
+	printf  "Type 'quit' or 'q' to exit setup.\n[RECIPIENT_DIRECTORY]: "
+	read recipient_mnt
+	while [[ -z $recipient_mnt ]]; do
+	    printf  "\nThe recipient reference genome directory path is required.  Please enter one.\n[RECIPIENT_DIRECTORY]: "
+	    read recipient_mnt
 	done
-	if [[ $host_mnt == 'q' ]] || [[ $host_mnt == 'quit' ]]; then
+	if [[ $recipient_mnt == 'q' ]] || [[ $recipient_mnt == 'quit' ]]; then
 	    quit_setup
 	fi
-	if [[ $host_mnt == ..* ]]; then 
-		host_mnt=../$host_mnt
-	elif [[ $host_mnt == .* ]]; then
-		host_mnt=.$host_mnt
+	if [[ $recipient_mnt == ..* ]]; then 
+		recipient_mnt=../$recipient_mnt
+	elif [[ $recipient_mnt == .* ]]; then
+		recipient_mnt=.$recipient_mnt
 	fi
-	perl -i -pe "s|###HOST_MNT###|$host_mnt|" $docker_compose
+	perl -i -pe "s|###RECIPIENT_MNT###|$recipient_mnt|" $docker_compose
 fi
 
 # Third ask for location of Refseq reference directory
