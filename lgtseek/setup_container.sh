@@ -282,6 +282,6 @@ printf  "Next it's time to customize some things within the container\n\n";
 docker cp $blastn_plus_config dockertemplates_ergatis_1:/opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/
 
 printf  "\nDocker container is ready for use!\n"
-printf  "In order to build the LGTSeek pipeline please point your browser to $COL_BLUEhttp://${ip_address}:8080/pipeline_builder$COL_RESET\n"
+printf  "In order to build the LGTSeek pipeline please point your browser to $COL_BLUE http://${ip_address}:8080/pipeline_builder $COL_RESET\n"
 
 exit 0

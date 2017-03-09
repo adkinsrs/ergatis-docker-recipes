@@ -3,7 +3,7 @@
 # Builds off of the Ergatis core Dockerfile
 ############################################################
 
-FROM adkinsrs/ergatis:latest
+FROM adkinsrs/ergatis:1.2
 
 MAINTAINER Shaun Adkins <sadkins@som.umaryland.edu>
 
@@ -220,6 +220,14 @@ RUN mkdir -p /opt/projects/$PROJECT \
 # Making this as a volume in case we'd like to pass this data to another image
 VOLUME /opt/projects/$PROJECT/output_repository/gather_lgtview_files/
 
+# Change to root for last bits
+USER root
+#--------------------------------------------------------------------------------
+# INSTALL PIPELINE
+COPY build_$PROJECT.pl /tmp/.
+RUN /usr/bin/perl /tmp/build_$PROJECT.pl /opt/ergatis \ 
+	&& ln -s /opt/ergatis/pipeline_builder /var/www/html/pipeline_builder
+
 #--------------------------------------------------------------------------------
 # PIPELINE_CHANGES - Files that need to deviate from the installed lgtseek pipeline in order to function in Docker
 
@@ -230,14 +238,13 @@ COPY changed_pipeline_files/sam2lca.lgt.config /opt/ergatis/pipeline_templates/L
 COPY changed_pipeline_files/sam2lca.mb.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/sam2lca.mb.config
 COPY changed_pipeline_files/sam2lca.xml /opt/ergatis/docs/sam2lca.xml
 
+# Set number of parallel runs for changed files
+RUN num_cores=$(grep -c ^processor /proc/cpuinfo) \
+	&& find /opt/ergatis/pipeline_templates -type f -exec /usr/bin/perl -pi -e 's/\$;NODISTRIB\$;\s?=\s?0/\$;NODISTRIB\$;='$num_cores'/g' {} \;
+
 #--------------------------------------------------------------------------------
 # SCRIPTS -- Any addition post-setup scripts that need to be run
 
 WORKDIR /
-# ... and start apache as root
-USER root
-# Set number of parallel runs for changed files
-RUN num_cores=$(grep -c ^processor /proc/cpuinfo) \
-	&& find /opt/ergatis/pipeline_templates -type f -exec /usr/bin/perl -pi -e 's/\$;NODISTRIB\$;\s?=\s?0/\$;NODISTRIB\$;='$num_cores'/g' {} \;
 
 CMD ["/usr/sbin/apachectl", "-D", "FOREGROUND"]

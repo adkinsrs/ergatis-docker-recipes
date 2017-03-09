@@ -64,6 +64,14 @@ RUN mkdir -p /opt/projects/$PROJECT \
 # Making this as a volume in case we'd like to pass this data to another image
 VOLUME /opt/projects/$PROJECT/output_repository
 
+# Run last bits as root
+USER root
+#--------------------------------------------------------------------------------
+# INSTALL PIPELINE
+COPY build_$PROJECT.pl /tmp/.
+RUN /usr/bin/perl /tmp/build_$PROJECT.pl /opt/ergatis \ 
+	&& ln -s /opt/ergatis/pipeline_builder /var/www/html/pipeline_builder
+
 #--------------------------------------------------------------------------------
 # PIPELINE_CHANGES - Files that need to deviate from the installed lgtseek pipeline in order to function in Docker
 
@@ -74,9 +82,6 @@ RUN num_cores=$(grep -c ^processor /proc/cpuinfo) \
 #--------------------------------------------------------------------------------
 # SCRIPTS -- Any addition post-setup scripts that need to be run
 
-
 # Lastly change to root directory
 WORKDIR /
-# ... and start apache as root
-USER root
 CMD ["/usr/sbin/apachectl", "-D", "FOREGROUND"]
