@@ -75,3 +75,10 @@ docker-compose -f docker_templates/docker-compose.yml down -v
 
 ## More detailed instructions
 For a more detailed set of instructions, please visit [https://docs.google.com/document/d/13ZQ2eNf3HPPNXuexkLK203dKZzjHdm12DP2yF1PLdDY/edit?usp=sharing](the LGTSeek Docker image Google Doc page)
+
+## Pending issues/concerns
+Pending issues
+* Currently the setup\_container.sh script filters questions by use-case, and writes the corresponding docker-compose based on the chosen use-case.  So the resulting LGTSeek Docker container is designed for the chosen use-case in mind.  If a user wants to run a pipeline using  “use-case 1” and then wants to another pipeline using “use-case 3”, the user will need to run setup\_container.sh again
+* Currently choosing “Y” (for yes) to perform a NCBI BlastN query against the remote “nt” database, is very unstable and may not even work.  NCBI will restrict the number of queries and can cut off access to the server to the user if they feel that user is overloading their servers.  It is highly recommended right now to select “N” (for no) and provide a path to a database stored locally.
+* Not all components in the pipelines are optimized for multithreading.
+
