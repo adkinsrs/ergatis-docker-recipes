@@ -1,4 +1,0 @@
-taxdump/20160510_124254_names.dmp filter=lfs diff=lfs merge=lfs -text
-taxdump/20160510_124254_nodes.dmp filter=lfs diff=lfs merge=lfs -text
-taxdump/names.dmp filter=lfs diff=lfs merge=lfs -text
-taxdump/nodes.dmp filter=lfs diff=lfs merge=lfs -text
