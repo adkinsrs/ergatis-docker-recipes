@@ -52,6 +52,7 @@ RUN apt-get -q update && apt-get -q install -y --no-install-recommends software-
 	fastqc \
 	fastx-toolkit \
 	libmagic-dev \
+	libmysqlclient-dev \
 	libpng-dev \
 	libssl-dev \
 	libxml2 \
@@ -62,6 +63,7 @@ RUN apt-get -q update && apt-get -q install -y --no-install-recommends software-
 	python-htseq \
 	r-bioc-edger \
 	r-bioc-cummerbund \
+	rsync \
 	samtools \
 	tophat \
 	&& apt-get -q clean autoclean \
