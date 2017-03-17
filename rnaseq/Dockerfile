@@ -16,51 +16,71 @@ ARG PROJECT=rnaseq
 # SOFTWARE
 
 # Installed via apt-get 
-#ARG BEDTOOLS_VERSION=2.25.0-1
-#ARG CUMMERBUND_VERSION=2.12.0-1
-#ARG FASTQC_VERSION=0.11.4+dfsg-3
-#ARG FASTX_TOOLKIT_VERSION=0.0.14-1build1
+#ARG BEDTOOLS_VERSION=2.17.0-1
+#ARG BOWTIE_VERSION=1.0.0-5
+#ARG CUMMERBUND_VERSION=2.4.1-1
+#ARG EDGER_VERSION=3.4.2+dfsg-2
+#ARG FASTQC_VERSION=0.10.1+dfsg-2
+#ARG FASTX_TOOLKIT_VERSION=0.0.14-1
 #ARG HTSEQ_VERSION=0.5.4p3-2
 #ARG PYTHON_VERSION=2.7
-#ARG SAMTOOLS_VERSION=0.1.19-1ubuntu1
-#ARG TOPHAT_VERSION=2.1.0+dfsg-1build1
+#ARG SAMTOOLS_VERSION=0.1.19-1
+#ARG TOPHAT_VERSION=2.0.9-1ubuntu1
 
-ARG BOWTIE_VERSION=0.12.19
+# Keeping internal used version for reference
+#ARG BOWTIE_VERSION=0.12.19
 
 ARG CUFFLINKS_VERSION=2.0.2
 
 ARG DESEQ_VERSION=1.10.1
 
-ARG EDGER_VERSION=2.4.6
+# Keeping internal used version for reference
+#ARG EDGER_VERSION=2.4.6
 
 ARG IGV_VERSION=2.3.32
 
 ARG R_VERSION_NEW=2.15.2
 ARG R_VERSION_OLD=2.14.1
 
-ARG UCSC_UTILS
+ARG UCSC_UTILS=git://github.com/ENCODE-DCC/kentUtils.git
 
 # Lets install some packages
 
 RUN apt-get -q update && apt-get -q install -y --no-install-recommends software-properties-common \
-	bedtools=2.25.0-1 \
-	fastqc=0.11.4+dfsg-3 \
-	fastx-toolkit=0.0.14-1build1 \
+	bedtools \
+	bowtie \
+	fastqc \
+	fastx-toolkit \
 	libmagic-dev \
+	libssl-dev \
 	libxml2 \
+	mysql-client-5.5 \
+	mysql-client-core-5.5 \
+	openssl \
 	python2.7 \
-	python-htseq=0.5.4p3-2 \
-	r-bioc-cummerbund=2.12.0-1 \
-	samtools=0.1.19-1ubuntu1 \
-	tophat=2.1.0+dfsg-1build1 \
+	python-htseq \
+	r-bioc-edger \
+	r-bioc-cummerbund \
+	samtools \
+	tophat \
 	&& apt-get -q clean autoclean \
 	&& apt-get -q autoremove -y \
-	&& rm -rf /var/lib/apt/lists/* \
-	&& ln -s /usr/bin/python2.7 /usr/bin/python
+	&& rm -rf /var/lib/apt/lists/*
 
 # Create directories needed for installs (putting here to reduce layers created)
-RUN mkdir -p /usr/src/bowtie \
-	&& mkdir -p /usr/src/samtools
+#RUN mkdir -p /usr/src/bowtie \
+#	&& mkdir -p /usr/src/samtools
+
+#--------------------------------------------------------------------------------
+# USCS Utils
+
+COPY .hg.conf /root/.
+RUN git clone $UCSC_UTILS \
+	&& cd kentUtils \
+	&& make \
+	&& sudo rsync -a -P ./bin/ /usr/local/bin/kentUtils/ \
+	&& export PATH=/usr/local/bin/kentUtils:$PATH \
+	&& chmod 600 /root/.hg.conf
 
 #--------------------------------------------------------------------------------
 # PROJECT REPOSITORY SETUP
