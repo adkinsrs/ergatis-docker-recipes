@@ -52,7 +52,7 @@ RUN apt-get -q update && apt-get -q install -y --no-install-recommends software-
 	fastqc \
 	fastx-toolkit \
 	libmagic-dev \
-	libpng \
+	libpng-dev \
 	libssl-dev \
 	libxml2 \
 	mysql-client-5.5 \
