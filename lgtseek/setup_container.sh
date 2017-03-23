@@ -25,11 +25,12 @@ printf "\nWelcome to the LGTSeek Docker installer. Please follow the prompts bel
 # Get Use-Case information to pare down setup options
 printf "\nFirst, let's figure out which LGTSeek Use Case you wish to employ\n"
 printf "Use Case 1 - Good donor reference and good LGT-free recipient reference\n"
-printf "Use Case 2 - Good donor reference but unknown recipient reference\n"
-printf "Use Case 3 - Good recipient reference but unknown donor reference\n"
+printf "Use Case 2 - Good donor reference and good LGT-infected recipient reference\n"
+printf "Use Case 3 - Good donor reference but unknown recipient reference\n"
+printf "Use Case 4 - Good recipient reference but unknown donor reference\n"
 
-PS3="Select a Use Case # (1-3 or 4 to quit) and press ENTER: "
-options=("Use Case 1" "Use Case 2" "Use Case 3" "Exit Setup")
+PS3="Select a Use Case # (1-4 or 5 to quit) and press ENTER: "
+options=("Use Case 1" "Use Case 2" "Use Case 3" "Use Case 4" "Exit Setup")
 use_case=''
 select opt in "${options[@]}"
 do
@@ -49,10 +50,15 @@ do
             use_case=3
             break
             ;;
+        "Use Case 4")
+            echo "Use case 4 chosen"
+            use_case=4
+            break
+            ;;
         "Exit Setup")
             quit_setup
             ;;
-        *) echo "invalid option... choose again (1-3 or 4 to quit)."
+        *) echo "invalid option... choose again (1-4 or 5 to quit)."
             continue
             ;;
     esac
@@ -61,7 +67,7 @@ done
 printf "\nNext it's time to specify where the reference and input files are located.\n"
 
 # First ask for location of donor reference directory
-if [[ $use_case == '1' ]] || [[ $use_case == '2' ]]; then
+if [[ $use_case == '1' ]] || [[ $use_case == '2' ]] || [[ $use_case == '3' ]]; then
 	printf  "\nPlease specify the directory that the donor reference genome(s) is located.\n"
 	printf  "Type 'quit' or 'q' to exit setup.\n$COL_GREEN[DONOR_DIRECTORY]$COL_RESET: "
 	read donor_mnt
@@ -83,7 +89,7 @@ if [[ $use_case == '1' ]] || [[ $use_case == '2' ]]; then
 fi
 
 # Second ask for location of recipient reference directory
-if [[ $use_case == '1' ]] || [[ $use_case == '3' ]]; then
+if [[ $use_case == '1' ]] || [[ $use_case == '2' ]] || [[ $use_case == '4' ]]; then
 	printf  "\nPlease specify the directory that the recipient reference genome(s) is located.\n"
 	printf  "Type 'quit' or 'q' to exit setup.\n$COL_GREEN[RECIPIENT_DIRECTORY]$COL_RESET: "
 	read recipient_mnt
@@ -103,7 +109,7 @@ if [[ $use_case == '1' ]] || [[ $use_case == '3' ]]; then
 fi
 
 # Third ask for location of Refseq reference directory
-if [[ $use_case == '3' ]]; then
+if [[ $use_case == '4' ]]; then
 	printf  "\nPlease specify the directory that the RefSeq reference genomes are located.\n"
 	printf  "Type 'quit' or 'q' to exit setup.\n$COL_GREEN[REFSEQ_DIRECTORY]$COL_RESET: "
 	read refseq_mnt
