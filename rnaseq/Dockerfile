@@ -37,6 +37,7 @@ ARG DESEQ_VERSION=1.10.1
 # Keeping internal used version for reference
 #ARG EDGER_VERSION=2.4.6
 
+# Low Priority for now
 ARG IGV_VERSION=2.3.32
 
 ARG R_VERSION_NEW=2.15.2

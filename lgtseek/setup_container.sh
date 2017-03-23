@@ -17,6 +17,7 @@ COL_BLUE=$ESC_SEQ'34;1m'
 
 # Copy the template over to a production version of the docker-compose file
 docker_compose=./docker_templates/docker-compose.yml
+mongo_tmpl=./docker_templates/mongodb.tmpl
 cp ${docker_compose}.tmpl $docker_compose
 
 printf "\nWelcome to the LGTSeek Docker installer. Please follow the prompts below that will help the Docker container access your usable data.\n"
@@ -176,6 +177,8 @@ if [[ $use_case == '2' ]] || [[ $use_case == '3' ]]; then
     # Copy template to production 
     blastn_plus_config=./docker_templates/blastn_plus.nt.config
     cp ${blastn_plus_config}.tmpl $blastn_plus_config
+    # Append mongodb part of template to the main docker-compose file
+    cat $mongo_tmpl >> $docker_compose
     # Next, figure out the BLAST db and if local/remote
     printf  "\nWhat reference database would you like to use for BLASTN querying?  Default is 'nt'\n"
     printf  "Type 'quit' or 'q' to exit setup.\n$COL_GREEN[BLAST_DATABASE]$COL_RESET: "
@@ -187,11 +190,11 @@ if [[ $use_case == '2' ]] || [[ $use_case == '3' ]]; then
         blast_db="nt"
     fi
 
-    printf  "\nWould you like to query against a remote database from the NCBI servers?  Using a remote database saves you from having to have a pre-formatted database exist on your local machine, but is not recommended if you anticipate a lot of queries or have sensitive data. Please enter 'Y' (default) if you would like to use the remote NCBI database or 'N' if you would prefer querying against a local database\n"
+    printf  "\nWould you like to query against a remote database from the NCBI servers?  Using a remote database saves you from having to have a pre-formatted database exist on your local machine, but is not recommended if you anticipate a lot of queries or have sensitive data. Please enter 'Y' if you would like to use the remote NCBI database or 'N' (default) if you would prefer querying against a local database\n"
     printf  "Type 'quit' or 'q' to exit setup.\n$COL_GREEN[REMOTE_BLAST]$COL_RESET: "
     read y_n
     if [[ -z $y_n ]]; then
-        remote=1
+        remote=0
     fi
 
     while [[ ! $y_n =~ ^[YyNn]$ ]] && [[ ! $y_n =~ "^q*" ]]; do
