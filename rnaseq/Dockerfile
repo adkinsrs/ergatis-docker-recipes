@@ -3,7 +3,7 @@
 # Builds off of the Ergatis core Dockerfile
 ############################################################
 
-FROM adkinsrs/ergatis:devel
+FROM adkinsrs/ergatis:1.2
 
 MAINTAINER Shaun Adkins <sadkins@som.umaryland.edu>
 
@@ -31,17 +31,18 @@ ARG PROJECT=rnaseq
 #ARG BOWTIE_VERSION=0.12.19
 
 ARG CUFFLINKS_VERSION=2.0.2
+ARG CUFFLINKS_DOWNLOAD_URL=http://cole-trapnell-lab.github.io/cufflinks/assets/downloads/cufflinks-${CUFFLINKS_VERSION}.Linux_x86_64.tar.gz
 
-ARG DESEQ_VERSION=1.10.1
+# Installing via rpkg.sh
+#ARG DESEQ_VERSION=1.10.1
 
 # Keeping internal used version for reference
 #ARG EDGER_VERSION=2.4.6
 
-# Low Priority for now
 ARG IGV_VERSION=2.3.32
 
-ARG R_VERSION_NEW=2.15.2
-ARG R_VERSION_OLD=2.14.1
+#ARG R_VERSION_NEW=2.15.2
+#ARG R_VERSION_OLD=2.14.1
 
 ARG UCSC_UTILS=git://github.com/ENCODE-DCC/kentUtils.git
 
@@ -72,8 +73,21 @@ RUN apt-get -q update && apt-get -q install -y --no-install-recommends software-
 	&& rm -rf /var/lib/apt/lists/*
 
 # Create directories needed for installs (putting here to reduce layers created)
-#RUN mkdir -p /usr/src/bowtie \
-#	&& mkdir -p /usr/src/samtools
+RUN mkdir -p /usr/src/cufflinks
+
+#--------------------------------------------------------------------------------
+# Cufflinks
+WORKDIR /usr/src/cufflinks
+RUN curl -SL $CUFFLINKS_DOWNLOAD_URL -o cufflinks.tar.gz \
+	&& tar --strip-components=1 -xvzf cufflinks.tar.gz -C /usr/src/cufflinks \
+	&& rm cufflinks.tar.gz \
+	&& ln -s /usr/src/cufflinks /opt/packages/cufflinks \
+	&& chmod 755 /opt/packages/cufflinks/*
+
+#--------------------------------------------------------------------------------
+# DESeq
+COPY rpkg.sh /tmp/.
+RUN /tmp/rpkg.sh
 
 #--------------------------------------------------------------------------------
 # USCS Utils
