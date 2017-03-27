@@ -24,15 +24,11 @@ ARG NCBI_BLAST_DOWNLOAD_URL=ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/
 ARG HTSLIB_VERSION=1.3.1
 ARG HTSLIB_DOWNLOAD_URL=https://github.com/samtools/htslib/archive/${HTSLIB_VERSION}.tar.gz
 
-#ARG HTSJDK_VERSION=2.7.0
-#ARG HTSJDK_DOWNLOAD_URL=https://github.com/samtools/htsjdk/archive/${HTSJDK_VERSION}.tar.gz
-
 ARG PICARD_VERSION=2.9.0
-#ARG PICARD_DOWNLOAD_URL=https://github.com/broadinstitute/picard/archive/${PICARD_VERSION}.tar.gz
+ARG PICARD_DOWNLOAD_URL=https://github.com/broadinstitute/picard.git
 
 ARG PRINSEQ_VERSION=0.20.4
 ARG PRINSEQ_DOWNLOAD_URL=http://mirror.ufs.ac.za/applications/prinseq/standalone/prinseq-lite-${PRINSEQ_VERSION}.tar.gz
-#ARG PRINSEQ_DOWNLOAD_URL=https://sourceforge.net/projects/prinseq/files/standalone/prinseq-lite-${PRINSEQ_VERSION}.tar.gz
 
 ARG SAMTOOLS_VERSION=1.3.1
 ARG SAMTOOLS_DOWNLOAD_URL=https://github.com/samtools/samtools/archive/${SAMTOOLS_VERSION}.tar.gz
@@ -40,16 +36,18 @@ ARG SAMTOOLS_DOWNLOAD_URL=https://github.com/samtools/samtools/archive/${SAMTOOL
 ARG SRA_VERSION=2.7.0
 ARG SRA_DOWNLOAD_URL=https://github.com/ncbi/sra-tools/archive/${SRA_VERSION}.tar.gz
 
+# Giant RUN command to reduce layers created
 # 1) Install the scripts required for "add-apt-repository"
 # 2) Setup the openjdk 8 repo
 ### NOTE: OpenJDK-8-JDK is natively not available for Ubuntu 14.04 so we need a workaround here
 # 3) Install java8
 # 4) Lets install the other stuff now
+# 5) Install CPAN modules
+# 6) Create directories needed for installs
 
-RUN apt-get -q update && apt-get -q install -y --no-install-recommends software-properties-common \
+RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends software-properties-common \
 	&& add-apt-repository ppa:openjdk-r/ppa \
-#	&& add-apt-repository ppa:fkrull/deadsnakes \
-	&& apt-get -q update && apt-get -q install -y --no-install-recommends openjdk-8-jdk \
+	&& apt-get -qq update && apt-get -qq install -y --no-install-recommends openjdk-8-jdk \
 	ant \
 	automake \
 	autotools-dev \
@@ -57,34 +55,23 @@ RUN apt-get -q update && apt-get -q install -y --no-install-recommends software-
 	libncursesw5-dev \
 	libmagic-dev \
 	libxml2 \
-#	python2.7 \
-	&& apt-get -q clean autoclean \
-	&& apt-get -q autoremove -y \
+	&& apt-get -qq clean autoclean \
+	&& apt-get -qq autoremove -y \
 	&& rm -rf /var/lib/apt/lists/* \
-	&& ln -s /usr/bin/python3 /usr/bin/python
-
-ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
-
-# CPAN modules
-RUN cpanm --force \
+	&& ln -s /usr/bin/python3 /usr/bin/python \
+	&& cpanm --force \
 	MongoDB \
 	Bio::Perl \
-	Bio::DB::EUtilities
-#	Mouse
+	Bio::DB::EUtilities \
+	&& mkdir -p /usr/src/bwa \
+	/usr/src/htslib \
+	/usr/src/samtools \
+	/usr/src/prinseq \
+	/usr/src/ncbi/sratoolkit \
+	/opt/packages/sra-tools \
+	/usr/src/ncbi/blast
 
-# For some reason BioPerl was not installing so here are two backups to try
-#RUN cpanm --force CJFIELDS/BioPerl-1.6.924.tar.gz
-#RUN cpanm --mirror-only --mirror https://stratopan.com/MeNoSeeGood/Manatee/master BioPerl
-
-# Create directories needed for installs (putting here to reduce layers created)
-RUN mkdir -p /usr/src/bwa \
-	&& mkdir -p /usr/src/htslib \
-	&& mkdir -p /usr/src/samtools \
-	&& mkdir -p /usr/src/prinseq \
-	&& mkdir -p /usr/src/ncbi/sratoolkit \
-	&& mkdir -p /opt/packages/sra-tools \
-	&& mkdir -p /usr/src/ncbi/blast
-
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
 #--------------------------------------------------------------------------------
 # BWA -- install in /opt/packages/bwa
@@ -137,9 +124,9 @@ WORKDIR /usr/src
 # 2) Clone latest version of PicardTools from GitHub and install
 RUN update-ca-certificates -f \
 	&& git config --global http.sslVerify false \
-	&& git clone https://github.com/broadinstitute/picard.git
-WORKDIR /usr/src/picard
-RUN git checkout tags/$PICARD_VERSION \ 
+	&& git clone ${PICARD_DOWNLOAD_URL} \ 
+	&& cd /usr/src/picard \
+	&& git checkout tags/$PICARD_VERSION \ 
 	&& ./gradlew shadowJar -Djavax.net.ssl.trustAnchors=/etc/ssl/certs/java/cacerts \
 	&& ln -s /usr/src/picard /opt/packages/picard
 

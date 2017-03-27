@@ -27,31 +27,24 @@ ARG PROJECT=rnaseq
 #ARG SAMTOOLS_VERSION=0.1.19-1
 #ARG TOPHAT_VERSION=2.0.9-1ubuntu1
 
-# Keeping internal used version for reference
-#ARG BOWTIE_VERSION=0.12.19
-
 ARG CUFFLINKS_VERSION=2.0.2
 ARG CUFFLINKS_DOWNLOAD_URL=http://cole-trapnell-lab.github.io/cufflinks/assets/downloads/cufflinks-${CUFFLINKS_VERSION}.Linux_x86_64.tar.gz
 
 # Installing via rpkg.sh
 #ARG DESEQ_VERSION=1.10.1
 
-# Keeping internal used version for reference
-#ARG EDGER_VERSION=2.4.6
-
 ARG IGV_VERSION=2.3.92
 ARG IGV_DOWNLOAD_URL=https://github.com/igvteam/igv.git
 
-#ARG R_VERSION_NEW=2.15.2
-#ARG R_VERSION_OLD=2.14.1
-
 ARG UCSC_UTILS=git://github.com/ENCODE-DCC/kentUtils.git
 
-# Lets install some packages
+# Giant RUN command
+# 1) Lets install some packages
+# 2) Create directories needed for installs (putting here to reduce layers created)
 
-RUN apt-get -q update && apt-get -q install -y --no-install-recommends software-properties-common \
+RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends software-properties-common \
 	&& add-apt-repository ppa:openjdk-r/ppa \
-	&& apt-get -q update && apt-get -q install -y --no-install-recommends openjdk-8-jdk \
+	&& apt-get -qq update && apt-get -qq install -y --no-install-recommends openjdk-8-jdk \
 	ant \
 	bedtools \
 	bowtie \
@@ -72,14 +65,12 @@ RUN apt-get -q update && apt-get -q install -y --no-install-recommends software-
 	rsync \
 	samtools \
 	tophat \
-	&& apt-get -q clean autoclean \
-	&& apt-get -q autoremove -y \
-	&& rm -rf /var/lib/apt/lists/*
+	&& apt-get -qq clean autoclean \
+	&& apt-get -qq autoremove -y \
+	&& rm -rf /var/lib/apt/lists/* \
+	&& mkdir -p /usr/src/cufflinks
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
-
-# Create directories needed for installs (putting here to reduce layers created)
-RUN mkdir -p /usr/src/cufflinks
 
 #--------------------------------------------------------------------------------
 # Cufflinks
