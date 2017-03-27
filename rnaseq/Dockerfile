@@ -39,7 +39,8 @@ ARG CUFFLINKS_DOWNLOAD_URL=http://cole-trapnell-lab.github.io/cufflinks/assets/d
 # Keeping internal used version for reference
 #ARG EDGER_VERSION=2.4.6
 
-ARG IGV_VERSION=2.3.32
+ARG IGV_VERSION=2.3.92
+ARG IGV_DOWNLOAD_URL=https://github.com/igvteam/igv.git
 
 #ARG R_VERSION_NEW=2.15.2
 #ARG R_VERSION_OLD=2.14.1
@@ -49,6 +50,9 @@ ARG UCSC_UTILS=git://github.com/ENCODE-DCC/kentUtils.git
 # Lets install some packages
 
 RUN apt-get -q update && apt-get -q install -y --no-install-recommends software-properties-common \
+	&& add-apt-repository ppa:openjdk-r/ppa \
+	&& apt-get -q update && apt-get -q install -y --no-install-recommends openjdk-8-jdk \
+	ant \
 	bedtools \
 	bowtie \
 	fastqc \
@@ -72,6 +76,8 @@ RUN apt-get -q update && apt-get -q install -y --no-install-recommends software-
 	&& apt-get -q autoremove -y \
 	&& rm -rf /var/lib/apt/lists/*
 
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+
 # Create directories needed for installs (putting here to reduce layers created)
 RUN mkdir -p /usr/src/cufflinks
 
@@ -88,6 +94,15 @@ RUN curl -SL $CUFFLINKS_DOWNLOAD_URL -o cufflinks.tar.gz \
 # DESeq
 COPY rpkg.sh /tmp/.
 RUN /tmp/rpkg.sh
+
+#--------------------------------------------------------------------------------
+# IGV
+WORKDIR /usr/src
+RUN git clone $IGV_DOWNLOAD_URL \
+	&& cd igv \
+	&& git checkout tags/v${IGV_VERSION} \
+	&& ant \
+	&& ln -s /usr/src/igv/igv.jar /opt/packages/igv.jar
 
 #--------------------------------------------------------------------------------
 # USCS Utils
