@@ -1,0 +1,27 @@
+version: '2'
+services:
+
+# Container responsible for running the pipeline
+  ergatis:
+    environment:
+      - DOCKER_HOST=localhost
+      - REPO_ROOT=/opt/projects/rnaseq/
+      - TEMPLATES=/opt/ergatis/pipeline_templates/
+    image: adkinsrs/rnaseq:latest
+    links:
+      - builder
+      - post # Will rename once Amol creates his UI
+    ports:
+      - "8080:80"
+    volumes_from:
+      - builder
+
+# Container with the pipeline configuration UI 
+  builder:
+    build: .
+    volumes_from: ergatis
+
+# Container to view post-analysis data
+  post:
+    build: .
+    volumes_from: ergatis.
