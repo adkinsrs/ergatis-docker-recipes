@@ -196,7 +196,7 @@ if [[ $use_case == '2' ]] || [[ $use_case == '3' ]]; then
         blast_db="nt"
     fi
 
-    printf  "\nWould you like to query against a remote database from the NCBI servers?  Using a remote database saves you from having to have a pre-formatted database exist on your local machine, but is not recommended if you anticipate a lot of queries or have sensitive data. Please enter 'Y' if you would like to use the remote NCBI database or 'N' (default) if you would prefer querying against a local database\n"
+    printf  "\nWould you like to query against a remote database from the NCBI servers?  Using a remote database saves you from having to have a pre-formatted database exist on your local machine, but is highly unrecommended due to the instability of the operation. Please enter 'Y' if you would like to use the remote NCBI database or 'N' (default) if you would prefer querying against a local database\n"
     printf  "Type 'quit' or 'q' to exit setup.\n$COL_GREEN[REMOTE_BLAST]$COL_RESET: "
     read y_n
     if [[ -z $y_n ]]; then

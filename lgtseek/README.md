@@ -14,14 +14,16 @@ Before running the pipeline, you must know the directory paths of your input dat
 * Donor reference (FASTA)
 * Recipient referenc (FASTA)e
 
+### Use Case 2 - Good donor reference but LGT-infected recipient reference
+* Donor reference (FASTA)
+* Recipient referenc (FASTA)e
+
 ### Use Case 2 - Good donor reference but unknown recipient reference
 * Donor reference (FASTA)
 
 ### Use Case 3 - Good recipient reference but unknown donor reference
 * Recipient reference (FASTA)
 * RefSeq reference (FASTA)
-
-### Use Case 4 - Good donor reference but LGT-infected recipient reference - (coming soon)
 
 For each reference, a single fasta-formatted file will be accepted, or a list file containing the paths of fasta-formatted files in the same directory (the list file must end in .list). 
 
@@ -40,7 +42,10 @@ In addition, the input file data can come from three sources.  These are:
   * One BAM input file. Can be compressed with GZIP.
   * A list file containing the file paths of one or more BAM files. If multiple BAM files are in the list file, then all BAM files will be merged prior to performing the first BWA alignment. BAM files can be compressed with GZIP.
 
-##  Setup and start a Docker container via shell
+### BLASTN database
+For use-cases 3 and 4, the pipeline will perform pairwise BLASTN analysis using NCBI-blast+.  While any database can be specified to be BLASTed against, the ‘nt’ database is the recommended choice.  If you plan on running one of these use-cases, then you need to have a database on your local machine that has already been prepped with either ‘formatdb’ or ‘blastdbcmd’, so that can be mounted to a directory in the Docker container.  Alternatively there is an option to perform remote blasts where queries are searched against databases on the NCBI server but this is highly unrecommended due to the instability of such an operation.
+
+## Setup and start a Docker container via shell
 If you wish to both configure and start a Docker container, then run 
 ```
 setup_container.sh
