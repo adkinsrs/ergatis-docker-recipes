@@ -179,12 +179,13 @@ if [[ $input == 'FASTQ' ]] || [[ $input == 'BAM' ]]; then
 	perl -i -pe "s|###INPUT_MNT###|$input_mnt|" $docker_compose
 fi
 
+# Append mongodb part of template to the main docker-compose file
+cat $mongo_tmpl >> $docker_compose
+
 if [[ $use_case == '2' ]] || [[ $use_case == '3' ]]; then
     # Copy template to production 
     blastn_plus_config=./docker_templates/blastn_plus.nt.config
     cp ${blastn_plus_config}.tmpl $blastn_plus_config
-    # Append mongodb part of template to the main docker-compose file
-    cat $mongo_tmpl >> $docker_compose
     # Next, figure out the BLAST db and if local/remote
     printf  "\nWhat reference database would you like to use for BLASTN querying?  Default is 'nt'\n"
     printf  "Type 'quit' or 'q' to exit setup.\n$COL_GREEN[BLAST_DATABASE]$COL_RESET: "

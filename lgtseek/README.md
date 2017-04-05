@@ -87,6 +87,9 @@ docker-compose -f docker_templates/docker-compose.yml down -v
 ## More detailed instructions
 For a more detailed set of instructions, please visit [https://docs.google.com/document/d/13ZQ2eNf3HPPNXuexkLK203dKZzjHdm12DP2yF1PLdDY/edit?usp=sharing](the LGTSeek Docker image Google Doc page)
 
+## Code for the LGTSeek pipeline
+Code for the LGTSeek pipeline itself can be found at [https://github.com/adkinsrs/ergatis-pipelines/tree/lgtseek](this GitHub repository)
+
 ## Pending issues/concerns
 Pending issues
 * Currently the setup\_container.sh script filters questions by use-case, and writes the corresponding docker-compose based on the chosen use-case.  So the resulting LGTSeek Docker container is designed for the chosen use-case in mind.  If a user wants to run a pipeline using  “use-case 1” and then wants to another pipeline using “use-case 3”, the user will need to run setup\_container.sh again
