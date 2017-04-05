@@ -289,7 +289,9 @@ printf  "Docker container is done building!\n"
 printf  "Next it's time to customize some things within the container\n\n";
 
 # I don't like hard-coding this
-docker cp $blastn_plus_config dockertemplates_ergatis_1:/opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/
+if [[ $use_case == '2' ]] || [[ $use_case == '3' ]]; then
+    docker cp $blastn_plus_config dockertemplates_ergatis_1:/opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/
+fi
 
 printf  "\nDocker container is ready for use!\n"
 printf  "In order to build the LGTSeek pipeline please point your browser to $COL_BLUE http://${ip_address}:8080/pipeline_builder $COL_RESET\n"
