@@ -28,7 +28,7 @@ ARG PICARD_VERSION=2.9.0
 ARG PICARD_DOWNLOAD_URL=https://github.com/broadinstitute/picard.git
 
 ARG PRINSEQ_VERSION=0.20.4
-ARG PRINSEQ_DOWNLOAD_URL=http://mirror.ufs.ac.za/applications/prinseq/standalone/prinseq-lite-${PRINSEQ_VERSION}.tar.gz
+ARG PRINSEQ_DOWNLOAD_URL=https://sourceforge.net/projects/prinseq/files/standalone/prinseq-lite-${PRINSEQ_VERSION}.tar.gz
 
 ARG SAMTOOLS_VERSION=1.3.1
 ARG SAMTOOLS_DOWNLOAD_URL=https://github.com/samtools/samtools/archive/${SAMTOOLS_VERSION}.tar.gz
