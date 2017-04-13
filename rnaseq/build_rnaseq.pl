@@ -110,13 +110,13 @@ sub set_idgen_configuration {
         ## change $base/lib/perl5/Ergatis/IdGenerator/Config.pm
         open(my $cfh, $conf_file) || die "couldn't open $conf_file for reading";
 
-        #while ( my $line = <$cfh> ) {
+        while ( my $line = <$cfh> ) {
         #    if ( $line !~ /^\#/ ) {
         #        $line =~ s/\:\:DefaultIdGenerator/\:\:IGSIdGenerator/g;
         #    }
-        #    
-        #    push @lines, $line;
-        #}
+            
+            push @lines, $line;
+        }
 
         close $cfh;
         
