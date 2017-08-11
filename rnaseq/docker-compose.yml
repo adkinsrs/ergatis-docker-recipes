@@ -8,20 +8,31 @@ services:
       - REPO_ROOT=/opt/projects/rnaseq/
       - TEMPLATES=/opt/ergatis/pipeline_templates/
     image: adkinsrs/rnaseq:latest
-    links:
-      - builder
-      - post # Will rename once Amol creates his UI
+#    links:
+#      - post # Will rename once Amol creates his UI
     ports:
       - "8080:80"
-    volumes_from:
-      - builder
+    volumes:
+      - ergatis_vol:/opt/ergatis
+#    volumes_from:
+#      - builder
 
 # Container with the pipeline configuration UI 
   builder:
-    build: .
-    volumes_from: ergatis
+    image: grotto
+    links:
+      - ergatis
+    ports:
+      - "5000:5000"
+    volumes_from:
+      - ergatis
+    volumes:
+      - ~/bin/grotto/www:/app
 
 # Container to view post-analysis data
-  post:
-    build: .
-    volumes_from: ergatis.
+#  post:
+#    build: .
+#    volumes_from: ergatis.
+
+volumes:
+  ergatis_vol:
