@@ -3,7 +3,7 @@
 # Builds off of the Ergatis core Dockerfile
 ############################################################
 
-FROM adkinsrs/ergatis:1.3
+FROM adkinsrs/ergatis:1.2
 
 MAINTAINER Shaun Adkins <sadkins@som.umaryland.edu>
 
