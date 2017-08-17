@@ -5,7 +5,7 @@ services:
   ergatis:
     environment:
       - DOCKER_HOST=localhost
-      - REPO_ROOT=/opt/projects/rnaseq/
+      - REPO_ROOT=/opt/projects/rnaseq
       - TEMPLATES=/opt/ergatis/pipeline_templates/
     image: adkinsrs/rnaseq:latest
 #    links:
@@ -14,11 +14,17 @@ services:
       - "8080:80"
     volumes:
       - ergatis_vol:/opt/ergatis
+      - projects_vol:/opt/projects/rnaseq
+      - perl5lib_vol:/usr/share/perl5
+      - perl5lib_vol2:/usr/lib/perl5
+      - ./input_data:/mnt/input_data
 #    volumes_from:
 #      - builder
 
 # Container with the pipeline configuration UI 
   builder:
+    environment:
+      - PERL5LIB=/opt/ergatis/lib/perl5
     image: grotto
     links:
       - ergatis
@@ -36,3 +42,6 @@ services:
 
 volumes:
   ergatis_vol:
+  projects_vol:
+  perl5lib_vol:
+  perl5lib_vol2:
