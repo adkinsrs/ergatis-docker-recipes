@@ -202,7 +202,8 @@ RUN mkdir -p /opt/projects/$PROJECT \
 	&& mkdir -m 0777 /opt/projects/$PROJECT/workflow/runtime/pipeline \
 	&& touch /opt/projects/$PROJECT/workflow/project_id_repository/valid_id_repository \
 	&& chmod 0666 /opt/projects/$PROJECT/workflow/project_id_repository/valid_id_repository \
-	&& cp /tmp/project.config /opt/projects/$PROJECT/workflow/.
+	&& cp /tmp/project.config /opt/projects/$PROJECT/workflow/. \
+    && mkdir -m 0777 /mnt/input_data
 
 # Making this as a volume in case we'd like to pass this data to another image
 VOLUME /opt/projects/$PROJECT/output_repository/gather_lgtview_files/
