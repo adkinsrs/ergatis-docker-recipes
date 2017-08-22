@@ -24,8 +24,9 @@ services:
 # Container with the pipeline configuration UI 
   builder:
     environment:
+      - DOCKER_HOST=localhost
       - PERL5LIB=/opt/ergatis/lib/perl5
-    image: grotto
+    image: adkinsrs/grotto
     links:
       - ergatis
     ports:

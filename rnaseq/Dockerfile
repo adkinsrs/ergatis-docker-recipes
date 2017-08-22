@@ -138,7 +138,7 @@ RUN /usr/bin/perl /tmp/build_$PROJECT.pl /opt/ergatis \
 	&& ln -s /opt/ergatis/pipeline_builder /var/www/html/pipeline_builder
 
 #--------------------------------------------------------------------------------
-# PIPELINE_CHANGES - Files that need to deviate from the installed lgtseek pipeline in order to function in Docker
+# PIPELINE_CHANGES - Files that need to deviate from the installed rnaseq pipeline in order to function in Docker
 
 # Set number of parallel runs for changed files
 RUN num_cores=$(grep -c ^processor /proc/cpuinfo) \
