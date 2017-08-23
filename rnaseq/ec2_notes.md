@@ -24,14 +24,7 @@ Next create an input area to copy input files over to.  This will take advantage
 mkdir /opt/input_data
 ```
 
-The area should be ready for the user to 'scp' or 'rsync' files over.  When using the Grotto UI, you will need to point to the /mnt/input_data location of the file, as that will be the location of the file within the "ergatis" Docker container.
-
-In addition, the ~/git/ergatis-docker-recipes/rnaseq/docker-compose.yml will need the following line switched:
-```
-  - ./input_data:/mnt/input_data
-to
-  - /opt/input_data:/mnt/input_data
-```
+The area should now be ready for the user to 'scp' or 'rsync' files over.
 
 ### Install Docker Compose
 
@@ -46,12 +39,14 @@ Now it's time to start the Grotto and RNAseq Docker containers.  The following s
 
 ```
 cd ~/git/ergatis-docker-recipes/rnaseq
-sh launch_rnaseq.sh -i </path/to/input/dir> -o </path/to/store/output_repository> -p "<EC2_IP>"
+sh launch_rnaseq.sh -i /opt/input_data -o /opt/output_repository -p "<EC2_IP>"
 ```
 
 Next, navigate to <EC2_IP>:5000 to bring up the Grotto UI.  Follow the instructions to set up your pipeline noting the key differences.
-* You will need to point to the /mnt/input_data location of the file, as that will be the location of the file within the "ergatis" Docker container.  So if your file on the EC2 container is /opt/input_data/test.fsa, then it will need to filled in as /mnt/input_data/test.fsa
-* Currently the link to view a running pipeline within Ergatis is not correct.  To view this pipeline, after clicking the "View Pipeline" link on the "Pipeline Status" page, replace the word "localhost" in the URL with the IP address of the EC2 instance you are in.
+* When filling out the text fields, you will need to point to the /mnt/input_data location of the file, as that will be the location of the file within the "ergatis" Docker container.  So if your file on the EC2 container is /opt/input_data/test.fsa, then it will need to filled in as /mnt/input_data/test.fsa
+* On the 'Pipeline Options' page, the repository root needs to point to /opt/projects/rnaseq as this is where it is in the RNASeq docker image.
+
+Pipeline output should be written to /opt/output_repository
 
 ## Powering down the containers
 
@@ -62,7 +57,7 @@ cd ~/git/ergatis-docker-recipes/rnaseq
 docker-compose down -v
 ```
 
-Note that this will remove all the pipeline data that was created within the containers, so be sure to migrate the data you want before running these commands.
+Note that this will remove all the pipeline data that was created within the containers, so be sure to migrate the data you want before running these commands.  If you do not want the volume storing the pipeline output to be destroyed, remove the "-v" option from the docker-compose command.
 
 ## To use more than 4 processes in a pipeline
 

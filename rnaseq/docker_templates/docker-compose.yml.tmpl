@@ -4,7 +4,6 @@ services:
 # Container responsible for running the pipeline
   ergatis:
     environment:
-      - DOCKER_HOST=###IP_HOST###
       - REPO_ROOT=/opt/projects/rnaseq
       - TEMPLATES=/opt/ergatis/pipeline_templates/
     image: adkinsrs/rnaseq:latest
