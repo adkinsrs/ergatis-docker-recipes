@@ -23,12 +23,12 @@ if [ -z "$ip_host" ]; then
     ip_host="localhost"
 fi
 
-if [-z "output_source" ]; then
+if [ -z "$output_source" ]; then
     echo "Must provide 'output_source' option."
     print_usage
 fi
 
-if [-z "input_source" ]; then
+if [ -z "$input_source" ]; then
     echo "Must provide 'input_source' option."
     print_usage
 fi
