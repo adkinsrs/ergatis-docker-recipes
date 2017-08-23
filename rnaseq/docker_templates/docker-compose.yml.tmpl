@@ -15,7 +15,7 @@ services:
       - perl5lib_vol:/usr/share/perl5
       - perl5lib_vol2:/usr/lib/perl5
       - ###INPUT_SOURCE###:/mnt/input_data
-      - ###OUTPUT_SOURCE###:/opt/projects/rnaseq/output_repository
+      - ###OUTPUT_SOURCE###:/opt/projects/rnaseq/output_repository:rw
 
 # Container with the pipeline configuration UI 
   builder:

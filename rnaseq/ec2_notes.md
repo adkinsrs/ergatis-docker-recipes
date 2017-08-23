@@ -43,8 +43,12 @@ sh launch_rnaseq.sh -i /opt/input_data -o /opt/output_repository -p "<EC2_IP>"
 ```
 
 Next, navigate to <EC2_IP>:5000 to bring up the Grotto UI.  Follow the instructions to set up your pipeline noting the key differences.
+* On the login page, For the user, just use 'user', and for the password, just use 'pass'.  UMaryland LDAP logins most likely will not work on EC2 (though I haven't actually tried).
 * When filling out the text fields, you will need to point to the /mnt/input_data location of the file, as that will be the location of the file within the "ergatis" Docker container.  So if your file on the EC2 container is /opt/input_data/test.fsa, then it will need to filled in as /mnt/input_data/test.fsa
+* Uploaded files, such as the "sample info file", should have their FASTQ paths pointing to /mnt/input_data as well.
 * On the 'Pipeline Options' page, the repository root needs to point to /opt/projects/rnaseq as this is where it is in the RNASeq docker image.
+
+After the pipeline is made, the "Pipeline Status" page should appear.  This page, has a "Refresh" button that can be hit to get the current status of the pipeline and its components.  There is also a "View Pipeline" link that will take the user to the pipeline in Ergatis.  When the pipeline is first created, it does not run automatically, so the user needs to first click "View Pipeline" to bring the pipeline up in Ergatis, and then hit the "Rerun" button to start it.
 
 Pipeline output should be written to /opt/output_repository
 
@@ -54,7 +58,7 @@ When you have finished your pipelines, you can shut down the containers with the
 
 ```
 cd ~/git/ergatis-docker-recipes/rnaseq
-docker-compose down -v
+docker-compose -f docker_templates/docker-compose.yml down -v
 ```
 
 Note that this will remove all the pipeline data that was created within the containers, so be sure to migrate the data you want before running these commands.  If you do not want the volume storing the pipeline output to be destroyed, remove the "-v" option from the docker-compose command.
