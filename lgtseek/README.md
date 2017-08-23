@@ -80,7 +80,7 @@ docker-compose -f docker_templates/docker-compose.yml down -v
 ```
 
 ## More detailed instructions
-For a more detailed set of instructions, please visit [the LGTSeek Docker image Google Doc page] (https://docs.google.com/document/d/13ZQ2eNf3HPPNXuexkLK203dKZzjHdm12DP2yF1PLdDY/edit?usp=sharing)
+For a more detailed set of instructions, please visit [the LGTSeek Docker image Google Doc page](https://docs.google.com/document/d/13ZQ2eNf3HPPNXuexkLK203dKZzjHdm12DP2yF1PLdDY/edit?usp=sharing)
 
 ## Code for the LGTSeek pipeline
 Code for the LGTSeek pipeline itself can be found at https://github.com/adkinsrs/ergatis-pipelines/tree/lgtseek
