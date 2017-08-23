@@ -52,6 +52,10 @@ After the pipeline is made, the "Pipeline Status" page should appear.  This page
 
 Pipeline output should be written to /opt/output_repository
 
+### Starting additional pipelines
+
+In order to create additional pipelines in Grotto, the user must logout, and then log back in.  This clears all information stored about the previous pipeline, which allows for a new pipeline to be created.  The previous pipeline will still be accessible on the Ergatis page and still will be running if it currently is.
+
 ## Powering down the containers
 
 When you have finished your pipelines, you can shut down the containers with the following commands:
