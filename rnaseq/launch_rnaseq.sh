@@ -33,11 +33,6 @@ if [ -z "$input_source" ]; then
     print_usage
 fi
 
-### COLORS ###
-ESC_SEQ='\x1b['
-COL_RESET=$ESC_SEQ'0m'
-COL_BLUE=$ESC_SEQ'34;1m'
-
 #########################
 # MAIN
 #########################
@@ -58,7 +53,7 @@ printf  "\nGoing to build and run the Docker containers now.....\n"
 docker-compose -f $docker_compose up -d
 
 printf  "Docker container is done building!\n"
-printf  "In order to start using the Grotto UI, please point your browser to $COL_BLUE http://${ip_host}:5000 $COL_RESET\n"
-printf  "To monitor pipelines, please point your browser to $COL_BLUE http://${ip_host}:8080/ergatis $COL_RESET\n"
+printf  "In order to start using the Grotto UI, please point your browser to http://${ip_host}:5000\n"
+printf  "To monitor pipelines, please point your browser to http://${ip_host}:8080/ergatis\n"
 
 exit 0
