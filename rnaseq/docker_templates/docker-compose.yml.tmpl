@@ -4,12 +4,10 @@ services:
 # Container responsible for running the pipeline
   ergatis:
     environment:
-      - DOCKER_HOST=localhost
+      - DOCKER_HOST=###IP_HOST###
       - REPO_ROOT=/opt/projects/rnaseq
       - TEMPLATES=/opt/ergatis/pipeline_templates/
     image: adkinsrs/rnaseq:latest
-#    links:
-#      - post # Will rename once Amol creates his UI
     ports:
       - "8080:80"
     volumes:
@@ -17,14 +15,13 @@ services:
       - projects_vol:/opt/projects/rnaseq
       - perl5lib_vol:/usr/share/perl5
       - perl5lib_vol2:/usr/lib/perl5
-      - ./input_data:/mnt/input_data
-#    volumes_from:
-#      - builder
+      - ###INPUT_SOURCE###:/mnt/input_data
+      - ###OUTPUT_SOURCE###:/opt/projects/rnaseq/output_repository
 
 # Container with the pipeline configuration UI 
   builder:
     environment:
-      - DOCKER_HOST=localhost
+      - DOCKER_HOST=###IP_HOST###
       - PERL5LIB=/opt/ergatis/lib/perl5
     image: adkinsrs/grotto
     links:
@@ -33,13 +30,8 @@ services:
       - "5000:5000"
     volumes_from:
       - ergatis
-    volumes:
-      - ~/bin/grotto/www:/app
-
-# Container to view post-analysis data
-#  post:
-#    build: .
-#    volumes_from: ergatis.
+#    volumes:
+#      - ~/bin/grotto/www:/app
 
 volumes:
   ergatis_vol:

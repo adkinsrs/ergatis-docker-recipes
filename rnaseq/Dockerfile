@@ -127,7 +127,7 @@ RUN mkdir -p /opt/projects/$PROJECT \
 	&& cp /tmp/project.config /opt/projects/$PROJECT/workflow/.
 
 # Making this as a volume in case we'd like to pass this data to another image
-VOLUME /opt/projects/$PROJECT/output_repository
+#VOLUME /opt/projects/$PROJECT/output_repository
 
 # Run last bits as root
 USER root
