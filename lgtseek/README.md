@@ -16,16 +16,16 @@ Before running the pipeline, you must know the directory paths of your input dat
 
 ### Use Case 2 - Good donor reference but LGT-infected recipient reference
 * Donor reference (FASTA)
-* Recipient referenc (FASTA)e
+* Recipient reference (FASTA)
 
-### Use Case 2 - Good donor reference but unknown recipient reference
+### Use Case 3 - Good donor reference but unknown recipient reference
 * Donor reference (FASTA)
 
-### Use Case 3 - Good recipient reference but unknown donor reference
+### Use Case 4 - Good recipient reference but unknown donor reference
 * Recipient reference (FASTA)
 * RefSeq reference (FASTA)
 
-For each reference, a single fasta-formatted file will be accepted, or a list file containing the paths of fasta-formatted files in the same directory (the list file must end in .list). 
+For each reference, one or more fasta-formatted files will be accepted.
 
 ### Input Data
 In addition, the input file data can come from three sources.  These are: 
@@ -34,16 +34,11 @@ In addition, the input file data can come from three sources.  These are:
   * SRR - Run ID
   * SRS - Sample ID
   * SRX - Experiment ID
-* A FASTQ input file for a single sample. Passed in one of the following ways:
-  * FASTQ file path for a single-end read. Can be compressed with GZIP
-  * A file with the extension ".pair", which will find the two paired-end files with the same basename located in the same directory as the ".pair" file.
-  * A list file containing a single file path to either of the previously mentioned files, or two file paths for each mate of a paired-end FASTQ set. These files should end in "\_1.fastq"/"\_2.fastq" or "R1.fastq"/"R2.fastq". In the case of the single-end or paired-end FASTQ paths, they can be compressed with GZIP.
-* A BAM input file. Passed in one of the following ways:
-  * One BAM input file. Can be compressed with GZIP.
-  * A list file containing the file paths of one or more BAM files. If multiple BAM files are in the list file, then all BAM files will be merged prior to performing the first BWA alignment. BAM files can be compressed with GZIP.
+* A FASTQ input file or files associated with a single sample.  If passing paired-end files, these files should end in "\_1.fastq"/"\_2.fastq" or "R1.fastq"/"R2.fastq".  Can be compressed with GZIP before uploading
+* A BAM input file or files.  Can be compressed with GZIP before uploading
 
 ### BLASTN database
-For use-cases 3 and 4, the pipeline will perform pairwise BLASTN analysis using NCBI-blast+.  While any database can be specified to be BLASTed against, the ‘nt’ database is the recommended choice.  If you plan on running one of these use-cases, then you need to have a database on your local machine that has already been prepped with either ‘formatdb’ or ‘blastdbcmd’, so that can be mounted to a directory in the Docker container.  Alternatively there is an option to perform remote blasts where queries are searched against databases on the NCBI server but this is highly unrecommended due to the instability of such an operation.
+For all use-cases, the pipeline will perform pairwise BLASTN analysis using NCBI-blast+.  While any database can be specified to be BLASTed against, the ‘nt’ database is the recommended choice.  If you plan on running one of these use-cases, then you need to have a database on your local machine that has already been prepped with either ‘formatdb’ or ‘blastdbcmd’, so that can be mounted to a directory in the Docker container.
 
 ## Setup and start a Docker container via shell
 If you wish to both configure and start a Docker container, then run 
