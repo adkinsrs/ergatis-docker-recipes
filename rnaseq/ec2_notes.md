@@ -17,11 +17,12 @@ cd ergatis-docker-recipes
 
 Within the 'ergatis-docker-recipes', the only directory that is of importance is the 'rnaseq' directory.  The only file of importance is the "docker-compose.yml" file, which will allow for the "grotto" and "rnaseq" containers to become linked.
 
-### Setting up the input area
-Next create an input area to copy input files over to.  This will take advantage of the attached volume from earlier (which should be mounted to /opt)
+### Setting up the input and output areas
+Next create an input area to copy input files over to. This will take advantage of the attached volume from earlier (which should be mounted to /opt).  In addition, an output area directory will be created so that the pipeline "output_repository" directory can mount here, making results easily accessible
 
 ```
 mkdir /opt/input_data
+mkdir -m 0777 /opt/output_repository
 ```
 
 The area should now be ready for the user to 'scp' or 'rsync' files over.
@@ -50,7 +51,7 @@ Next, navigate to <EC2_IP>:5000 to bring up the Grotto UI.  Follow the instructi
 
 After the pipeline is made, the "Pipeline Status" page should appear.  This page, has a "Refresh" button that can be hit to get the current status of the pipeline and its components.  There is also a "View Pipeline" link that will take the user to the pipeline in Ergatis.  When the pipeline is first created, it does not run automatically, so the user needs to first click "View Pipeline" to bring the pipeline up in Ergatis, and then hit the "Rerun" button to start it.
 
-Pipeline output should be written to /opt/output_repository
+Pipeline output should be written to /opt/output_repository.
 
 ### Starting additional pipelines
 
@@ -65,7 +66,7 @@ cd ~/git/ergatis-docker-recipes/rnaseq
 docker-compose -f docker_templates/docker-compose.yml down -v
 ```
 
-Note that this will remove all the pipeline data that was created within the containers, so be sure to migrate the data you want before running these commands.  If you do not want the volume storing the pipeline output to be destroyed, remove the "-v" option from the docker-compose command.
+Note that this will remove all the pipeline data that was created within the containers, so be sure to migrate the data you want before running these commands.  If you do not want the volume storing the pipeline output to be destroyed, remove the "-v" option from the docker-compose command.  However, do note that specifying this directory as the output source upon running "launch_rnaseq.sh" for a second time can cause problems, such as overwriting of existing output files.
 
 ## To use more than 4 processes in a pipeline
 
