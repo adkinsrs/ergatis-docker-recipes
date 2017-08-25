@@ -38,6 +38,8 @@ sudo apt install docker-compose
 
 Now it's time to start the Grotto and RNAseq Docker containers.  The following script will run docker-compose to set up both the Grotto and RNAseq containers.  This also mounts volumes from the EC2 host to the Docker container for passing in input data and for collecting output data.
 
+NOTE: for the -i and the -o options, make sure to specify the FULL PATH
+
 ```
 cd ~/git/ergatis-docker-recipes/rnaseq
 sh launch_rnaseq.sh -i /opt/input_data -o /opt/output_repository -p "<EC2_IP>"

@@ -46,7 +46,7 @@ If you wish to both configure and start a Docker container, then run
 launch_lgtseek.sh -b </path/to/blast/db/dir> -d <db_prefix> -o </path/to/store/output_repository> -p <HOST_IP>
 ```
 
-This script will pass these options to a custom docker-compose file which the shell script will then use to create containers from a few Docker images.
+This script will pass these options to a custom docker-compose file which the shell script will then use to create containers from a few Docker images.  For the -b and the -o options, make sure you specify the FULL PATH
 
 ## After the container starts...
 
