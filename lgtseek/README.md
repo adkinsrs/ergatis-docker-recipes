@@ -43,10 +43,10 @@ For all use-cases, the pipeline will perform pairwise BLASTN analysis using NCBI
 ## Setup and start a Docker container via shell
 If you wish to both configure and start a Docker container, then run 
 ```
-setup_container.sh
+launch_lgtseek.sh -b </path/to/blast/db/dir> -d <db_prefix> -o </path/to/store/output_repository> -p <HOST_IP>
 ```
 
-This script will ask various questions, such as where your input data and reference data sources are located, and how to configure BLAST.  This helps with mounting the correct directories for Docker to read, and to  configure a couple components in the LGTSeek pipeline.  These changes are written to a custom docker-compose file which the shell script will then use to create containers from a few Docker images.
+This script will pass these options to a custom docker-compose file which the shell script will then use to create containers from a few Docker images.
 
 ## After the container starts...
 
