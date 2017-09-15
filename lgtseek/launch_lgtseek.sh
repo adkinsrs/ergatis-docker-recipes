@@ -74,7 +74,8 @@ perl -i -ne 'print unless /###/;' $docker_compose
 
 # Default docker_templates/docker-compose.yml was written to so no need to specify -f
 printf  "\nGoing to build and run the Docker containers now.....\n"
-docker-compose -f $docker_compose up -d
+dc=`which docker-compose`
+$dc -f $docker_compose up -d
 
 printf  "Docker container is done building!\n"
 printf  "Next it's time to customize some things within the container\n\n";
