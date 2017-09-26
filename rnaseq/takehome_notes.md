@@ -1,15 +1,37 @@
-# Note about the workshop notes
+# Requirements
 
-These notes are specific to the workshop.  If you wish to run Grotto from your local computer, please consult "takehome_notes.md" as the information is more tailored for that situation.
+The following tools are required in order to run Grotto;
 
-# SSH into the 'dockerhost' (Workshop use only)
+* Docker (https://docs.docker.com/engine/installation/)
+* docker-compose (https://docs.docker.com/compose/install/)
+* git (https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
-The following commands require that the user has SSH'ed into the 'dockerhost' VM.  This is a seperate VM that hosts the RNASeq (Grotto) Docker images.  
+Also it is worth noting that Grotto has only been tested in the Mac and Linux OS environments.  It may not work on a Windows environment.
 
-From your student VM type the following (replace the ## with your student ID number):
+# Getting the RNAseq GitHub repository
+
+The first step is to use 'git' to clone the "ergatis-docker-recipes" GitHub repository, which houses information and scripts for the "rnaseq" Docker image.  For this example, the following will take place in the user's home directory
+
 ```
-ssh student##@134.192.131.215
+cd ~
+mkdir git; cd git
+git clone https://github.com/adkinsrs/ergatis-docker-recipes.git
+cd ergatis-docker-recipes
 ```
+
+Within the 'ergatis-docker-recipes', the only directory that is of importance is the 'rnaseq' directory... the other directories can be ignored.
+
+### Setting up the input and output areas
+Next, input and output areas for the "rnaseq" Docker container to read from and write to, respectively, will need to created.  For this example, we will create them in the home directory (~). The input and output directories will be mounted as volumes within the Docker container, so that the container can access them to read and write to.
+
+NOTE:  This step is important, as the Ergatis pipeline will fail if the input_data directory is not created beforehand.
+
+```
+mkdir ~/input_data
+mkdir -m 0777 ~/output_repository
+```
+
+At this point you should now move or copy the pipeline input_data to the "/opt/input_data" directory.
 
 ### Start the Docker containers
 
@@ -19,10 +41,12 @@ NOTE: for the -i and the -o options, make sure to specify the FULL PATH
 
 ```
 cd ~/git/ergatis-docker-recipes/rnaseq
-sh launch_rnaseq.sh -i /export/input_data -o /export/output_repository -p 134.192.131.215
+sh launch_rnaseq.sh -i ~/input_data -o ~/output_repository
 ```
 
-Next, in your web browser from your student VM, navigate to *134.192.131.215:5000* to bring up the Grotto UI.  Follow the instructions to set up your pipeline noting the key differences.
+The first time that launch_rnaseq.sh is run should take a few minutes, as Docker needs to pull the images down the Dockerhub repository.  Subsequent executions of the command should be much quicker.
+
+Next, in your web browser, navigate to *localhost:5000* to bring up the Grotto UI.  Follow the instructions to set up your pipeline noting the key differences.
 * When filling out the text fields, you will need to point to the /mnt/input_data location of the file, as that will be the location of the file within the "ergatis" Docker container.  So if your file on the EC2 container is /opt/input_data/test.fsa, then it will need to filled in as /mnt/input_data/test.fsa
 * Uploaded files, such as the "sample info file", should have their FASTQ paths pointing to /mnt/input_data as well.
 * On the 'Pipeline Options' page, the repository root needs to point to /opt/projects/rnaseq as this is where it is in the RNASeq docker image.  This should be pointed there by default.

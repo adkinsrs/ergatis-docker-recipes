@@ -15,7 +15,7 @@ git clone https://github.com/adkinsrs/ergatis-docker-recipes.git
 cd ergatis-docker-recipes
 ```
 
-Within the 'ergatis-docker-recipes', the only directory that is of importance is the 'rnaseq' directory.  The only file of importance is the "docker-compose.yml" file, which will allow for the "grotto" and "rnaseq" containers to become linked.
+Within the 'ergatis-docker-recipes', the only directory that is of importance is the 'rnaseq' directory.
 
 ### Setting up the input and output areas
 Next create an input area to copy input files over to. This will take advantage of the attached volume from earlier (which should be mounted to /opt).  In addition, an output area directory will be created so that the pipeline "output_repository" directory can mount here, making results easily accessible
@@ -45,11 +45,12 @@ cd ~/git/ergatis-docker-recipes/rnaseq
 sh launch_rnaseq.sh -i /opt/input_data -o /opt/output_repository -p "<EC2_IP>"
 ```
 
-Next, navigate to <EC2_IP>:5000 to bring up the Grotto UI.  Follow the instructions to set up your pipeline noting the key differences.
-* On the login page, For the user, just use 'user', and for the password, just use 'pass'.  UMaryland LDAP logins most likely will not work on EC2 (though I haven't actually tried).
+The first time that launch_rnaseq.sh is run should take a few minutes, as Docker needs to pull the images down the Dockerhub repository.  Subsequent executions of the command should be much quicker.
+
+Next, in your web browser, navigate to <EC2_IP>:5000 to bring up the Grotto UI.  Follow the instructions to set up your pipeline noting the key differences.
 * When filling out the text fields, you will need to point to the /mnt/input_data location of the file, as that will be the location of the file within the "ergatis" Docker container.  So if your file on the EC2 container is /opt/input_data/test.fsa, then it will need to filled in as /mnt/input_data/test.fsa
 * Uploaded files, such as the "sample info file", should have their FASTQ paths pointing to /mnt/input_data as well.
-* On the 'Pipeline Options' page, the repository root needs to point to /opt/projects/rnaseq as this is where it is in the RNASeq docker image.
+* On the 'Pipeline Options' page, the repository root needs to point to /opt/projects/rnaseq as this is where it is in the RNASeq docker image.  This should be pointed there by default.
 
 After the pipeline is made, the "Pipeline Status" page should appear.  This page, has a "Refresh" button that can be hit to get the current status of the pipeline and its components.  There is also a "View Pipeline" link that will take the user to the pipeline in Ergatis.  When the pipeline is first created, it does not run automatically, so the user needs to first click "View Pipeline" to bring the pipeline up in Ergatis, and then hit the "Rerun" button to start it.
 
@@ -57,7 +58,7 @@ Pipeline output should be written to /opt/output_repository.
 
 ### Starting additional pipelines
 
-In order to create additional pipelines in Grotto, the user must logout, and then log back in.  This clears all information stored about the previous pipeline, which allows for a new pipeline to be created.  The previous pipeline will still be accessible on the Ergatis page and still will be running if it currently is.
+In order to create additional pipelines in Grotto, the user must click the "Grotto" logo at the top of the page, which will navigate to the "Sample Info File" page again.  This clears all information stored about the previous pipeline, which allows for a new pipeline to be created.  The previous pipeline will still be accessible on the Ergatis page (<EC2_IP>:8080)and still will be running if it currently is.
 
 ## Powering down the containers
 
