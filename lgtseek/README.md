@@ -5,11 +5,7 @@ First things first...
 git clone https://github.com/adkinsrs/ergatis-docker-recipes.git
 cd ./ergatis-docker-recipes/lgtseek
 ```
-
-## Setting up volumes for input_data
-
-Before running the pipeline, you must know the directory paths of your input data and of your reference data, as these directories will be mounted with the LGTSeeek container in order to share information from the host to the container.  What needs to be passed in is dependent on which LGTSeek use-case you wish to use:
-
+## Requisite input files for each use case
 ### Use Case 1 - Good donor reference and good LGT-free recipient reference
 * Donor reference (FASTA)
 * Recipient referenc (FASTA)e
@@ -46,20 +42,20 @@ If you wish to both configure and start a Docker container, then run
 launch_lgtseek.sh -b </path/to/blast/db/dir> -d <db_prefix> -o </path/to/store/output_repository> -p <HOST_IP>
 ```
 
-This script will pass these options to a custom docker-compose file which the shell script will then use to create containers from a few Docker images.  For the -b and the -o options, make sure you specify the FULL PATH
+This script will pass these options to a custom docker-compose file which the shell script will then use to create containers from a few Docker images.  For the -b and the -o arguments, make sure you specify the FULL PATH.  If you are running locally, then the <HOST_IP> for -p can be set to "localhost" or the argument can be omitted entirely
 
-## After the container starts...
+## After the containers start...
 
-Verify the docker container is up by running:
+Verify the 2 docker containers are up by running:
 ```
 docker ps
 ```
 This should give you valuable information such as the container ID, time it has been running, among other things
 
 The access the UI to create your pipeline, please go to
-[http://localhost:8080/pipeline_builder/](http://localhost:8080/pipeline_builder/).
+http://<HOST_IP>:8080/pipeline_builder/.  
 
-In your internet browser, you can access the Ergatis homepage by navigating to [http://localhost:8080/ergatis/](http://localhost:8080/ergatis/).  This is where you can view monitor pipelines that have already been started
+In your internet browser, you can access the Ergatis homepage by navigating to http://<HOST_IP>:8080/ergatis/.  This is where you can view monitor pipelines that have already been started
 
 ##Pausing and unpausing the container bundle
 To stop and save progress
@@ -88,4 +84,3 @@ Code for the LGTSeek pipeline itself can be found at https://github.com/adkinsrs
 ## Pending issues/concerns
 Pending issues
 * Not all components in the pipelines are optimized for multithreading.
-* Even though there is an option to specify a different IP (such as from a docker-machine host) in setup_container.sh, this has not been tested fully with the pipeline.  For now, just use ‘localhost’
