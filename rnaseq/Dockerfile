@@ -24,6 +24,7 @@ ARG PROJECT=rnaseq
 #ARG FASTX_TOOLKIT_VERSION=0.0.14-1
 #ARG HTSEQ_VERSION=0.5.4p3-2
 #ARG PYTHON_VERSION=2.7
+#ARG SAMTOOLS_VERSION=0.1.19.1
 #ARG TOPHAT_VERSION=2.0.9-1ubuntu1
 
 ARG CUFFLINKS_VERSION=2.0.2
@@ -32,14 +33,11 @@ ARG CUFFLINKS_DOWNLOAD_URL=http://cole-trapnell-lab.github.io/cufflinks/assets/d
 # Installing via rpkg.sh
 #ARG DESEQ_VERSION=1.10.1
 
-ARG HTSLIB_VERSION=1.3.1
-ARG HTSLIB_DOWNLOAD_URL=https://github.com/samtools/htslib/archive/${HTSLIB_VERSION}.tar.gz
+#ARG HTSLIB_VERSION=1.3.1
+#ARG HTSLIB_DOWNLOAD_URL=https://github.com/samtools/htslib/archive/${HTSLIB_VERSION}.tar.gz
 
-ARG IGV_VERSION=2.3.92
-ARG IGV_DOWNLOAD_URL=https://github.com/igvteam/igv.git
-
-ARG SAMTOOLS_VERSION=1.3.1
-ARG SAMTOOLS_DOWNLOAD_URL=https://github.com/samtools/samtools/archive/${SAMTOOLS_VERSION}.tar.gz
+#ARG IGV_VERSION=2.3.92
+#ARG IGV_DOWNLOAD_URL=https://github.com/igvteam/igv.git
 
 ARG UCSC_UTILS=git://github.com/ENCODE-DCC/kentUtils.git
 
@@ -71,45 +69,15 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 	python-htseq \
 	r-bioc-edger \
 	r-bioc-cummerbund \
+	samtools \
 	rsync \
 	tophat \
 	&& apt-get -qq clean autoclean \
 	&& apt-get -qq autoremove -y \
 	&& rm -rf /var/lib/apt/lists/* \
-	&& mkdir -p /usr/src/cufflinks \
-	/usr/src/htslib \
-	/usr/src/samtools
+	&& mkdir -p /usr/src/cufflinks
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
-
-#--------------------------------------------------------------------------------
-# HTSLIB -- install in /opt/packages/htslib (required for Samtools)
-
-WORKDIR /usr/src/htslib
-
-RUN curl -SL $HTSLIB_DOWNLOAD_URL -o htslib.tar.gz \
-	&& tar --strip-components=1 -xvzf htslib.tar.gz -C /usr/src/htslib \
-	&& rm htslib.tar.gz \
-	&& autoconf
-
-#--------------------------------------------------------------------------------
-# SAMTOOLS -- install in /opt/packages/samtools
-# Had to consult this to get it to build https://github.com/samtools/samtools/issues/500
-
-WORKDIR /usr/src/samtools
-
-RUN curl -SL $SAMTOOLS_DOWNLOAD_URL -o samtools.tar.gz \
-	&& tar --strip-components=1 -xvzf samtools.tar.gz -C /usr/src/samtools \
-	&& rm samtools.tar.gz \
-	&& mkdir autoconf \
-	&& wget -O autoconf/ax_with_htslib.m4 https://raw.githubusercontent.com/samtools/samtools/develop/m4/ax_with_htslib.m4 \
-	&& wget -O autoconf/ax_with_curses.m4 https://raw.githubusercontent.com/samtools/samtools/develop/m4/ax_with_curses.m4 \
-	#&& wget -O ./configure.ac https://raw.githubusercontent.com/samtools/samtools/develop/configure.ac \
-	&& aclocal -I./autoconf \
-	&& autoconf \
-	&& ./configure --prefix=/opt/packages/samtools \
-	&& make \
-	&& make install
 
 #--------------------------------------------------------------------------------
 # Cufflinks
@@ -127,12 +95,12 @@ RUN /tmp/rpkg.sh
 
 #--------------------------------------------------------------------------------
 # IGV
-WORKDIR /usr/src
-RUN git clone $IGV_DOWNLOAD_URL \
-	&& cd igv \
-	&& git checkout tags/v${IGV_VERSION} \
-	&& ant \
-	&& ln -s /usr/src/igv/igv.jar /opt/packages/igv.jar
+#WORKDIR /usr/src
+#RUN git clone $IGV_DOWNLOAD_URL \
+#	&& cd igv \
+#	&& git checkout tags/v${IGV_VERSION} \
+#	&& ant \
+#	&& ln -s /usr/src/igv/igv.jar /opt/packages/igv.jar
 
 #--------------------------------------------------------------------------------
 # USCS Utils
