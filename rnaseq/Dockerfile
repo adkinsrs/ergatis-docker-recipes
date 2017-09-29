@@ -15,7 +15,7 @@ ARG PROJECT=rnaseq
 #--------------------------------------------------------------------------------
 # SOFTWARE
 
-# Installed via apt-get 
+# Installed via apt-get
 #ARG BOWTIE_VERSION=1.0.0-5
 #ARG CUMMERBUND_VERSION=2.4.1-1
 #ARG EDGER_VERSION=3.4.2+dfsg-2
@@ -26,8 +26,10 @@ ARG PROJECT=rnaseq
 #ARG SAMTOOLS_VERSION=0.1.19.1 - For Tophat
 #ARG TOPHAT_VERSION=2.0.9-1ubuntu1
 
-ARG BEDTOOLS_VERSION=2.25.0
-ARG BEDTOOLS_DOWNLOAD_URL=https://github.com/arq5x/bedtools2/releases/download/v${BEDTOOLS_VERSION}/bedtools-${BEDTOOLS_VERSION}.tar.gz
+# Using Bedtools master branch on Github, which is v2.26.0 with some bugfixes
+#ARG BEDTOOLS_VERSION=2.26.0
+#ARG BEDTOOLS_DOWNLOAD_URL=https://github.com/arq5x/bedtools2/releases/download/v${BEDTOOLS_VERSION}/bedtools-${BEDTOOLS_VERSION}.tar.gz
+ARG BEDTOOLS_DOWNLOAD_URL=https://github.com/arq5x/bedtools2.git
 
 ARG CUFFLINKS_VERSION=2.0.2
 ARG CUFFLINKS_DOWNLOAD_URL=http://cole-trapnell-lab.github.io/cufflinks/assets/downloads/cufflinks-${CUFFLINKS_VERSION}.Linux_x86_64.tar.gz
@@ -70,32 +72,39 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 	mysql-client-core-5.5 \
 	openssl \
 	python2.7 \
+	python2.7-dev \
 	python-htseq \
+	python-numpy \
+	python-pip \
 	r-bioc-edger \
 	r-bioc-cummerbund \
 	samtools \
 	rsync \
 	tophat \
+	&& cpanm --force \
+	Spreadsheet::WriteExcel \
+	&& pip install --upgrade pip numpy \
 	&& apt-get -qq clean autoclean \
 	&& apt-get -qq autoremove -y \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& mkdir -p /usr/src/cufflinks \
 	/usr/src/htslib \
-	/usr/src/samtools \
-	/usr/src/bedtools
+	/usr/src/samtools
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
 #--------------------------------------------------------------------------------
 # BEDTOOLS - install in /opt/packages/bedtools
 
-WORKDIR /usr/src/bedtools
+WORKDIR /usr/src
 
-RUN curl -SL $BEDTOOLS_DOWNLOAD_URL -o bedtools.tar.gz \
-	&& tar --strip-components=1 -xvzf bedtools.tar.gz -C /usr/src/bedtools \
-	&& rm bedtools.tar.gz \
+RUN git clone $BEDTOOLS_DOWNLOAD_URL \
+	&& cd bedtools2 \
+#RUN curl -SL $BEDTOOLS_DOWNLOAD_URL -o bedtools.tar.gz \
+#	&& tar --strip-components=1 -xvzf bedtools.tar.gz -C /usr/src/bedtools \
+#	&& rm bedtools.tar.gz \
 	&& make \
-	&& ln -s /usr/src/bedtools /opt/packages/bedtools \
+	&& ln -s /usr/src/bedtools2 /opt/packages/bedtools \
 	&& chmod 755 /opt/packages/bedtools/*
 
 #--------------------------------------------------------------------------------
