@@ -16,7 +16,6 @@ ARG PROJECT=rnaseq
 # SOFTWARE
 
 # Installed via apt-get 
-#ARG BEDTOOLS_VERSION=2.17.0-1
 #ARG BOWTIE_VERSION=1.0.0-5
 #ARG CUMMERBUND_VERSION=2.4.1-1
 #ARG EDGER_VERSION=3.4.2+dfsg-2
@@ -26,6 +25,9 @@ ARG PROJECT=rnaseq
 #ARG PYTHON_VERSION=2.7
 #ARG SAMTOOLS_VERSION=0.1.19.1 - For Tophat
 #ARG TOPHAT_VERSION=2.0.9-1ubuntu1
+
+ARG BEDTOOLS_VERSION=2.25.0
+ARG BEDTOOLS_DOWNLOAD_URL=https://github.com/arq5x/bedtools2/releases/download/v${BEDTOOLS_VERSION}/bedtools-${BEDTOOLS_VERSION}.tar.gz
 
 ARG CUFFLINKS_VERSION=2.0.2
 ARG CUFFLINKS_DOWNLOAD_URL=http://cole-trapnell-lab.github.io/cufflinks/assets/downloads/cufflinks-${CUFFLINKS_VERSION}.Linux_x86_64.tar.gz
@@ -54,7 +56,6 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 	ant \
 	automake \
 	autotools-dev \
-	bedtools \
 	bowtie \
 	fastqc \
 	fastx-toolkit \
@@ -80,9 +81,22 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 	&& rm -rf /var/lib/apt/lists/* \
 	&& mkdir -p /usr/src/cufflinks \
 	/usr/src/htslib \
-	/usr/src/samtools
+	/usr/src/samtools \
+	/usr/src/bedtools
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+
+#--------------------------------------------------------------------------------
+# BEDTOOLS - install in /opt/packages/bedtools
+
+WORKDIR /usr/src/bedtools
+
+RUN curl -SL $BEDTOOLS_DOWNLOAD_URL -o bedtools.tar.gz \
+	&& tar --strip-components=1 -xvzf bedtools.tar.gz -C /usr/src/bedtools \
+	&& rm bedtools.tar.gz \
+	&& make \
+	&& ln -s /usr/src/bedtools /opt/packages/bedtools \
+	&& chmod 755 /opt/packages/bedtools/*
 
 #--------------------------------------------------------------------------------
 # HTSLIB -- install in /opt/packages/htslib (required for Samtools)
@@ -97,6 +111,7 @@ RUN curl -SL $HTSLIB_DOWNLOAD_URL -o htslib.tar.gz \
 #--------------------------------------------------------------------------------
 # SAMTOOLS -- install in /opt/packages/samtools
 # Had to consult this to get it to build https://github.com/samtools/samtools/issues/500
+# A second version of samtools, v0.1.19.1 is also installed with apt-get for Tophat
 
 WORKDIR /usr/src/samtools
 
