@@ -1,6 +1,6 @@
 #!/bin/bash
 
-Rver="R-3.1.1"
+Rver="R-3.0.2"
 
 # base code
 #apt-get --force-yes -y update

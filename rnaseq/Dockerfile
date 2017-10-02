@@ -100,9 +100,6 @@ WORKDIR /usr/src
 
 RUN git clone $BEDTOOLS_DOWNLOAD_URL \
 	&& cd bedtools2 \
-#RUN curl -SL $BEDTOOLS_DOWNLOAD_URL -o bedtools.tar.gz \
-#	&& tar --strip-components=1 -xvzf bedtools.tar.gz -C /usr/src/bedtools \
-#	&& rm bedtools.tar.gz \
 	&& make \
 	&& ln -s /usr/src/bedtools2 /opt/packages/bedtools \
 	&& chmod 755 /opt/packages/bedtools/*
@@ -130,7 +127,6 @@ RUN curl -SL $SAMTOOLS_DOWNLOAD_URL -o samtools.tar.gz \
 	&& mkdir autoconf \
 	&& wget -O autoconf/ax_with_htslib.m4 https://raw.githubusercontent.com/samtools/samtools/develop/m4/ax_with_htslib.m4 \
 	&& wget -O autoconf/ax_with_curses.m4 https://raw.githubusercontent.com/samtools/samtools/develop/m4/ax_with_curses.m4 \
-	#&& wget -O ./configure.ac https://raw.githubusercontent.com/samtools/samtools/develop/configure.ac \
 	&& aclocal -I./autoconf \
 	&& autoconf \
 	&& ./configure --prefix=/opt/packages/samtools \
