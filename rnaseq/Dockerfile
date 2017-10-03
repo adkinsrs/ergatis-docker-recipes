@@ -17,6 +17,8 @@ ARG PROJECT=rnaseq
 
 # Installed via apt-get
 #ARG BOWTIE_VERSION=1.0.0-5
+#ARG CUMMERBUND_VERSION=2.4.1-1
+#ARG EDGER_VERSION=3.4.2+dfsg-2
 #ARG FASTQC_VERSION=0.10.1+dfsg-2
 #ARG FASTX_TOOLKIT_VERSION=0.0.14-1
 #ARG HTSEQ_VERSION=0.5.4p3-2
@@ -25,8 +27,6 @@ ARG PROJECT=rnaseq
 #ARG TOPHAT_VERSION=2.0.9-1ubuntu1
 
 # Installing via install_bioc.sh
-#ARG CUMMERBUND_VERSION=2.4.1-1
-#ARG EDGER_VERSION=3.4.2+dfsg-2
 #ARG DESEQ_VERSION=1.10.1
 
 # Using Bedtools master branch on Github, which is v2.26.0 with some bugfixes
@@ -78,8 +78,8 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 	python-htseq \
 	python-numpy \
 	python-pip \
+	r-bioc-cummerbund
 	r-bioc-edger \
-	r-bioc-cummerbund \
 	rsync \
 	samtools \
 	tophat \
