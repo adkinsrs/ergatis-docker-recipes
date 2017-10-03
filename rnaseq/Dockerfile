@@ -17,14 +17,17 @@ ARG PROJECT=rnaseq
 
 # Installed via apt-get
 #ARG BOWTIE_VERSION=1.0.0-5
-#ARG CUMMERBUND_VERSION=2.4.1-1
-#ARG EDGER_VERSION=3.4.2+dfsg-2
 #ARG FASTQC_VERSION=0.10.1+dfsg-2
 #ARG FASTX_TOOLKIT_VERSION=0.0.14-1
 #ARG HTSEQ_VERSION=0.5.4p3-2
 #ARG PYTHON_VERSION=2.7
 #ARG SAMTOOLS_VERSION=0.1.19.1 - For Tophat
 #ARG TOPHAT_VERSION=2.0.9-1ubuntu1
+
+# Installing via install_bioc.sh
+#ARG CUMMERBUND_VERSION=2.4.1-1
+#ARG EDGER_VERSION=3.4.2+dfsg-2
+#ARG DESEQ_VERSION=1.10.1
 
 # Using Bedtools master branch on Github, which is v2.26.0 with some bugfixes
 #ARG BEDTOOLS_VERSION=2.26.0
@@ -33,9 +36,6 @@ ARG BEDTOOLS_DOWNLOAD_URL=https://github.com/arq5x/bedtools2.git
 
 ARG CUFFLINKS_VERSION=2.0.2
 ARG CUFFLINKS_DOWNLOAD_URL=http://cole-trapnell-lab.github.io/cufflinks/assets/downloads/cufflinks-${CUFFLINKS_VERSION}.Linux_x86_64.tar.gz
-
-# Installing via rpkg.sh
-#ARG DESEQ_VERSION=1.10.1
 
 ARG HTSLIB_VERSION=1.3.1
 ARG HTSLIB_DOWNLOAD_URL=https://github.com/samtools/htslib/archive/${HTSLIB_VERSION}.tar.gz
@@ -76,10 +76,10 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 	python-htseq \
 	python-numpy \
 	python-pip \
-	r-bioc-edger \
-	r-bioc-cummerbund \
-	samtools \
+	r-base \
+	r-base-dev \
 	rsync \
+	samtools \
 	tophat \
 	&& cpanm --force \
 	Spreadsheet::WriteExcel \
@@ -143,9 +143,9 @@ RUN curl -SL $CUFFLINKS_DOWNLOAD_URL -o cufflinks.tar.gz \
 	&& chmod 755 /opt/packages/cufflinks/*
 
 #--------------------------------------------------------------------------------
-# DESeq
-COPY rpkg.sh /tmp/.
-RUN /tmp/rpkg.sh
+# DESeq, EdgeR, and CummeRbund
+COPY install_bioc.sh /tmp/.
+RUN /tmp/install_bioc.sh
 
 #--------------------------------------------------------------------------------
 # IGV
