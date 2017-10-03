@@ -61,6 +61,7 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 	bowtie \
 	fastqc \
 	fastx-toolkit \
+	gfortran \
 	libmagic-dev \
 	libmysqlclient-dev \
 	libncurses5-dev \
@@ -68,6 +69,7 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 	libpng-dev \
 	libssl-dev \
 	libxml2 \
+	libxml2-dev \
 	mysql-client-5.5 \
 	mysql-client-core-5.5 \
 	openssl \
@@ -76,8 +78,8 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 	python-htseq \
 	python-numpy \
 	python-pip \
-	r-base \
-	r-base-dev \
+	r-bioc-edger \
+	r-bioc-cummerbund \
 	rsync \
 	samtools \
 	tophat \
@@ -131,7 +133,8 @@ RUN curl -SL $SAMTOOLS_DOWNLOAD_URL -o samtools.tar.gz \
 	&& autoconf \
 	&& ./configure --prefix=/opt/packages/samtools \
 	&& make \
-	&& make install
+	&& make install \
+	&& rm -rf /usr/src/samtools
 
 #--------------------------------------------------------------------------------
 # Cufflinks
@@ -141,11 +144,6 @@ RUN curl -SL $CUFFLINKS_DOWNLOAD_URL -o cufflinks.tar.gz \
 	&& rm cufflinks.tar.gz \
 	&& ln -s /usr/src/cufflinks /opt/packages/cufflinks \
 	&& chmod 755 /opt/packages/cufflinks/*
-
-#--------------------------------------------------------------------------------
-# DESeq, EdgeR, and CummeRbund
-COPY install_bioc.sh /tmp/.
-RUN /tmp/install_bioc.sh
 
 #--------------------------------------------------------------------------------
 # IGV
@@ -166,6 +164,11 @@ RUN git clone $UCSC_UTILS \
 	&& sudo rsync -a -P ./bin/ /usr/local/bin/kentUtils/ \
 	&& export PATH=/usr/local/bin/kentUtils:$PATH \
 	&& chmod 600 /root/.hg.conf
+
+#--------------------------------------------------------------------------------
+# DESeq, EdgeR, and CummeRbund (also R itself)
+COPY install_deseq.sh /tmp/.
+RUN /tmp/install_deseq.sh
 
 #--------------------------------------------------------------------------------
 # PROJECT REPOSITORY SETUP
