@@ -78,7 +78,7 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 	python-htseq \
 	python-numpy \
 	python-pip \
-	r-bioc-cummerbund
+	r-bioc-cummerbund \
 	r-bioc-edger \
 	rsync \
 	samtools \
