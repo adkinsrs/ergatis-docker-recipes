@@ -15,7 +15,7 @@ make install || exit 1
 
 apt-get -qq install -y --no-install-recommends r-base-dev
 
-echo "install.packages(c(\"gplots\", \"survival\"), repos=\"https://lib.stat.cmu.edu/R/CRAN/\")" | R --save --restore
+echo "install.packages(c(\"gplots\", \"survival\"), repos=\"http://lib.stat.cmu.edu/R/CRAN/\")" | R --save --restore
 echo "source(\"http://bioconductor.org/biocLite.R\");
 biocLite(c(\"cummeRbund\", \"DESeq\", \"edgeR\"), ask=FALSE)" | R --save --restore
 
