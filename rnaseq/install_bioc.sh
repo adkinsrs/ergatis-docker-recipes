@@ -13,7 +13,7 @@ cd /opt/${Rver}
 make || exit 1
 make install || exit 1
 
-apt-get --force-yes -y install r-base-dev
+apt-get -qq install -y --no-install-recommends r-base-dev
 
 echo "install.packages(c(\"gplots\", \"survival\"), repos=\"https://lib.stat.cmu.edu/R/CRAN/\")" | R --save --restore
 echo "source(\"http://bioconductor.org/biocLite.R\");
