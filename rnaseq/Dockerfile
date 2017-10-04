@@ -17,8 +17,6 @@ ARG PROJECT=rnaseq
 
 # Installed via apt-get
 #ARG BOWTIE_VERSION=1.0.0-5
-#ARG CUMMERBUND_VERSION=2.4.1-1
-#ARG EDGER_VERSION=3.4.2+dfsg-2
 #ARG FASTQC_VERSION=0.10.1+dfsg-2
 #ARG FASTX_TOOLKIT_VERSION=0.0.14-1
 #ARG HTSEQ_VERSION=0.5.4p3-2
@@ -28,6 +26,8 @@ ARG PROJECT=rnaseq
 
 # Installing via install_bioc.sh
 #ARG DESEQ_VERSION=1.10.1
+#ARG CUMMERBUND_VERSION=2.4.1-1
+#ARG EDGER_VERSION=3.4.2+dfsg-2
 
 # Using Bedtools master branch on Github, which is v2.26.0 with some bugfixes
 #ARG BEDTOOLS_VERSION=2.26.0
@@ -62,14 +62,19 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 	fastqc \
 	fastx-toolkit \
 	gfortran \
+	libbz2-dev \
+	libcurl4-openssl-dev \
 	libmagic-dev \
 	libmysqlclient-dev \
 	libncurses5-dev \
 	libncursesw5-dev \
+	libpcre3 \
+	libpcre3-dev \
 	libpng-dev \
 	libssl-dev \
 	libxml2 \
 	libxml2-dev \
+	liblzma-dev \
 	mysql-client-5.5 \
 	mysql-client-core-5.5 \
 	openssl \
@@ -78,8 +83,6 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 	python-htseq \
 	python-numpy \
 	python-pip \
-	r-bioc-cummerbund \
-	r-bioc-edger \
 	rsync \
 	samtools \
 	tophat \
@@ -166,9 +169,9 @@ RUN git clone $UCSC_UTILS \
 	&& chmod 600 /root/.hg.conf
 
 #--------------------------------------------------------------------------------
-# DESeq, EdgeR, and CummeRbund (also R itself)
-COPY install_deseq.sh /tmp/.
-RUN /tmp/install_deseq.sh
+# DESeq, EdgeR, and CummeRbund
+COPY install_bioc.sh /tmp/.
+RUN /tmp/install_bioc.sh
 
 #--------------------------------------------------------------------------------
 # PROJECT REPOSITORY SETUP
