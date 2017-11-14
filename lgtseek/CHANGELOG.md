@@ -2,8 +2,8 @@
 
 Note: This CHANGELOG is reflective of Docker versions, not the GitHub tags of the Ergatis-Docker repository
 
+## v1.4 (November 14, 2017)
 * Renamed setup\_container.sh to launch\_lgtseek.sh.  In addition, got rid of the interactive setup in favor of simple command line options instead.  Some options, such as use-case and input file location, were removed since they were redundant with those same options in the UI.
-* The pipeline creation UI now accepts uploads instead of text boxes for file input.  Keep in mind this copies the file in the container, rather than accesses a mount.  I also realize that there may be some difficulty in uploading some big files, and I may make modifications depending on if this is ineffective, or if the PI wants me too :-)
 * All 4 use-cases will run BLASTN on the various classifications of alignments (LGT, all-donor, all-recipient, etc.)
 
 ## v1.3 (March 8, 2017)
