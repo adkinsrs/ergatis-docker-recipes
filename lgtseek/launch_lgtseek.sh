@@ -3,16 +3,31 @@
 function print_usage {
     progname=`basename $0`
     cat << END
-usage: $progname -b </path/to/blast/db/dir> -d <db_prefix> -o </path/to/store/output_repository> -p <HOST_IP>
+usage: $progname -b </path/to/blast/db/dir> -B <db_prefix> -o </path/to/store/output_repository> -p <HOST_IP> -d <DONOR_INPUT_DIRECTORY> -r <RECIPIENT_INPUT_DIRECTORY> -R <REFSEQ_INPUT_DIRECTORY>
+
+Note - at least one of a donor input directory (-d) or a recipient input directory (-r) must be provided
+
+The required input directories is depending on the LGTSeek use case you wish to employ
+Use Case 1 - Good donor reference and good LGT-free recipient reference
+	-d and -r options required
+Use Case 2 - Good donor reference and good LGT-infected recipient reference
+	-d and -r options required
+Use Case 3 - Good donor reference but unknown recipient reference
+	-d  option required
+Use Case 4 - Good recipient reference but unknown donor reference
+	-r and -R options required
 END
     exit 1
 }
 
-while getopts "b:d:o:p:" opt
+while getopts "b:D:d:r:R:o:p:" opt
 do
     case $opt in
         b) blast_db_dir=$OPTARG;;
-        d) blast_db=$OPTARG;;
+        D) blast_db=$OPTARG;;
+        d) donor_path=$OPTARG;;
+        r) recipient_path=$OPTARG;;
+        R) refseq_path=$OPTARG;;
         o) output_source=$OPTARG;;
         p) ip_host=$OPTARG;;
     esac
@@ -38,6 +53,41 @@ if [ -z "$output_source" ]; then
     print_usage
 fi
 
+if [[ -z $donor_path ]] && [[ -z $recipient_path ]]; then
+    echo "All LGTSeek use-cases require either the -d or -r option, or both.  Neither were provided."
+    print_usage
+fi
+
+if [[ -z $donor_path ]]; then
+    donor_path=""
+else
+	if [[ $donor_path == ..* ]]; then 
+		donor_path=../$donor_path
+	elif [[ $donor_path == .* ]]; then
+		donor_path=.$donor_path
+	fi
+fi
+
+if [[ -z $recipient_path ]]; then
+    recipient_path=""
+else
+	if [[ $recipient_path == ..* ]]; then 
+		recipient_path=../$recipient_path
+	elif [[ $recipient_path == .* ]]; then
+		recipient_path=.$recipient_path
+	fi
+fi
+
+if [[ -z $refseq_path ]]; then
+    refseq_path=""
+else
+	if [[ $refseq_path == ..* ]]; then 
+		refseq_path=../$refseq_path
+	elif [[ $refseq_path == .* ]]; then
+		refseq_path=.$refseq_path
+	fi
+fi
+
 #########################
 # MAIN
 #########################
@@ -60,6 +110,10 @@ perl -i -pe "s|###BLAST_DB_DIR###|$blast_db_dir|" $docker_compose
 perl -i -pe "s|###BLAST_DB###|/mnt/blast/$blast_db|" $blastn_plus_config
 perl -i -pe "s|###OUTPUT_DATA###|$output_source|" $docker_compose
 perl -i -pe "s|###IP_HOST###|$ip_host|" $docker_compose
+perl -i -pe "s|###DONOR_MNT###|$donor_path|" $docker_compose
+perl -i -pe "s|###RECIPIENT_MNT###|$recipient_path|" $docker_compose
+perl -i -pe "s|###REFSEQ_MNT###|$refseq_path|" $docker_compose
+
 
 # Remove leftover template ### lines from compose file
 perl -i -ne 'print unless /###/;' $docker_compose
