@@ -200,16 +200,18 @@ RUN mkdir -p /opt/projects/$PROJECT \
 	&& mkdir -m 0777 /opt/projects/$PROJECT/workflow/project_id_repository \
 	&& mkdir -m 0777 /opt/projects/$PROJECT/workflow/runtime \
 	&& mkdir -m 0777 /opt/projects/$PROJECT/workflow/runtime/pipeline \
+    #&& mkdir -m 0777 /opt/projects/$PROJECT/output_repository/gather_lgtseek_files \
 	&& touch /opt/projects/$PROJECT/workflow/project_id_repository/valid_id_repository \
 	&& chmod 0666 /opt/projects/$PROJECT/workflow/project_id_repository/valid_id_repository \
-	&& cp /tmp/project.config /opt/projects/$PROJECT/workflow/. \
-    && mkdir -m 0777 /mnt/input_data
+	&& cp /tmp/project.config /opt/projects/$PROJECT/workflow/.
 
 # Making this as a volume in case we'd like to pass this data to another image
-VOLUME /opt/projects/$PROJECT/output_repository/gather_lgtview_files/
+VOLUME /opt/projects/$PROJECT/output_repository/gather_lgtseek_files/
 
 # Change to root for last bits
 USER root
+RUN mkdir -m 0777 /mnt/input_data
+
 #--------------------------------------------------------------------------------
 # INSTALL PIPELINE
 COPY build_$PROJECT.pl /tmp/.
@@ -220,10 +222,12 @@ RUN /usr/bin/perl /tmp/build_$PROJECT.pl /opt/ergatis \
 # PIPELINE_CHANGES - Files that need to deviate from the installed lgtseek pipeline in order to function in Docker
 
 COPY taxdump /local/db/
-COPY changed_pipeline_files/blast2lca.lgt.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/blast2lca.lgt.config
-COPY changed_pipeline_files/blast_lgt_finder.lgt.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/blast_lgt_finder.lgt.config
+COPY changed_pipeline_files/blast2lca.lgt_d.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/blast2lca.lgt_d.config
+COPY changed_pipeline_files/blast2lca.lgt_r.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/blast2lca.lgt_r.config
+COPY changed_pipeline_files/blast_lgt_finder.lgt_d.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/blast_lgt_finder.lgt_d.config
+COPY changed_pipeline_files/blast_lgt_finder.lgt_r.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/blast_lgt_finder.lgt_r.config
 COPY changed_pipeline_files/sam2lca.lgt.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/sam2lca.lgt.config
-COPY changed_pipeline_files/sam2lca.mb.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/sam2lca.mb.config
+#COPY changed_pipeline_files/sam2lca.mb.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/sam2lca.mb.config
 COPY changed_pipeline_files/sam2lca.xml /opt/ergatis/docs/sam2lca.xml
 
 # Set number of parallel runs for changed files

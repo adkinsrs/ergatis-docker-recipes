@@ -101,7 +101,8 @@ cp ${docker_compose}.tmpl $docker_compose
 cat $mongo_tmpl >> $docker_compose
 
 # Copy template to production 
-blastn_plus_config=./docker_templates/blastn_plus.nt.config
+blastn_plus_d_config=./docker_templates/blastn_plus.nt_d.config
+blastn_plus_r_config=./docker_templates/blastn_plus.nt_r.config
 cp ${blastn_plus_config}.tmpl $blastn_plus_config
 
 remote=0 #For now, hardcoding to 0
@@ -134,7 +135,8 @@ $dc -f $docker_compose up -d
 printf  "Docker container is done building!\n"
 printf  "Next it's time to customize some things within the container\n\n";
 
-docker cp $blastn_plus_config dockertemplates_ergatis_1:/opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/
+docker cp $blastn_plus_d_config dockertemplates_ergatis_1:/opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/
+docker cp $blastn_plus_r_config dockertemplates_ergatis_1:/opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/
 
 printf  "\nDocker container is ready for use!\n"
 printf  "In order to build the LGTSeek pipeline please point your browser to http://${ip_address}:8080/pipeline_builder\n"
