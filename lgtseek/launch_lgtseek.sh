@@ -105,8 +105,6 @@ blastn_plus_d_config=./docker_templates/blastn_plus.nt_d.config
 blastn_plus_r_config=./docker_templates/blastn_plus.nt_r.config
 cp ${blastn_plus_config}.tmpl $blastn_plus_config
 
-remote=0 #For now, hardcoding to 0
-perl -i -pe "s|###REMOTE###|$remote|" $blastn_plus_config
 perl -i -pe "s|###BLAST_DB_DIR###|$blast_db_dir|" $docker_compose
 perl -i -pe "s|###BLAST_DB###|/mnt/blast/$blast_db|" $blastn_plus_config
 perl -i -pe "s|###OUTPUT_DATA###|$output_source|" $docker_compose
