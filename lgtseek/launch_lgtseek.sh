@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function print_usage {
+print_usage() {
     progname=`basename $0`
     cat << END
 usage: $progname -b </path/to/blast/db/dir> -B <db_prefix> -o </path/to/store/output_repository> -p <HOST_IP> -d <DONOR_INPUT_DIRECTORY> -r <RECIPIENT_INPUT_DIRECTORY> -R <REFSEQ_INPUT_DIRECTORY>
@@ -20,11 +20,11 @@ END
     exit 1
 }
 
-while getopts "b:D:d:r:R:o:p:" opt
+while getopts "b:B:d:r:R:o:p:" opt
 do
     case $opt in
         b) blast_db_dir=$OPTARG;;
-        D) blast_db=$OPTARG;;
+        B) blast_db=$OPTARG;;
         d) donor_path=$OPTARG;;
         r) recipient_path=$OPTARG;;
         R) refseq_path=$OPTARG;;
@@ -43,7 +43,7 @@ if [ -z "$blast_db" ]; then
     blast_db="nt"
 fi
 
-if [ -z "$blast_dir" ]; then
+if [ -z "$blast_db_dir" ]; then
     echo "Must provide 'blast_db_dir' option."
     print_usage
 fi
