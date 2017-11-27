@@ -13,6 +13,9 @@ services:
     volumes:
       - ###BLAST_DB_DIR###:/mnt/blast:ro
       - ###OUTPUT_DATA###:/mnt/output_data
+      - ###DONOR_MNT###:/mnt/input_data/donor_ref
+      - ###RECIPIENT_MNT###:/mnt/input_data/recipient_ref
+      - ###REFSEQ_MNT###:/mnt/input_data/refseq_ref
     volumes_from:
       - mongodata
 
