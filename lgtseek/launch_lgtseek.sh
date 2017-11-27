@@ -92,17 +92,20 @@ fi
 # MAIN
 #########################
 
+# Directory name of current script
+DIR="$(dirname "$(readlink -f "$0")")"
+
 # Copy the template over to a production version of the docker-compose file
-docker_compose=./docker_templates/docker-compose.yml
-mongo_tmpl=./docker_templates/mongodb.tmpl
+docker_compose=${DIR}/docker_templates/docker-compose.yml
+mongo_tmpl=${DIR}/docker_templates/mongodb.tmpl
 cp ${docker_compose}.tmpl $docker_compose
 
 # Append mongodb part of template to the main docker-compose file
 cat $mongo_tmpl >> $docker_compose
 
 # Copy template to production 
-blastn_plus_d_config=./docker_templates/blastn_plus.nt_d.config
-blastn_plus_r_config=./docker_templates/blastn_plus.nt_r.config
+blastn_plus_d_config=${DIR}/docker_templates/blastn_plus.nt_d.config
+blastn_plus_r_config=${DIR}/docker_templates/blastn_plus.nt_r.config
 cp ${blastn_plus_config}.tmpl $blastn_plus_config
 
 perl -i -pe "s|###BLAST_DB_DIR###|$blast_db_dir|" $docker_compose
