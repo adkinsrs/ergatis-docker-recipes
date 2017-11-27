@@ -110,7 +110,8 @@ cp ${blastn_plus_d_config}.tmpl $blastn_plus_d_config
 cp ${blastn_plus_r_config}.tmpl $blastn_plus_r_config
 
 perl -i -pe "s|###BLAST_DB_DIR###|$blast_db_dir|" $docker_compose
-perl -i -pe "s|###BLAST_DB###|/mnt/blast/$blast_db|" $blastn_plus_config
+perl -i -pe "s|###BLAST_DB###|/mnt/blast/$blast_db|" $blastn_plus_d_config
+perl -i -pe "s|###BLAST_DB###|/mnt/blast/$blast_db|" $blastn_plus_r_config
 perl -i -pe "s|###OUTPUT_DATA###|$output_source|" $docker_compose
 perl -i -pe "s|###IP_HOST###|$ip_host|" $docker_compose
 perl -i -pe "s|###DONOR_MNT###|$donor_path|" $docker_compose
