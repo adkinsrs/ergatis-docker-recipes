@@ -106,7 +106,8 @@ cat $mongo_tmpl >> $docker_compose
 # Copy template to production 
 blastn_plus_d_config=${DIR}/docker_templates/blastn_plus.nt_d.config
 blastn_plus_r_config=${DIR}/docker_templates/blastn_plus.nt_r.config
-cp ${blastn_plus_config}.tmpl $blastn_plus_config
+cp ${blastn_plus_d_config}.tmpl $blastn_plus_d_config
+cp ${blastn_plus_r_config}.tmpl $blastn_plus_r_config
 
 perl -i -pe "s|###BLAST_DB_DIR###|$blast_db_dir|" $docker_compose
 perl -i -pe "s|###BLAST_DB###|/mnt/blast/$blast_db|" $blastn_plus_config
