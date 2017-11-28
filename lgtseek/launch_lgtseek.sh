@@ -129,6 +129,6 @@ docker cp $blastn_plus_d_config dockertemplates_ergatis_1:/opt/ergatis/pipeline_
 docker cp $blastn_plus_r_config dockertemplates_ergatis_1:/opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/
 
 printf  "\nDocker container is ready for use!\n"
-printf  "In order to build the LGTSeek pipeline please point your browser to http://${ip_address}:8080/pipeline_builder\n"
+printf  "In order to build the LGTSeek pipeline please point your browser to http://${ip_host}:8080/pipeline_builder\n"
 
 exit 0
