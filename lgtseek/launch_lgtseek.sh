@@ -114,10 +114,15 @@ perl -i -pe "s|###BLAST_DB###|/mnt/blast/$blast_db|" $blastn_plus_d_config
 perl -i -pe "s|###BLAST_DB###|/mnt/blast/$blast_db|" $blastn_plus_r_config
 perl -i -pe "s|###OUTPUT_DATA###|$output_source|" $docker_compose
 perl -i -pe "s|###IP_HOST###|$ip_host|" $docker_compose
-perl -i -pe "s|###DONOR_MNT###|$donor_path|" $docker_compose
-perl -i -pe "s|###RECIPIENT_MNT###|$recipient_path|" $docker_compose
-perl -i -pe "s|###REFSEQ_MNT###|$refseq_path|" $docker_compose
-
+if [[ -s $donor_path ]]; then
+	perl -i -pe "s|###DONOR_MNT###|$donor_path|" $docker_compose
+fi
+if [[ -s $recipient_path ]]; then
+	perl -i -pe "s|###RECIPIENT_MNT###|$recipient_path|" $docker_compose
+fi
+if [[ -s $refseq_path ]]; then
+	perl -i -pe "s|###REFSEQ_MNT###|$refseq_path|" $docker_compose
+fi
 
 # Remove leftover template ### lines from compose file
 perl -i -ne 'print unless /###/;' $docker_compose
