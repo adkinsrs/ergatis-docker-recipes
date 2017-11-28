@@ -60,32 +60,14 @@ fi
 
 if [[ -z $donor_path ]]; then
     donor_path=""
-else
-	if [[ $donor_path == ..* ]]; then 
-		donor_path=../$donor_path
-	elif [[ $donor_path == .* ]]; then
-		donor_path=.$donor_path
-	fi
 fi
 
 if [[ -z $recipient_path ]]; then
     recipient_path=""
-else
-	if [[ $recipient_path == ..* ]]; then 
-		recipient_path=../$recipient_path
-	elif [[ $recipient_path == .* ]]; then
-		recipient_path=.$recipient_path
-	fi
 fi
 
 if [[ -z $refseq_path ]]; then
     refseq_path=""
-else
-	if [[ $refseq_path == ..* ]]; then 
-		refseq_path=../$refseq_path
-	elif [[ $refseq_path == .* ]]; then
-		refseq_path=.$refseq_path
-	fi
 fi
 
 #########################
