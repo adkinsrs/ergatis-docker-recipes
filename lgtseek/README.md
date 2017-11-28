@@ -28,10 +28,11 @@ In addition, the input file data can come from three sources.  These are:
 * The SRA ID provided is downloaded from the Sequence Read Archive. This field can be any of the following:
   * SRP - Study ID
   * SRR - Run ID
-  * SRS - Sample ID
-  * SRX - Experiment ID
 * A FASTQ input file or files associated with a single sample.  If passing paired-end files, these files should end in "\_1.fastq"/"\_2.fastq" or "R1.fastq"/"R2.fastq".  Can be compressed with GZIP before uploading
 * A BAM input file or files.  Can be compressed with GZIP before uploading
+
+#### Special note for SRS (sample) or SRX (experiment) IDs
+Normally the way SRA files are acquired is by using a 'wget' command on the NCBI Trace FTP site.  However they have removed the SRS and SRX IDs from the FTP directory due to the growing size of the SRA database.  So these IDs must be converted into either SRP (study) or SRR (run) IDs which can be accomplished by searching for the SRS or SRX ID from the Run Selector at https://trace.ncbi.nlm.nih.gov/Traces/study/?go=home and using that as the input.
 
 ### BLASTN database
 For all use-cases, the pipeline will perform pairwise BLASTN analysis using NCBI-blast+.  While any database can be specified to be BLASTed against, the ‘nt’ database is the recommended choice.  If you plan on running one of these use-cases, then you need to have a database on your local machine that has already been prepped with either ‘formatdb’ or ‘blastdbcmd’, so that can be mounted to a directory in the Docker container.
