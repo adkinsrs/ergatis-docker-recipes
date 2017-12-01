@@ -45,6 +45,9 @@ If you wish to both configure and start a Docker container, then run
 
 This script will pass these options to a custom docker-compose file which the shell script will then use to create containers from a few Docker images.  For the -b, -d, -r, -R and the -o arguments, make sure you specify the FULL PATH.  If you are running locally, then the <HOST_IP> for -p can be set to "localhost" or the argument can be omitted entirely
 
+### If running on Amazon EC2...
+If LGTSeek is to be run on an Amazon EC2 instance, the IP host to be provided should be the public IPv4 or hostname, not the private one. 
+
 ## After the containers start...
 
 Verify the 2 docker containers are up by running:
