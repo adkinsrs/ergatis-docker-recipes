@@ -3,9 +3,14 @@
 print_usage() {
     progname=`basename $0`
     cat << END
-usage: $progname -b </path/to/blast/db/dir> -B <db_prefix> -o </path/to/store/output_repository> -p <HOST_IP> -d <DONOR_INPUT_DIRECTORY> -r <RECIPIENT_INPUT_DIRECTORY> -R <REFSEQ_INPUT_DIRECTORY>
+usage: $progname -b </path/to/blast/db/dir> -B <db_prefix> -i </path/to/input/samples> -o </path/to/store/output_repository> -p <HOST_IP> -d <DONOR_INPUT_DIRECTORY> -r <RECIPIENT_INPUT_DIRECTORY> -R <REFSEQ_INPUT_DIRECTORY> -a <ACCESSION_LIST_DIRECTORY>
 
-Note - at least one of a donor input directory (-d) or a recipient input directory (-r) must be provided
+Note - at least one of a donor input directory (-d) or a recipient input directory (-r) must be provided.
+
+REQUIRED FIELDS:
+-a)  A directory path to both bacteria and eukaryotic accession lists
+-o)  A directory to store the resulting output data files
+-i)  Location of the input BAM or FASTQ file(s) if electing to use them instead of SRA
 
 The required input directories is depending on the LGTSeek use case you wish to employ
 Use Case 1 - Good donor reference and good LGT-free recipient reference
@@ -20,22 +25,37 @@ END
     exit 1
 }
 
-while getopts "b:B:d:r:R:o:p:" opt
+while getopts ":a:b:B:d:r:R:i:o:p:" opt
 do
     case $opt in
-        b) blast_db_dir=$OPTARG;;
-        B) blast_db=$OPTARG;;
-        d) donor_path=$OPTARG;;
-        r) recipient_path=$OPTARG;;
-        R) refseq_path=$OPTARG;;
-        o) output_source=$OPTARG;;
-        p) ip_host=$OPTARG;;
+        a ) acc_list_path=$OPTARG;;
+        b ) blast_db_dir=$OPTARG;;
+        B ) blast_db=$OPTARG;;
+        d ) donor_path=$OPTARG;;
+        r ) recipient_path=$OPTARG;;
+        R ) refseq_path=$OPTARG;;
+        i ) input_source=$OPTARG;;
+        o ) output_source=$OPTARG;;
+        p ) ip_host=$OPTARG;;
+        \? )
+          echo "Invalid option: $OPTARG" 1>&2
+          print_usage;;
+        : )
+          echo "Invalid option: $OPTARG requires an argument" 1>&2
+          print_usage;;
     esac
 done
+shift $((OPTIND -1))
+
 
 if [ -z "$ip_host" ]; then
     echo "Setting IP to 'localhost'"
     ip_host="localhost"
+fi
+
+if [ -z "$acc_list_path" ]; then
+    echo "Must provide path that houses bacteria and eukaryotic accession ID lists (-a)"
+    print_usage
 fi
 
 if [ -z "$blast_db" ]; then
@@ -46,6 +66,11 @@ fi
 if [ -z "$blast_db_dir" ]; then
     echo "Must provide 'blast_db_dir' option."
     print_usage
+fi
+
+if [ -z "$input_source" ]; then
+    echo "Did not provide 'input_source' option.  Must use SRA input"
+    $input_source="none"
 fi
 
 if [ -z "$output_source" ]; then
@@ -74,8 +99,13 @@ fi
 # MAIN
 #########################
 
+unamestr=`uname`
 # Directory name of current script
-DIR="$(dirname "$(readlink -f "$0")")"
+if [[ "$unamestr" == 'Darwin' ]]; then
+  DIR="$(dirname "$(stat -f "$0")")"
+else
+  DIR="$(dirname "$(readlink -f "$0")")"
+fi
 
 # Copy the template over to a production version of the docker-compose file
 docker_compose=${DIR}/docker_templates/docker-compose.yml
@@ -85,15 +115,9 @@ cp ${docker_compose}.tmpl $docker_compose
 # Append mongodb part of template to the main docker-compose file
 cat $mongo_tmpl >> $docker_compose
 
-# Copy template to production 
-blastn_plus_d_config=${DIR}/docker_templates/blastn_plus.nt_d.config
-blastn_plus_r_config=${DIR}/docker_templates/blastn_plus.nt_r.config
-cp ${blastn_plus_d_config}.tmpl $blastn_plus_d_config
-cp ${blastn_plus_r_config}.tmpl $blastn_plus_r_config
-
+perl -i -pe "s|###ACC_MNT###|$acc_list_path|" $docker_compose
 perl -i -pe "s|###BLAST_DB_DIR###|$blast_db_dir|" $docker_compose
-perl -i -pe "s|###BLAST_DB###|/mnt/blast/$blast_db|" $blastn_plus_d_config
-perl -i -pe "s|###BLAST_DB###|/mnt/blast/$blast_db|" $blastn_plus_r_config
+perl -i -pe "s|###INPUT_DATA###|$input_source|" $docker_compose
 perl -i -pe "s|###OUTPUT_DATA###|$output_source|" $docker_compose
 perl -i -pe "s|###IP_HOST###|$ip_host|" $docker_compose
 if [[ -s $donor_path ]]; then
@@ -125,8 +149,8 @@ $dc -f $docker_compose up -d
 printf  "Docker container is done building!\n"
 printf  "Next it's time to customize some things within the container\n\n";
 
-docker cp $blastn_plus_d_config dockertemplates_ergatis_1:/opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/
-docker cp $blastn_plus_r_config dockertemplates_ergatis_1:/opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/
+#replace_cores=$(find /opt/ergatis/pipeline_templates -type f -exec /usr/bin/perl -pi -e 's/\$;NODISTRIB\$;\s?=\s?0/\$;NODISTRIB\$;='$num_cores'/g' {} \;)
+#docker exec ergatis_lgtseek_1 $replace_cores
 
 printf  "\nDocker container is ready for use!\n"
 printf  "In order to build the LGTSeek pipeline please point your browser to http://${ip_host}:8080/pipeline_builder\n"
