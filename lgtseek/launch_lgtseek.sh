@@ -117,9 +117,11 @@ cat $mongo_tmpl >> $docker_compose
 
 perl -i -pe "s|###ACC_MNT###|$acc_list_path|" $docker_compose
 perl -i -pe "s|###BLAST_DB_DIR###|$blast_db_dir|" $docker_compose
-perl -i -pe "s|###INPUT_DATA###|$input_source|" $docker_compose
 perl -i -pe "s|###OUTPUT_DATA###|$output_source|" $docker_compose
 perl -i -pe "s|###IP_HOST###|$ip_host|" $docker_compose
+if [[ -s $input_source ]]; then
+    perl -i -pe "s|###INPUT_DATA###|$input_source|" $docker_compose
+fi
 if [[ -s $donor_path ]]; then
 	perl -i -pe "s|###DONOR_MNT###|$donor_path|" $docker_compose
 fi
