@@ -70,7 +70,7 @@ fi
 
 if [ -z "$input_source" ]; then
     echo "Did not provide 'input_source' option.  Must use SRA input"
-    $input_source="none"
+    input_source="none"
 fi
 
 if [ -z "$output_source" ]; then
