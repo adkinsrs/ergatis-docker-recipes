@@ -2,6 +2,14 @@
 
 Note: This CHANGELOG is reflective of Docker versions, not the GitHub tags of the Ergatis-Docker repository
 
+## v1.5 (April 13, 2018)
+* Modified pipelines
+  * All not run extra analyses for non-putative-LGT reads (such as all-donor, all-recipient)
+  * Putative LGT reads will be validated acros two BLASTN searches, one against metazoan accessions, and one against bacterial accessions
+  * LGT will be validated if one read has hit to bacteria and other read has hit to metazoa
+  * This should speed up the back end of the pipeline
+* Removed Refseq reference requirement for recipient-only use case
+
 ## v1.4 (November 14, 2017)
 * Renamed setup\_container.sh to launch\_lgtseek.sh.  In addition, got rid of the interactive setup in favor of simple command line options instead.  Some options, such as use-case and input file location, were removed since they were redundant with those same options in the UI.
 * All 4 use-cases will run BLASTN on the various classifications of alignments (LGT, all-donor, all-recipient, etc.)

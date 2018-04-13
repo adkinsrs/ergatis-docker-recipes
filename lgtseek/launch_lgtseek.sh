@@ -3,7 +3,7 @@
 print_usage() {
     progname=`basename $0`
     cat << END
-usage: $progname -b </path/to/blast/db/dir> -B <db_prefix> -i </path/to/input/samples> -o </path/to/store/output_repository> -p <HOST_IP> -d <DONOR_INPUT_DIRECTORY> -r <RECIPIENT_INPUT_DIRECTORY> -R <REFSEQ_INPUT_DIRECTORY> -a <ACCESSION_LIST_DIRECTORY>
+usage: $progname -b </path/to/blast/db/dir> -B <db_prefix> -i </path/to/input/samples> -o </path/to/store/output_repository> -p <HOST_IP> -d <DONOR_INPUT_DIRECTORY> -r <RECIPIENT_INPUT_DIRECTORY> -a <ACCESSION_LIST_DIRECTORY>
 
 Note - at least one of a donor input directory (-d) or a recipient input directory (-r) must be provided.
 
@@ -20,7 +20,7 @@ Use Case 2 - Good donor reference and good LGT-infected recipient reference
 Use Case 3 - Good donor reference but unknown recipient reference
 	-d  option required
 Use Case 4 - Good recipient reference but unknown donor reference
-	-r and -R options required
+	-r option required
 END
     exit 1
 }
@@ -33,7 +33,6 @@ do
         B ) blast_db=$OPTARG;;
         d ) donor_path=$OPTARG;;
         r ) recipient_path=$OPTARG;;
-        R ) refseq_path=$OPTARG;;
         i ) input_source=$OPTARG;;
         o ) output_source=$OPTARG;;
         p ) ip_host=$OPTARG;;
@@ -91,10 +90,6 @@ if [[ -z $recipient_path ]]; then
     recipient_path=""
 fi
 
-if [[ -z $refseq_path ]]; then
-    refseq_path=""
-fi
-
 #########################
 # MAIN
 #########################
@@ -127,9 +122,6 @@ if [[ -s $donor_path ]]; then
 fi
 if [[ -s $recipient_path ]]; then
 	perl -i -pe "s|###RECIPIENT_MNT###|$recipient_path|" $docker_compose
-fi
-if [[ -s $refseq_path ]]; then
-	perl -i -pe "s|###REFSEQ_MNT###|$refseq_path|" $docker_compose
 fi
 
 # Remove leftover template ### lines from compose file

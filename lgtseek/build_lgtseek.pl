@@ -39,7 +39,7 @@ sub clear_export_area {
 sub clear_install_area {
     my $base = shift;
 
-    for my $subdir ( qw( bin docs lib pipeline_templates) ) {
+    for my $subdir ( qw( bin docs lib pipeline_templates pipeline_builder) ) {
         rmtree("$base/$subdir");
     }
     
