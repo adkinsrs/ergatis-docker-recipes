@@ -3,7 +3,7 @@
 print_usage() {
     progname=`basename $0`
     cat << END
-usage: $progname -b </path/to/blast/db/dir> -B <db_prefix> -i </path/to/input/samples> -o </path/to/store/output_repository> -p <HOST_IP> -d <DONOR_INPUT_DIRECTORY> -r <RECIPIENT_INPUT_DIRECTORY> -a <ACCESSION_LIST_DIRECTORY>
+usage: $progname -b </path/to/blast/db/dir> -i </path/to/input/samples> -o </path/to/store/output_repository> -p <HOST_IP> -d <DONOR_INPUT_DIRECTORY> -r <RECIPIENT_INPUT_DIRECTORY> -a <ACCESSION_LIST_DIRECTORY>
 
 Note - at least one of a donor input directory (-d) or a recipient input directory (-r) must be provided.
 
@@ -11,6 +11,7 @@ REQUIRED FIELDS:
 -a)  A directory path to both bacteria and eukaryotic accession lists
 -o)  A directory to store the resulting output data files
 -i)  Location of the input BAM or FASTQ file(s) if electing to use them instead of SRA
+-b)  The path to an 'nt' BLAST database, stored locally
 
 The required input directories is depending on the LGTSeek use case you wish to employ
 Use Case 1 - Good donor reference and good LGT-free recipient reference
@@ -30,7 +31,6 @@ do
     case $opt in
         a ) acc_list_path=$OPTARG;;
         b ) blast_db_dir=$OPTARG;;
-        B ) blast_db=$OPTARG;;
         d ) donor_path=$OPTARG;;
         r ) recipient_path=$OPTARG;;
         i ) input_source=$OPTARG;;
@@ -55,11 +55,6 @@ fi
 if [ -z "$acc_list_path" ]; then
     echo "Must provide path that houses bacteria and eukaryotic accession ID lists (-a)"
     print_usage
-fi
-
-if [ -z "$blast_db" ]; then
-    echo "Setting BLASTN database to 'nt'"
-    blast_db="nt"
 fi
 
 if [ -z "$blast_db_dir" ]; then

@@ -9,6 +9,7 @@ Note: This CHANGELOG is reflective of Docker versions, not the GitHub tags of th
   * LGT will be validated if one read has hit to bacteria and other read has hit to metazoa
   * This should speed up the back end of the pipeline
 * Removed Refseq reference requirement for recipient-only use case
+* 'nt' BLAST database will be required, stored locally.
 
 ## v1.4 (November 14, 2017)
 * Renamed setup\_container.sh to launch\_lgtseek.sh.  In addition, got rid of the interactive setup in favor of simple command line options instead.  Some options, such as use-case and input file location, were removed since they were redundant with those same options in the UI.
