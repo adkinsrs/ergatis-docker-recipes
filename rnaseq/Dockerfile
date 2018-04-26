@@ -34,8 +34,11 @@ ARG PROJECT=rnaseq
 #ARG BEDTOOLS_DOWNLOAD_URL=https://github.com/arq5x/bedtools2/releases/download/v${BEDTOOLS_VERSION}/bedtools-${BEDTOOLS_VERSION}.tar.gz
 ARG BEDTOOLS_DOWNLOAD_URL=https://github.com/arq5x/bedtools2.git
 
-ARG CUFFLINKS_VERSION=2.0.2
+ARG CUFFLINKS_VERSION=2.2.1
 ARG CUFFLINKS_DOWNLOAD_URL=http://cole-trapnell-lab.github.io/cufflinks/assets/downloads/cufflinks-${CUFFLINKS_VERSION}.Linux_x86_64.tar.gz
+
+ARG HISAT2_VERSION=2.1.0
+ARG HISAT2_DOWNLOAD_URL=ftp://ftp.ccb.jhu.edu/pub/infphilo/hisat2/downloads/hisat2-${HISAT2_VERSION}-Linux_x86_64.zip
 
 ARG HTSLIB_VERSION=1.3.1
 ARG HTSLIB_DOWNLOAD_URL=https://github.com/samtools/htslib/archive/${HTSLIB_VERSION}.tar.gz
@@ -100,9 +103,18 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
 #--------------------------------------------------------------------------------
-# BEDTOOLS - install in /opt/packages/bedtools
+# HISAT2 - install in /opt/packages/hisat2
 
 WORKDIR /usr/src
+
+RUN wget $HISAT2_DOWNLOAD_URL -O hisat2.zip \
+	&& unzip hisat2.zip \
+	&& ln -s /usr/src/hisat2-${HISAT2_VERSION} /opt/packages/hisat2 \
+	&& chmod 755 /opt/packages/hisat2/*
+
+#--------------------------------------------------------------------------------
+# BEDTOOLS - install in /opt/packages/bedtools
+
 
 RUN git clone $BEDTOOLS_DOWNLOAD_URL \
 	&& cd bedtools2 \

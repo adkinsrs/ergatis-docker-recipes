@@ -15,7 +15,7 @@ ARG PROJECT=lgtseek
 #--------------------------------------------------------------------------------
 # SOFTWARE
 
-ARG BWA_VERSION=0.7.15
+ARG BWA_VERSION=0.7.17
 ARG BWA_DOWNLOAD_URL=https://github.com/lh3/bwa/archive/v${BWA_VERSION}.tar.gz
 
 ARG NCBI_BLAST_VERSION=2.6.0
@@ -33,7 +33,7 @@ ARG PRINSEQ_DOWNLOAD_URL=https://sourceforge.net/projects/prinseq/files/standalo
 ARG SAMTOOLS_VERSION=1.3.1
 ARG SAMTOOLS_DOWNLOAD_URL=https://github.com/samtools/samtools/archive/${SAMTOOLS_VERSION}.tar.gz
 
-ARG SRA_VERSION=2.7.0
+ARG SRA_VERSION=2.9.0
 ARG SRA_DOWNLOAD_URL=https://github.com/ncbi/sra-tools/archive/${SRA_VERSION}.tar.gz
 
 # Giant RUN command to reduce layers created
@@ -81,7 +81,7 @@ WORKDIR /usr/src/bwa
 RUN curl -SL $BWA_DOWNLOAD_URL -o bwa.tar.gz \
 	&& tar --strip-components=1 -xvzf bwa.tar.gz -C /usr/src/bwa \
 	&& rm bwa.tar.gz \
-	&& make all \
+	&& make bwa \
 	&& ln -s /usr/src/bwa /opt/packages/bwa \
 	&& chmod 755 /opt/packages/bwa/*
 
@@ -111,7 +111,7 @@ RUN curl -SL $SAMTOOLS_DOWNLOAD_URL -o samtools.tar.gz \
 	&& aclocal -I./autoconf \
 	&& autoconf \
 	&& ./configure --prefix=/opt/packages/samtools \
-	&& make \
+	&& make samtools \
 	&& make install
 
 #--------------------------------------------------------------------------------
@@ -124,9 +124,9 @@ WORKDIR /usr/src
 # 2) Clone latest version of PicardTools from GitHub and install
 RUN update-ca-certificates -f \
 	&& git config --global http.sslVerify false \
-	&& git clone ${PICARD_DOWNLOAD_URL} \ 
+	&& git clone ${PICARD_DOWNLOAD_URL} \
 	&& cd /usr/src/picard \
-	&& git checkout tags/$PICARD_VERSION \ 
+	&& git checkout tags/$PICARD_VERSION \
 	&& ./gradlew shadowJar -Djavax.net.ssl.trustAnchors=/etc/ssl/certs/java/cacerts \
 	&& ln -s /usr/src/picard /opt/packages/picard
 
@@ -181,7 +181,7 @@ RUN curl -SL $SRA_DOWNLOAD_URL -o sra.tar.gz \
 WORKDIR /usr/src/ncbi/blast
 RUN curl -SL $NCBI_BLAST_DOWNLOAD_URL -o blast.tar.gz \
 	&& tar --strip-components=1 -xvzf blast.tar.gz -C /usr/src/ncbi/blast \
-	&& rm blast.tar.gz \ 
+	&& rm blast.tar.gz \
 	&& ln -s /usr/src/ncbi/blast/bin/* /usr/bin/
 
 #--------------------------------------------------------------------------------
@@ -215,7 +215,7 @@ RUN mkdir -m 0777 /mnt/input_data
 #--------------------------------------------------------------------------------
 # INSTALL PIPELINE
 COPY build_$PROJECT.pl /tmp/.
-RUN /usr/bin/perl /tmp/build_$PROJECT.pl /opt/ergatis \ 
+RUN /usr/bin/perl /tmp/build_$PROJECT.pl /opt/ergatis \
 	&& ln -s /opt/ergatis/pipeline_builder /var/www/html/pipeline_builder
 
 #--------------------------------------------------------------------------------
