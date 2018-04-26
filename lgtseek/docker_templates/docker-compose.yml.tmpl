@@ -4,7 +4,8 @@ services:
   ergatis:
     environment:
       - DOCKER_HOST=###IP_HOST###
-    image: adkinsrs/lgtseek:1.4
+    #image: adkinsrs/lgtseek:1.4
+    image: adkinsrs/lgtseek:latest
     links:
       - mongo
     mem_limit: 5120000000
@@ -16,8 +17,6 @@ services:
       - ###OUTPUT_DATA###:/mnt/output_data
       - ###DONOR_MNT###:/mnt/input_data/donor_ref
       - ###RECIPIENT_MNT###:/mnt/input_data/recipient_ref
-      - ###REFSEQ_MNT###:/mnt/input_data/refseq_ref
       - ###ACC_MNT###:/mnt/input_data/acc_list
-      - /Users/sadkins/bin/git/ergatis-pipelines/package-lgtseek/pipeline_builder:/opt/ergatis/pipeline_builder
     volumes_from:
       - mongodata

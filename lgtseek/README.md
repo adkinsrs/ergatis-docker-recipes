@@ -8,7 +8,7 @@ cd ./ergatis-docker-recipes/lgtseek
 ## Requisite input files for each use case
 ### Use Case 1 - Good donor reference and good LGT-free recipient reference
 * Donor reference (FASTA)
-* Recipient referenc (FASTA)e
+* Recipient reference (FASTA)
 
 ### Use Case 2 - Good donor reference but LGT-infected recipient reference
 * Donor reference (FASTA)
@@ -19,7 +19,6 @@ cd ./ergatis-docker-recipes/lgtseek
 
 ### Use Case 4 - Good recipient reference but unknown donor reference
 * Recipient reference (FASTA)
-* RefSeq reference (FASTA)
 
 For each reference, one or more fasta-formatted files will be accepted.
 
@@ -40,7 +39,7 @@ For all use-cases, the pipeline will perform pairwise BLASTN analysis using NCBI
 ## Setup and start a Docker container via shell
 If you wish to both configure and start a Docker container, then run 
 ```
-./launch_lgtseek.sh -b </path/to/blast/db/dir> -B <db_prefix> -o </path/to/store/output_repository> -p <HOST_IP> -d <DONOR_INPUT_DIRECTORY> -r <RECIPIENT_INPUT_DIRECTORY> -R <REFSEQ_INPUT_DIRECTORY>
+./launch_lgtseek.sh -b </path/to/blast/db/dir> -B <db_prefix> -o </path/to/store/output_repository> -p <HOST_IP> -d <DONOR_INPUT_DIRECTORY> -r <RECIPIENT_INPUT_DIRECTORY>
 ```
 
 This script will pass these options to a custom docker-compose file which the shell script will then use to create containers from a few Docker images.  For the -b, -d, -r, -R and the -o arguments, make sure you specify the FULL PATH.  If you are running locally, then the <HOST_IP> for -p can be set to "localhost" or the argument can be omitted entirely
