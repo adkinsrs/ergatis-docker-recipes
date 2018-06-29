@@ -4,15 +4,14 @@ print_usage()
 {
     progname=`basename $0`
     cat << END
-usage: $progname -i </path/to/input/dir> -o </path/to/store/output_repository> -p <HOST_IP>
+usage: $progname -i </path/to/input/dir> -p <HOST_IP>
 END
     exit 1
 }
 
-while getopts "o:i:p:" opt
+while getopts "i:p:" opt
 do
     case $opt in
-        o) output_source=$OPTARG;;
         i) input_source=$OPTARG;;
         p) ip_host=$OPTARG;;
     esac
@@ -21,11 +20,6 @@ done
 if [ -z "$ip_host" ]; then
     echo "Setting IP to 'localhost'"
     ip_host="localhost"
-fi
-
-if [ -z "$output_source" ]; then
-    echo "Must provide 'output_source' option."
-    print_usage
 fi
 
 if [ -z "$input_source" ]; then
@@ -42,7 +36,6 @@ docker_compose=./docker_templates/docker-compose.yml
 cp ${docker_compose}.tmpl $docker_compose
 
 perl -i -pe "s|###INPUT_SOURCE###|$input_source|" $docker_compose
-perl -i -pe "s|###OUTPUT_SOURCE###|$output_source|" $docker_compose
 perl -i -pe "s|###IP_HOST###|$ip_host|" $docker_compose
 
 # Remove leftover template ### lines from compose file

@@ -10,7 +10,6 @@ services:
     ports:
       - "8080:80"
     volumes:
-#      - ergatis_ini:/var/www/html/ergatis/cgi
       - ergatis_vol:/opt/ergatis
       - projects_vol:/opt/projects/rnaseq
       - perl5lib_vol:/usr/share/perl5
@@ -18,7 +17,6 @@ services:
       - scratch_vol:/usr/local/scratch
       - workflow_vol:/opt/workflow
       - ###INPUT_SOURCE###:/mnt/input_data
-      - ###OUTPUT_SOURCE###:/opt/projects/rnaseq/output_repository:rw
 
 # Container with the pipeline configuration UI 
   builder:
@@ -34,10 +32,9 @@ services:
       - ergatis
 
 volumes:
-#  - ergatis_ini:/var/www/html/ergatis/cgi
-  - ergatis_vol:/opt/ergatis
-  - projects_vol:/opt/projects/rnaseq
-  - perl5lib_vol:/usr/share/perl5
-  - perl5lib_vol2:/usr/lib/perl5
-  - scratch_vol:/usr/local/scratch
-  - workflow_vol:/opt/workflow
+  - ergatis_vol:
+  - projects_vol:
+  - perl5lib_vol:
+  - perl5lib_vol2:
+  - scratch_vol:
+  - workflow_vol
