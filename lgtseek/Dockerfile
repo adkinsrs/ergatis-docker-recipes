@@ -33,7 +33,7 @@ ARG PRINSEQ_DOWNLOAD_URL=https://sourceforge.net/projects/prinseq/files/standalo
 ARG SAMTOOLS_VERSION=1.3.1
 ARG SAMTOOLS_DOWNLOAD_URL=https://github.com/samtools/samtools/archive/${SAMTOOLS_VERSION}.tar.gz
 
-ARG SRA_VERSION=2.9.0
+ARG SRA_VERSION=2.9.1
 ARG SRA_DOWNLOAD_URL=https://github.com/ncbi/sra-tools/archive/${SRA_VERSION}.tar.gz
 
 # Giant RUN command to reduce layers created

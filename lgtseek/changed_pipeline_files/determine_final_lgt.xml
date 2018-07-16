@@ -50,7 +50,7 @@
 			</param>
 		</command>
 		<!--Processing-->
-		<commandSet type="distributed-serial">
+		<commandSet type="serial">
 			<state>incomplete</state>
 			<name>get final LGT distributed work</name>
 			<fileName>$;WORKFLOW_REPOSITORY$;/determine_final_lgt_distributed_work.xml.gz</fileName>
