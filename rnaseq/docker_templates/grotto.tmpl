@@ -1,0 +1,66 @@
+
+  bdbag:
+    command: ["/opt/wait/wait-for-it.sh", "rabbit:5672", "--", "/usr/bin/perl", "/opt/bdbag_listener.pl"]
+    depends_on:
+      - rabbit
+    environment:
+      - AMQP_ADDRESS=rabbit
+    image: apaala/bdbag_rabbit:latest
+    networks:
+      - rabbitmq
+    tty: true
+    volumes:
+      - ./utils:/opt/wait
+      - bdbag_out_vol:/tmp
+      - projects_vol:/opt/projects/rnaseq
+
+# Container with the pipeline configuration UI 
+  grotto:
+#    build: ../../../svn/grotto/www/
+    depends_on:
+      - rabbit
+    environment:
+      - DOCKER_HOST=localhost
+      - AMQP_ADDRESS=rabbit
+      - PERL5LIB=/opt/ergatis/lib/perl5
+    image: adkinsrs/grotto:latest
+    networks:
+      - ergatis
+      - rabbitmq
+    ports:
+      - "5000:5000"
+    volumes:
+      - ~/bin/svn/grotto/www:/app
+      - ergatis_vol:/opt/ergatis
+      - projects_vol:/opt/projects/rnaseq
+      - perl5lib_vol:/usr/share/perl5
+      - perl5lib_vol2:/usr/local/lib/site_perl
+      - scratch_vol:/usr/local/scratch
+      - workflow_vol:/opt/workflow
+      - ./input_data:/mnt/input_data
+      - bdbag_out_vol:/tmp/bdbag/
+      - reports_out_vol:/tmp/reports/
+
+  rabbit:
+    image: rabbitmq:3-alpine
+    networks:
+      - rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  reports:
+    command: ["/opt/wait/wait-for-it.sh", "rabbit:5672", "--", "/usr/bin/perl", "/opt/make_report_listener.pl"]
+    depends_on:
+      - rabbit
+    environment:
+      - AMQP_ADDRESS=rabbit
+    image: apaala/report_rabbit:latest
+    networks:
+      - rabbitmq
+    tty: true
+    volumes:
+      - ./utils:/opt/wait
+      - bdbag_out_vol:/tmp
+      - reports_out_vol:/tmp/reports
+      - projects_vol:/opt/projects/rnaseq

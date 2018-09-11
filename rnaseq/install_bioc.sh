@@ -18,7 +18,7 @@ apt-get -qq install -y --no-install-recommends r-base-dev
 # Install Bioconductor programs we need
 echo "install.packages(c(\"devtools\", \"gplots\", \"survival\"), repos=\"http://lib.stat.cmu.edu/R/CRAN/\")" | R --save --restore
 echo "source(\"http://bioconductor.org/biocLite.R\");
-biocLite(c(\"cummeRbund\", \"DESeq\", \"edgeR\"), ask=FALSE)" | R --save --restore
+biocLite(c(\"cummeRbund\", \"DESeq2\", \"edgeR\"), ask=FALSE)" | R --save --restore
 
 # RSQLite must be no higher than version 1.1.2, since cummeRbund is not compatible with later versions
 echo "require(devtools); install_version(\"RSQLite\", version = \"1.1-2\", repos = \"http://cran.us.r-project.org\")" | R --save --restore

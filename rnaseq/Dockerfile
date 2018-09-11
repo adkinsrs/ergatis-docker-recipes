@@ -182,7 +182,7 @@ RUN git clone $UCSC_UTILS \
 	&& chmod 600 /root/.hg.conf
 
 #--------------------------------------------------------------------------------
-# DESeq, EdgeR, and CummeRbund
+# DESeq2, EdgeR, and CummeRbund
 COPY install_bioc.sh /tmp/.
 RUN /tmp/install_bioc.sh
 
@@ -225,7 +225,10 @@ RUN num_cores=$(grep -c ^processor /proc/cpuinfo) \
 	&& find /opt/ergatis/pipeline_templates -type f -exec /usr/bin/perl -pi -e 's/\$;NODISTRIB\$;\s?=\s?0/\$;NODISTRIB\$;='$num_cores'/g' {} \;
 #--------------------------------------------------------------------------------
 # SCRIPTS -- Any addition post-setup scripts that need to be run
+COPY execute_pipeline.sh /opt/scripts/execute_pipeline.sh
+RUN chmod 755 /opt/scripts/execute_pipeline.sh
 
 # Lastly change to root directory
 WORKDIR /
-CMD ["/usr/sbin/apachectl", "-D", "FOREGROUND"]
+#CMD ["/usr/sbin/apachectl", "-D", "FOREGROUND"]
+ENTRYPOINT ["sh", "/opt/scripts/execute_pipeline.sh"]

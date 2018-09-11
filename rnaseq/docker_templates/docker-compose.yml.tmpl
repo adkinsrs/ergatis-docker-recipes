@@ -1,4 +1,19 @@
-version: '2'
+version: '3'
+
+networks:
+  ergatis:
+  ###rabbitmq:###
+
+volumes:
+  ###bdbag_out_vol:###
+  ergatis_vol:
+  projects_vol:
+  perl5lib_vol:
+  perl5lib_vol2:
+  ###reports_out_vol:###
+  scratch_vol:
+  workflow_vol:
+
 services:
 
 # Container responsible for running the pipeline
@@ -6,7 +21,17 @@ services:
     environment:
       - REPO_ROOT=/opt/projects/rnaseq
       - TEMPLATES=/opt/ergatis/pipeline_templates/
+    ###command:###
+    entrypoint:
+      - sh
+      - /opt/scripts/execute_pipeline.sh
+      ###- --start-web-server###
+      ###- --keep-alive###
+    expose:
+      - "22"
     image: adkinsrs/rnaseq:latest
+    networks:
+      - ergatis
     ports:
       - "8080:80"
     volumes:
@@ -17,24 +42,4 @@ services:
       - scratch_vol:/usr/local/scratch
       - workflow_vol:/opt/workflow
       - ###INPUT_SOURCE###:/mnt/input_data
-
-# Container with the pipeline configuration UI 
-  builder:
-    environment:
-      - DOCKER_HOST=###IP_HOST###
-      - PERL5LIB=/opt/ergatis/lib/perl5
-    image: adkinsrs/grotto
-    links:
-      - ergatis
-    ports:
-      - "5000:5000"
-    volumes_from:
-      - ergatis
-
-volumes:
-  - ergatis_vol:
-  - projects_vol:
-  - perl5lib_vol:
-  - perl5lib_vol2:
-  - scratch_vol:
-  - workflow_vol
+      - ###OUTPUT_SOURCE###:/mnt/output_data
