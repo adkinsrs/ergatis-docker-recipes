@@ -18,14 +18,12 @@ services:
 
 # Container responsible for running the pipeline
   ergatis:
+    command: ["-D", "FOREGROUND"]
     environment:
       - REPO_ROOT=/opt/projects/rnaseq
       - TEMPLATES=/opt/ergatis/pipeline_templates/
     entrypoint:
-      - sh
-      - /opt/scripts/execute_pipeline.sh
-      - --start-web-server
-      - --keep-alive
+      - /usr/sbin/apachectl
     expose:
       - "22"
     image: adkinsrs/rnaseq:latest
