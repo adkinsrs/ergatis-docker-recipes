@@ -9,6 +9,72 @@ usage() {
 	echo "  -h, --help                         display this help and exit"
 }
 
+create_rnaseq_command() {
+
+	# Example JSON
+	# {
+	#   "sample_file":"/opt/input/sample.info", 
+	#   "config_file":"/opt/input/euk_rnaseq.config", 
+	#   "reffile":"/opt/input/referense.fasta",
+	#   "quality":"40",    # 'No' if not using qual value
+	#   "gtffile":"/opt/input/annotation.gtf",
+	#   "build_indexes":"yes",
+	#   "quality_stats":"no",
+	#   "quality_trimming":"no",
+	#   "split":"no",  
+	#   "alignment":"yes",
+	#   "idxfile":"no",     # Filepath if wanting to use idxfile
+	#   "visualization":"yes",
+	#   "rpkm_analysis":"no",
+	#   "annotation_format":"gtf", 
+	#   "diff_gene_expr":"yes",
+	#   "comparison_groups":"experiementvscontrol",
+	#   "count":"no", 
+	#   "file_type":"SAM",    # 'No' if not needed
+	#   "sorted":"position",    # 'No' if not needed
+	#   "isoform_analysis":"yes",
+	#   "include_novel":"yes",
+	#   "diff_isoform_analysis":"yes",
+	#   "use_ref_gtf":"no", 
+	#   "repository_root":"/opt/projects/rnaseq",    # Constant
+	#   "ergatis_ini":"/var/www/html/ergatis/cgi/ergatis.ini",     # Constant
+	#   "outdir":"/opt/projects/rnaseq",     # Constant
+	#   "template_dir":"/opt/projects/ergatis/package-rnaseq/pipeline_templates/Eukaryotic_RNA_Seq_Analysis",    # Constant... either Euk path or Prok path
+	#   "cufflinks_legacy":"no",
+	#   "tophat_legacy":"no"
+	# }
+
+	# Assign file types from directory to variables
+	sample_info=$(find $1 -type f -name "*.info")
+	config_file=$(find $1 -type f -name "*.config")
+	reference=$(find $1 -type f \(-name "*.fasta" -o -name "*.fa" -o -name "*.fsa" -o -name "*.fna"\) )
+	annotation=$(find $1 -type f \(-name "*.gtf" -o -name "*.gff" -o -name "*.gff3"\) )
+	json_file=$(find $1 -type f -name "*.json")
+
+	# Parse JSON file with python JSON module
+	json_opts=$(echo $json_file | python -mjson.tool | grep ":" | grep -ve "\"no\"")
+
+	rnaseq_cmd=""
+	# Does template dir have Prok or Euk?
+	if [[ $json_optis =~ .*Prok.* ]]; then
+		rnaseq_cmd="/opt/ergatis/package-rnaseq/bin/create_prok_rnaseq_config.pl"
+	else
+		rnaseq_cmd="/opt/ergatis/package-rnaseq/bin/create_euk_rnaseq_config.pl"
+	fi
+
+	while read -r line; do
+		param=$(echo $line | cut -f1 -d:)
+		val=$(echo $line | cut -f2 -d:)
+		rnaseq_cmd+=" --$param"
+		# If param has a value, add value to cmd
+		if [[ ! $val =~ .*yes.* && ! $val =~ .*Yes.* ]]; then
+			rnaseq_cmd+="=$val"
+		fi
+	done <<< $json_opts
+	
+	return $rnaseq_cmd
+}
+
 #--------------------------------------------------------------------------------
 # Process parameters
 
@@ -32,6 +98,28 @@ do
 		;;
 	--keep-alive|-k)
 		opt_k=1
+		;;
+	--aws-secret|-S)
+		if [ "$2" ]
+		then
+			secret=$2
+			shift
+		else
+			echo "$0: missing argument to '$1' option"
+			usage
+			exit 1
+		fi
+		;;
+	--aws-key|-K)
+		if [ "$2" ]
+		then
+			key=$2
+			shift
+		else
+			echo "$0: missing argument to '$1' option"
+			usage
+			exit 1
+		fi
 		;;
 	--sleep=?*)
 		opt_s=1
@@ -84,7 +172,9 @@ then
 	usage
 	exit 1
 fi
-rnaseq_cmd=$1
+
+# Either S3 bucket or a local directory of input
+input_dir=$1
 
 #--------------------------------------------------------------------------------
 # Verify sleep seconds
@@ -129,14 +219,12 @@ if [ $host_type = "ec2" -o $host_type = "local" ]
 then
 	if [ ! -d /opt/input ]
 	then
-		echo "$0: directory not found: /opt/input"
-		exit 1
+		mkdir -p /opt/input
 	fi
 
 	if [ ! -d /opt/output ]
 	then
-		echo "$0: directory not found: /opt/output"
-		exit 1
+		mkdir -p /opt/output
 	fi
 fi
 
@@ -145,7 +233,23 @@ fi
 
 if [ $host_type = "ec2" ]
 then
-	# Do stuff
+	# Download input files
+
+	cd /opt/input
+
+	AWS_SECRET_ACCESS_KEY=$secret
+	AWS_ACCESS_KEY_ID=$key
+
+	aws --no-sign-request s3 cp --recursive --quiet $input_dir .
+	retcode=$?
+
+	if [ $retcode -ne 0 ]
+	then
+		echo "$0: aws s3 cp failed: aws return code: $retcode"
+		exit 1
+	fi
+
+	input_dir=/opt/input
 fi
 
 #--------------------------------------------------------------------------------
@@ -153,7 +257,8 @@ fi
 
 if [ $host_type = "local" ]
 then
-	# Do stuff
+	# If going this route, ensure input_dir is mounted via volume
+	input_dir=/opt/input/
 fi
 
 #--------------------------------------------------------------------------------
@@ -168,9 +273,9 @@ fi
 # Configure/run rnaseq pipeline
 
 export PERL5LIB=/opt/ergatis/lib/perl5
-
+create_rnaseq_command "$input_dir"
 # Some last minute modifications before running the cmd would go here
-rnaseq_cmd=$(echo "$rnaseq_cmd --block")
+rnaseq_cmd+=" --block"
 `rnaseq_cmd`
 
 status=$?

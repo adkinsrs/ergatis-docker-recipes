@@ -92,7 +92,7 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 	unzip \
 	&& cpanm --force \
 	Spreadsheet::WriteExcel \
-	&& pip install --upgrade pip numpy \
+	&& pip install --upgrade pip numpy aws-cli \
 	&& apt-get -qq clean autoclean \
 	&& apt-get -qq autoremove -y \
 	&& rm -rf /var/lib/apt/lists/* \
