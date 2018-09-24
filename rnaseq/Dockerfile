@@ -5,7 +5,7 @@
 
 FROM adkinsrs/ergatis:1.2
 
-MAINTAINER Shaun Adkins <sadkins@som.umaryland.edu>
+LABEL maintainer="Shaun Adkins <sadkins@som.umaryland.edu>"
 
 EXPOSE 80
 
@@ -92,7 +92,7 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 	unzip \
 	&& cpanm --force \
 	Spreadsheet::WriteExcel \
-	&& pip install --upgrade pip numpy aws-cli \
+	&& pip install --upgrade pip numpy awscli \
 	&& apt-get -qq clean autoclean \
 	&& apt-get -qq autoremove -y \
 	&& rm -rf /var/lib/apt/lists/* \
@@ -174,7 +174,8 @@ RUN curl -SL $CUFFLINKS_DOWNLOAD_URL -o cufflinks.tar.gz \
 # USCS Utils
 
 COPY .hg.conf /root/.
-RUN git clone $UCSC_UTILS \
+RUN git config --global http.sslVerify false \
+	&& git clone $UCSC_UTILS \
 	&& cd kentUtils \
 	&& make \
 	&& sudo rsync -a -P ./bin/ /usr/local/bin/kentUtils/ \
