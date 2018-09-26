@@ -79,7 +79,7 @@ services:
       - perl5lib_vol2:/usr/local/lib/site_perl
       - scratch_vol:/usr/local/scratch
       - workflow_vol:/opt/workflow
-      - ./input_data:/mnt/input_data
+      - ###INPUT_SOURCE###:/mnt/input_data
       - bdbag_out_vol:/tmp/bdbag/
       - reports_out_vol:/tmp/reports/
 
