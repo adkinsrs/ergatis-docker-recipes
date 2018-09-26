@@ -62,7 +62,7 @@ services:
     depends_on:
       - rabbit
     environment:
-      - DOCKER_HOST=localhost
+      - DOCKER_HOST=###IP_HOST###
       - AMQP_ADDRESS=rabbit
       - PERL5LIB=/opt/ergatis/lib/perl5
     image: adkinsrs/grotto:latest
