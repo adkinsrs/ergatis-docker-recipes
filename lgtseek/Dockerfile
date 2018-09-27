@@ -63,6 +63,7 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 	MongoDB \
 	Bio::Perl \
 	Bio::DB::EUtilities \
+	Try::Tiny \
 	&& mkdir -p /usr/src/bwa \
 	/usr/src/htslib \
 	/usr/src/samtools \

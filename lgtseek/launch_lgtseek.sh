@@ -63,7 +63,7 @@ if [ -z "$blast_db_dir" ]; then
 fi
 
 if [ -z "$input_source" ]; then
-    echo "Did not provide 'input_source' option.  Must use SRA input"
+    echo "Did not provide 'input_source' option so you must use SRA input only."
     input_source=""
 fi
 
