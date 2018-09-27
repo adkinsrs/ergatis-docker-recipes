@@ -3,7 +3,7 @@
 print_usage() {
     progname=`basename $0`
     cat << END
-usage: $progname -b </path/to/blast/db/dir> -i </path/to/input/samples> -o </path/to/store/output_repository> -p <HOST_IP> -d <DONOR_INPUT_DIRECTORY> -r <RECIPIENT_INPUT_DIRECTORY> -a <ACCESSION_LIST_DIRECTORY>
+usage: $progname -b </path/to/blast/db/dir> -i </path/to/input/samples> -o </path/to/store/output_repository> -p <HOST_IP> -d <DONOR_INPUT_DIRECTORY> -r <RECIPIENT_INPUT_DIRECTORY>
 
 Note - at least one of a donor input directory (-d) or a recipient input directory (-r) must be provided.
 
@@ -26,10 +26,9 @@ END
     exit 1
 }
 
-while getopts ":a:b:B:d:r:R:i:o:p:" opt
+while getopts ":b:B:d:r:R:i:o:p:" opt
 do
     case $opt in
-        a ) acc_list_path=$OPTARG;;
         b ) blast_db_dir=$OPTARG;;
         d ) donor_path=$OPTARG;;
         r ) recipient_path=$OPTARG;;
@@ -50,11 +49,6 @@ shift $((OPTIND -1))
 if [ -z "$ip_host" ]; then
     echo "Setting IP to 'localhost'"
     ip_host="localhost"
-fi
-
-if [ -z "$acc_list_path" ]; then
-    echo "Must provide path that houses bacteria and eukaryotic accession ID lists (-a)"
-    print_usage
 fi
 
 if [ -z "$blast_db_dir" ]; then
@@ -105,7 +99,6 @@ cp ${docker_compose}.tmpl $docker_compose
 # Append mongodb part of template to the main docker-compose file
 cat $mongo_tmpl >> $docker_compose
 
-perl -i -pe "s|###ACC_MNT###|$acc_list_path|" $docker_compose
 perl -i -pe "s|###BLAST_DB_DIR###|$blast_db_dir|" $docker_compose
 perl -i -pe "s|###OUTPUT_DATA###|$output_source|" $docker_compose
 perl -i -pe "s|###IP_HOST###|$ip_host|" $docker_compose

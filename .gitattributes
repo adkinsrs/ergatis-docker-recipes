@@ -1,2 +1,0 @@
-lgtseek/accession_lists_dir/bacteria.accession.txt filter=lfs diff=lfs merge=lfs -text
-lgtseek/accession_lists_dir/metazoa.accession.txt filter=lfs diff=lfs merge=lfs -text

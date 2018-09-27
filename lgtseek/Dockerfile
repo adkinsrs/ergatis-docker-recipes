@@ -223,6 +223,7 @@ RUN /usr/bin/perl /tmp/build_$PROJECT.pl /opt/ergatis \
 # PIPELINE_CHANGES - Files that need to deviate from the installed lgtseek pipeline in order to function in Docker
 
 COPY taxdump /local/db/
+COPY accession_lists_dir /local/db/
 COPY changed_pipeline_files/blast2lca.lgt_d.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/blast2lca.lgt_d.config
 COPY changed_pipeline_files/blast2lca.lgt_r.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/blast2lca.lgt_r.config
 COPY changed_pipeline_files/blast_lgt_finder.lgt_d.config /opt/ergatis/pipeline_templates/LGT_Seek_Pipeline/blast_lgt_finder.lgt_d.config
