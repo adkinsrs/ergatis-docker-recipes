@@ -43,7 +43,7 @@ For use-cases 3 and 4, the pipeline will perform pairwise BLASTN analysis using 
 ## Setup and start a Docker container via shell
 If you wish to both configure and start a Docker container, then run 
 ```
-./launch_lgtseek.sh -b </path/to/blast/db/dir> -B <db_prefix> -o </path/to/store/output_repository> -p <HOST_IP> -d <DONOR_INPUT_DIRECTORY> -r <RECIPIENT_INPUT_DIRECTORY> -a <BAC_EUK_ACCESSION_FILES_PATH>
+./launch_lgtseek.sh -b </path/to/blast/db/dir> -B <db_prefix> -o </path/to/store/output_repository> -p <HOST_IP> -d <DONOR_INPUT_DIRECTORY> -r <RECIPIENT_INPUT_DIRECTORY>
 ```
 
 This script will pass these options to a custom docker-compose file which the shell script will then use to create containers from a few Docker images.  For the -b, -d, -r, -a and the -o arguments, make sure you specify the FULL PATH.  If you are running locally, then the <HOST_IP> for -p can be set to "localhost" or the argument can be omitted entirely
