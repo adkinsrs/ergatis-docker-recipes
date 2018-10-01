@@ -2,10 +2,9 @@
 
 Note: This CHANGELOG is reflective of Docker versions, not the GitHub tags of the Ergatis-Docker repository
 
-## v1.6 ([needs a date])
-* Added default bacterial and metazoan accession IDs lists for use in the new BLAST search setup.  This allows users to not have to create their own.
+## v1.6 (September 27, 2018)
+* Added default bacterial and metazoan accession IDs lists for use in the new BLAST search setup within the Docker image.
 * Incorporating improvments based on internal review of the Docker pipeline with a 'naive' end-user
-* Removing option to add accession list files (for now), and instead use default ones
 
 ## v1.5 (April 13, 2018)
 * Modified pipelines
