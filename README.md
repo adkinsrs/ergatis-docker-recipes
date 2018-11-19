@@ -6,8 +6,8 @@ This README is just an abbreviated version of the main documentation.  For a mor
 ## First Steps
 First things first...
 ```
-git clone https://github.com/adkinsrs/ergatis-docker-recipes.git
-cd ./ergatis-docker-recipes/lgtseek
+git clone --single-branch -b lgtseek https://github.com/adkinsrs/ergatis-docker-recipes.git
+cd ./ergatis-docker-recipes
 ```
 ## Requisite input files for each use case
 ### Use Case 1 - Good donor reference and good LGT-free recipient reference
