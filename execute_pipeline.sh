@@ -173,8 +173,8 @@ then
 	exit 1
 fi
 
-# Either S3 bucket or a local directory of input
-input_dir=$1
+# Archived file either in an S3 bucket or a local directory
+input_zip=$1
 
 #--------------------------------------------------------------------------------
 # Verify sleep seconds
@@ -240,7 +240,7 @@ then
 	AWS_SECRET_ACCESS_KEY=$secret
 	AWS_ACCESS_KEY_ID=$key
 
-	aws --no-sign-request s3 cp --recursive --quiet $input_dir .
+	aws --no-sign-request s3 cp --recursive --quiet $input_zip .
 	retcode=$?
 
 	if [ $retcode -ne 0 ]
@@ -248,7 +248,8 @@ then
 		echo "$0: aws s3 cp failed: aws return code: $retcode"
 		exit 1
 	fi
-
+	unzip $(basename $input_zip)
+	
 	input_dir=/opt/input
 fi
 
