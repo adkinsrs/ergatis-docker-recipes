@@ -2,6 +2,11 @@
 
 Note: This CHANGELOG is reflective of Docker versions, not the GitHub tags of the Ergatis-Docker repository
 
+## v1.7 (November 19, 2018)
+* Adding .lst as a valid extension for a list file besides .list.  The "bwa-aln" wrapper script will now accept that extension
+* Corrected typo in accession file name in pipeline UI
+* Put "lgtseek" into its own branch in the "ergatis-docker-recipes" Github repo.  Users should not have to worry about downloading repositories for other Ergatis Docker images.
+
 ## v1.6 (September 27, 2018)
 * Added default bacterial and metazoan accession IDs lists for use in the new BLAST search setup within the Docker image.
 * Incorporating improvments based on internal review of the Docker pipeline with a 'naive' end-user
