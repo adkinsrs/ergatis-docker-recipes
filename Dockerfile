@@ -3,7 +3,7 @@
 # Builds off of the Ergatis core Dockerfile
 ############################################################
 
-FROM adkinsrs/ergatis:1.2
+FROM adkinsrs/ergatis:1.4
 
 MAINTAINER Shaun Adkins <sadkins@som.umaryland.edu>
 
@@ -189,7 +189,7 @@ RUN curl -SL $NCBI_BLAST_DOWNLOAD_URL -o blast.tar.gz \
 # PROJECT REPOSITORY SETUP
 
 # Have ergatis.ini point to new project so we can quickly access it
-RUN sed -i.bak "s/CUSTOM/$PROJECT/g" /var/www/html/ergatis/cgi/ergatis.ini
+RUN sed -i.bak "s/CUSTOM/$PROJECT/g" /var/www/html/config/ergatis.ini
 
 USER www-data
 
@@ -241,4 +241,4 @@ RUN num_cores=$(grep -c ^processor /proc/cpuinfo) \
 
 WORKDIR /
 
-CMD ["/usr/sbin/apachectl", "-D", "FOREGROUND"]
+CMD ["/bin/bash"]

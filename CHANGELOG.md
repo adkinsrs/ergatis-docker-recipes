@@ -2,6 +2,9 @@
 
 Note: This CHANGELOG is reflective of Docker versions, not the GitHub tags of the Ergatis-Docker repository
 
+## v1.8 (January 2, 2019)
+* Removed Apache from the base Ergatis image.  The LGTSeek image will be based on adkinsrs/ergatis:1.3 and the apache service will now run as a service in docker-compose.  This was done in an effort to allow users to suspend and resume pipeline runs with docker\-compose "stop" and "start" commands.
+
 ## v1.7 (November 19, 2018)
 * Adding .lst as a valid extension for a list file besides .list.  The "bwa-aln" wrapper script will now accept that extension
 * Corrected typo in accession file name in pipeline UI

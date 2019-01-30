@@ -93,11 +93,7 @@ fi
 
 # Copy the template over to a production version of the docker-compose file
 docker_compose=${DIR}/docker_templates/docker-compose.yml
-mongo_tmpl=${DIR}/docker_templates/mongodb.tmpl
 cp ${docker_compose}.tmpl $docker_compose
-
-# Append mongodb part of template to the main docker-compose file
-cat $mongo_tmpl >> $docker_compose
 
 perl -i -pe "s|###BLAST_DB_DIR###|$blast_db_dir|" $docker_compose
 perl -i -pe "s|###OUTPUT_DATA###|$output_source|" $docker_compose
@@ -117,11 +113,13 @@ perl -i -ne 'print unless /###/;' $docker_compose
 
 # Now, establish the following Docker containers:
 # 1. ergatis_lgtseek_1
-#  - Houses the Apache server and LGTview related code
+#  - Houses the LGTSeek code
 # 2. ergatis_mongo_1
 #  - Houses the MongoDB server
 # 3. ergatis_mongodata_1
-#  - A container to establish persistent MongoDB dataa
+#  - A container to establish persistent MongoDB data
+# 4. ergatis_apache_1
+#  - The Apache service
 
 # Default docker_templates/docker-compose.yml was written to so no need to specify -f
 printf  "\nGoing to build and run the Docker containers now.....\n"
