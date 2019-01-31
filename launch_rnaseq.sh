@@ -32,7 +32,7 @@ fi
 
 # Not really used
 if [ -z "$output_source" ]; then
-    $output_source=""
+    output_source=""
 fi
 #########################
 # MAIN
