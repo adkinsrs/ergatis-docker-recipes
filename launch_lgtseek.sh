@@ -92,8 +92,9 @@ else
 fi
 
 # Copy the template over to a production version of the docker-compose file
-docker_compose=${DIR}/docker_templates/docker-compose.yml
-cp ${docker_compose}.tmpl $docker_compose
+docker_compose_tmpl=${DIR}/docker_templates/docker-compose.yml.tmpl
+docker_compose=${DIR}/docker-compose.yml
+cp $docker_compose_tmpl $docker_compose
 
 perl -i -pe "s|###BLAST_DB_DIR###|$blast_db_dir|" $docker_compose
 perl -i -pe "s|###OUTPUT_DATA###|$output_source|" $docker_compose

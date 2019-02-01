@@ -65,21 +65,29 @@ http://<HOST_IP>:8080/pipeline\_builder/.
 In your internet browser, you can access the Ergatis homepage by navigating to http://<HOST_IP>:8080/ergatis/.  This is where you can view monitor pipelines that have already been started
 
 ##Pausing and unpausing the container bundle
+NOTE:  These instructions assume you are in the "ergatis\_docker\_recipes" directory
+
 To stop and save progress
 ```
-docker-compose -f docker_templates/docker_compose.yml stop
+docker-compose stop
 ```
+### Starting back up
 To start back up and resume progress
 ```
-docker-compose -f docker_templates/docker_compose.yml start
+docker-compose start
 ```
+However, the pipeline is in an “interrupted” state and will need to be resumed.
 
-NOTE:  The setup_container.sh shell script created a custom docker_compose.yml file in the ./docker_templates directory.  If you do not wish to use the -f option to provide the path to this file, you can simply “cd” into the docker_templates directory and run docker_compose without the -f option.
+If you closed the “pipeline view” page (page with the pipeline on it), navigate to http://localhost:8080/ergatis/cgi/pipeline\_list.cgi?repository\_root=/opt/projects/repository and click “View” on the pipeline to navigate to it.
+
+
+Once on the “Pipeline View” page, click “Rerun” to resume the pipeline.  Note that it will take a few seconds before resuming.
+
 
 ## Stopping the container
 To stop the container, and free up valuable CPU and memory resources, run the following:
 ```
-docker-compose -f docker_templates/docker-compose.yml down -v
+docker-compose down -v
 ```
 
 ## Code for the LGTSeek pipeline
