@@ -1,59 +1,35 @@
 version: '3'
 
 networks:
-  apache:
   ergatis:
 
 volumes:
-  ergatis_vol:
-  ergatis_ini_vol:
   mongo_data:
-  pipebuilder_vol:
   projects_vol:
   scratch_vol:
-  #workflow_vol:
 
 services:
 
-  apache:
-    depends_on:
-      - ergatis
-    image: adkinsrs/ergatis-apache
-    networks:
-      - apache
-    ports:
-      - "8080:80"
-    restart: always
+  data:
+    image: adkinsrs/ergatis-data
+    tty: true
     volumes:
-      - ergatis_vol:/opt/ergatis
-      - ergatis_ini_vol:/var/www/html/config
-      - pipebuilder_vol:/var/www/html/pipeline_builder
-      - projects_vol:/opt/projects/lgtseek
+      - projects_vol:/opt/projects/repository
       - scratch_vol:/usr/local/scratch
-#     - workflow_vol:/opt/workflow
-      - ###BLAST_DB_DIR###:/mnt/blast:ro
-      - ###INPUT_DATA###:/mnt/input_data/input_source
-      - ###OUTPUT_DATA###:/mnt/output_data
-      - ###DONOR_MNT###:/mnt/input_data/donor_ref
-      - ###RECIPIENT_MNT###:/mnt/input_data/recipient_ref
 
   ergatis:
     environment:
       - DOCKER_HOST=###IP_HOST###
     image: adkinsrs/lgtseek:1.8
-    #mem_limit: 5120000000
     networks:
-      - apache
       - ergatis
-    tty: true
+    ports:
+      - 8080:80
+    restart: always
     volumes:
-      - ergatis_vol:/opt/ergatis
-      - ergatis_ini_vol:/var/www/html/config
       - mongo_data:/data/db
-      - pipebuilder_vol:/var/www/html/pipeline_builder
-      - projects_vol:/opt/projects/lgtseek
+      - projects_vol:/opt/projects/repository
       - scratch_vol:/usr/local/scratch
-#      - workflow_vol:/opt/workflow
       - ###BLAST_DB_DIR###:/mnt/blast:ro
       - ###INPUT_DATA###:/mnt/input_data/input_source
       - ###OUTPUT_DATA###:/mnt/output_data

@@ -3,7 +3,8 @@
 Note: This CHANGELOG is reflective of Docker versions, not the GitHub tags of the Ergatis-Docker repository
 
 ## v1.8 (January 2, 2019)
-* Removed Apache from the base Ergatis image.  The LGTSeek image will be based on adkinsrs/ergatis:1.3 and the apache service will now run as a service in docker-compose.  This was done in an effort to allow users to suspend and resume pipeline runs with docker\-compose "stop" and "start" commands.
+* Removed Ergatis repository root and scratch areas from the base Ergatis image and placed in a separate image.  The LGTSeek image will be based on adkinsrs/ergatis:1.3 and the "data" service will now run as a separate service in docker-compose.  This was done in an effort to allow users to suspend and resume pipeline runs with docker\-compose "stop" and "start" commands and not lose their data
+* Changed the build method of Samtools, Picard-tools, and the SRA Toolkit to build from binary instead of from source.  This saves a little bit of space, and allows for the use of the Java JRE instead of JDK.
 
 ## v1.7 (November 19, 2018)
 * Adding .lst as a valid extension for a list file besides .list.  The "bwa-aln" wrapper script will now accept that extension
