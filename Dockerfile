@@ -129,8 +129,6 @@ RUN curl -SL $NCBI_BLAST_DOWNLOAD_URL -o blast.tar.gz \
 #--------------------------------------------------------------------------------
 # PROJECT REPOSITORY SETUP
 
-USER www-data
-
 # Change to root for last bits
 USER root
 RUN mkdir -m 0777 /mnt/input_data
