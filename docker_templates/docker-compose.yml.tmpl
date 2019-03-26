@@ -29,7 +29,7 @@ services:
       - REPO_ROOT=/opt/projects/repository
       - TEMPLATES=/opt/ergatis/pipeline_templates/
     entrypoint:
-      - /usr/sbin/apachectl
+      - apache2
     expose:
       - "22"
     image: adkinsrs/rnaseq:latest
