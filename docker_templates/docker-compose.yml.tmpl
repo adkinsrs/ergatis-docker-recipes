@@ -6,10 +6,7 @@ networks:
 
 volumes:
   bdbag_out_vol:
-  ergatis_vol:
   projects_vol:
-  perl5lib_vol:
-  perl5lib_vol2:
   reports_out_vol:
   scratch_vol:
 
@@ -29,7 +26,7 @@ services:
   ergatis:
     command: ["-D", "FOREGROUND"]
     environment:
-      - REPO_ROOT=/opt/projects/rnaseq
+      - REPO_ROOT=/opt/projects/repository
       - TEMPLATES=/opt/ergatis/pipeline_templates/
     entrypoint:
       - /usr/sbin/apachectl
@@ -42,10 +39,7 @@ services:
       - "8080:80"
     restart: always
     volumes:
-      - ergatis_vol:/opt/ergatis
-      - projects_vol:/opt/projects/rnaseq
-      - perl5lib_vol:/usr/share/perl5
-      - perl5lib_vol2:/usr/lib/perl5
+      - projects_vol:/opt/projects/repository
       - scratch_vol:/usr/local/scratch
       - ###INPUT_SOURCE###:/mnt/input_data
       - ###OUTPUT_SOURCE###:/mnt/output_data
@@ -63,7 +57,7 @@ services:
     volumes:
       - ./utils:/opt/wait
       - bdbag_out_vol:/tmp
-      - projects_vol:/opt/projects/rnaseq
+      - projects_vol:/opt/projects/repository
 
 # Container with the pipeline configuration UI 
   grotto:
@@ -80,10 +74,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ergatis_vol:/opt/ergatis
-      - projects_vol:/opt/projects/rnaseq
-      - perl5lib_vol:/usr/share/perl5
-      - perl5lib_vol2:/usr/local/lib/site_perl
+      - projects_vol:/opt/projects/repository
       - scratch_vol:/usr/local/scratch
       - ###INPUT_SOURCE###:/mnt/input_data
       - bdbag_out_vol:/tmp/bdbag/
@@ -111,4 +102,4 @@ services:
       - ./utils:/opt/wait
       - bdbag_out_vol:/tmp
       - reports_out_vol:/tmp/reports
-      - projects_vol:/opt/projects/rnaseq
+      - projects_vol:/opt/projects/repository
