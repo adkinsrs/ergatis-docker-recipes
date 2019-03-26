@@ -12,7 +12,6 @@ volumes:
   perl5lib_vol2:
   reports_out_vol:
   scratch_vol:
-  workflow_vol:
 
 services:
 
@@ -48,7 +47,6 @@ services:
       - perl5lib_vol:/usr/share/perl5
       - perl5lib_vol2:/usr/lib/perl5
       - scratch_vol:/usr/local/scratch
-      - workflow_vol:/opt/workflow
       - ###INPUT_SOURCE###:/mnt/input_data
       - ###OUTPUT_SOURCE###:/mnt/output_data
 
@@ -87,7 +85,6 @@ services:
       - perl5lib_vol:/usr/share/perl5
       - perl5lib_vol2:/usr/local/lib/site_perl
       - scratch_vol:/usr/local/scratch
-      #- workflow_vol:/opt/workflow
       - ###INPUT_SOURCE###:/mnt/input_data
       - bdbag_out_vol:/tmp/bdbag/
       - reports_out_vol:/tmp/reports/
