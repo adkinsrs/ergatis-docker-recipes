@@ -6,6 +6,7 @@ networks:
 
 volumes:
   bdbag_out_vol:
+  ergatis_bin_vol:
   projects_vol:
   reports_out_vol:
   scratch_vol:
@@ -39,6 +40,7 @@ services:
       - "8080:80"
     restart: always
     volumes:
+      - ergatis_bin_vol:/opt/ergatis/bin
       - projects_vol:/opt/projects/repository
       - scratch_vol:/usr/local/scratch
       - ###INPUT_SOURCE###:/mnt/input_data
@@ -75,6 +77,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
+      - ergatis_bin_vol:/opt/ergatis/bin
       - projects_vol:/opt/projects/repository
       - scratch_vol:/usr/local/scratch
       - ###INPUT_SOURCE###:/mnt/input_data
