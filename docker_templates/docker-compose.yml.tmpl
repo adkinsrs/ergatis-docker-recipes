@@ -16,7 +16,17 @@ volumes:
 
 services:
 
+# Container that stores ergatis repo root data.
+# Stopping other contaners will not cause loss in pipeline data, meaning pipelines can be resumed later
+  data:
+    image: adkinsrs/ergatis-data
+    tty: true
+    volumes:
+      - projects_vol:/opt/projects/repository
+      - scratch_vol:/usr/local/scratch
+
 # Container responsible for running the pipeline
+
   ergatis:
     command: ["-D", "FOREGROUND"]
     environment:
@@ -31,6 +41,7 @@ services:
       - ergatis
     ports:
       - "8080:80"
+    restart: always
     volumes:
       - ergatis_vol:/opt/ergatis
       - projects_vol:/opt/projects/rnaseq
@@ -52,13 +63,12 @@ services:
       - rabbitmq
     tty: true
     volumes:
-      - ../utils:/opt/wait
+      - ./utils:/opt/wait
       - bdbag_out_vol:/tmp
       - projects_vol:/opt/projects/rnaseq
 
 # Container with the pipeline configuration UI 
   grotto:
-#    build: ../../../svn/grotto/www/
     depends_on:
       - rabbit
     environment:
@@ -72,13 +82,12 @@ services:
     ports:
       - "5000:5000"
     volumes:
-#      - ~/bin/svn/grotto/www:/app
       - ergatis_vol:/opt/ergatis
       - projects_vol:/opt/projects/rnaseq
       - perl5lib_vol:/usr/share/perl5
       - perl5lib_vol2:/usr/local/lib/site_perl
       - scratch_vol:/usr/local/scratch
-      - workflow_vol:/opt/workflow
+      #- workflow_vol:/opt/workflow
       - ###INPUT_SOURCE###:/mnt/input_data
       - bdbag_out_vol:/tmp/bdbag/
       - reports_out_vol:/tmp/reports/
@@ -102,7 +111,7 @@ services:
       - rabbitmq
     tty: true
     volumes:
-      - ../utils:/opt/wait
+      - ./utils:/opt/wait
       - bdbag_out_vol:/tmp
       - reports_out_vol:/tmp/reports
       - projects_vol:/opt/projects/rnaseq

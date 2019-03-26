@@ -38,9 +38,18 @@ fi
 # MAIN
 #########################
 
+unamestr=`uname`
+# Directory name of current script
+if [[ "$unamestr" == 'Darwin' ]]; then
+  DIR="$(dirname "$(stat -f "$0")")"
+else
+  DIR="$(dirname "$(readlink -f "$0")")"
+fi
+
 # Copy the template over to a production version of the docker-compose file
-docker_compose=./docker_templates/docker-compose.yml
-cp ${docker_compose}.tmpl $docker_compose
+docker_compose_tmpl=${DIR}/docker_templates/docker-compose.yml.tmpl
+docker_compose=${DIR}/docker-compose.yml
+cp $docker_compose_tmpl $docker_compose
 
 perl -i -pe "s|###INPUT_SOURCE###|$input_source|" $docker_compose
 perl -i -pe "s|###IP_HOST###|$ip_host|" $docker_compose

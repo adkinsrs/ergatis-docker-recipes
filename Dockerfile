@@ -3,7 +3,7 @@
 # Builds off of the Ergatis core Dockerfile
 ############################################################
 
-FROM adkinsrs/ergatis:1.2
+FROM adkinsrs/ergatis:1.3
 
 LABEL maintainer="Shaun Adkins <sadkins@som.umaryland.edu>"
 
@@ -40,16 +40,10 @@ ARG CUFFLINKS_DOWNLOAD_URL=http://cole-trapnell-lab.github.io/cufflinks/assets/d
 ARG HISAT2_VERSION=2.1.0
 ARG HISAT2_DOWNLOAD_URL=ftp://ftp.ccb.jhu.edu/pub/infphilo/hisat2/downloads/hisat2-${HISAT2_VERSION}-Linux_x86_64.zip
 
-ARG HTSLIB_VERSION=1.3.1
-ARG HTSLIB_DOWNLOAD_URL=https://github.com/samtools/htslib/archive/${HTSLIB_VERSION}.tar.gz
+ARG SAMTOOLS_VERSION=1.9
+ARG SAMTOOLS_DOWNLOAD_URL=https://github.com/samtools/samtools/releases/download/${SAMTOOLS_VERSION}/samtools-${SAMTOOLS_VERSION}.tar.bz2
 
-#ARG IGV_VERSION=2.3.92
-#ARG IGV_DOWNLOAD_URL=https://github.com/igvteam/igv.git
-
-ARG SAMTOOLS_VERSION=1.3.1
-ARG SAMTOOLS_DOWNLOAD_URL=https://github.com/samtools/samtools/archive/${SAMTOOLS_VERSION}.tar.gz
-
-ARG UCSC_UTILS=git://github.com/ENCODE-DCC/kentUtils.git
+ARG UCSC_UTILS=rsync://hgdownload.soe.ucsc.edu/genome/admin/exe/linux.x86_64/
 
 # Giant RUN command
 # 1) Lets install some packages
@@ -57,29 +51,13 @@ ARG UCSC_UTILS=git://github.com/ENCODE-DCC/kentUtils.git
 
 RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends software-properties-common \
 	&& add-apt-repository ppa:openjdk-r/ppa \
-	&& apt-get -qq update && apt-get -qq install -y --no-install-recommends openjdk-8-jdk \
-	ant \
+	&& apt-get -qq update && apt-get -qq install -y --no-install-recommends \
 	automake \
 	autotools-dev \
 	bowtie \
 	fastqc \
 	fastx-toolkit \
-	gfortran \
-	libbz2-dev \
-	libcurl4-openssl-dev \
-	libmagic-dev \
-	libmysqlclient-dev \
-	libncurses5-dev \
-	libncursesw5-dev \
-	libpcre3 \
-	libpcre3-dev \
-	libpng-dev \
-	libssl-dev \
 	libxml2 \
-	libxml2-dev \
-	liblzma-dev \
-	mysql-client-5.5 \
-	mysql-client-core-5.5 \
 	openssl \
 	python2.7 \
 	python2.7-dev \
@@ -90,6 +68,14 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 	samtools \
 	tophat \
 	unzip \
+	# For R install
+	gfortran \
+    libbz2-dev \
+	libcurl4-openssl-dev \
+	liblzma-dev \
+	libpcre3 \
+	libpcre3-dev \
+	# Other things
 	&& cpanm --force \
 	Spreadsheet::WriteExcel \
 	&& pip install --upgrade pip numpy awscli \
@@ -97,7 +83,6 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 	&& apt-get -qq autoremove -y \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& mkdir -p /usr/src/cufflinks \
-	/usr/src/htslib \
 	/usr/src/samtools
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
@@ -123,34 +108,16 @@ RUN git clone $BEDTOOLS_DOWNLOAD_URL \
 	&& chmod 755 /opt/packages/bedtools/*
 
 #--------------------------------------------------------------------------------
-# HTSLIB -- install in /opt/packages/htslib (required for Samtools)
-
-WORKDIR /usr/src/htslib
-
-RUN curl -SL $HTSLIB_DOWNLOAD_URL -o htslib.tar.gz \
-	&& tar --strip-components=1 -xvzf htslib.tar.gz -C /usr/src/htslib \
-	&& rm htslib.tar.gz \
-	&& autoconf
-
-#--------------------------------------------------------------------------------
 # SAMTOOLS -- install in /opt/packages/samtools
-# Had to consult this to get it to build https://github.com/samtools/samtools/issues/500
-# A second version of samtools, v0.1.19.1 is also installed with apt-get for Tophat
 
 WORKDIR /usr/src/samtools
 
-RUN curl -SL $SAMTOOLS_DOWNLOAD_URL -o samtools.tar.gz \
-	&& tar --strip-components=1 -xvzf samtools.tar.gz -C /usr/src/samtools \
-	&& rm samtools.tar.gz \
-	&& mkdir autoconf \
-	&& wget -O autoconf/ax_with_htslib.m4 https://raw.githubusercontent.com/samtools/samtools/develop/m4/ax_with_htslib.m4 \
-	&& wget -O autoconf/ax_with_curses.m4 https://raw.githubusercontent.com/samtools/samtools/develop/m4/ax_with_curses.m4 \
-	&& aclocal -I./autoconf \
-	&& autoconf \
-	&& ./configure --prefix=/opt/packages/samtools \
+RUN curl -SL $SAMTOOLS_DOWNLOAD_URL -o samtools.tar.bz2 \
+	&& tar --strip-components=1 -xvjf samtools.tar.bz2 -C /usr/src/samtools \
+	&& rm samtools.tar.bz2 \
+	&& ./configure --prefix=/opt/packages/samtools --without-curses --disable-bz2 --disable-lzma \
 	&& make \
-	&& make install \
-	&& rm -rf /usr/src/samtools
+	&& make install
 
 #--------------------------------------------------------------------------------
 # Cufflinks
@@ -162,25 +129,12 @@ RUN curl -SL $CUFFLINKS_DOWNLOAD_URL -o cufflinks.tar.gz \
 	&& chmod 755 /opt/packages/cufflinks/*
 
 #--------------------------------------------------------------------------------
-# IGV
-#WORKDIR /usr/src
-#RUN git clone $IGV_DOWNLOAD_URL \
-#	&& cd igv \
-#	&& git checkout tags/v${IGV_VERSION} \
-#	&& ant \
-#	&& ln -s /usr/src/igv/igv.jar /opt/packages/igv.jar
-
-#--------------------------------------------------------------------------------
 # USCS Utils
 
 COPY .hg.conf /root/.
-RUN git config --global http.sslVerify false \
-	&& git clone $UCSC_UTILS \
-	&& cd kentUtils \
-	&& make \
-	&& sudo rsync -a -P ./bin/ /usr/local/bin/kentUtils/ \
-	&& export PATH=/usr/local/bin/kentUtils:$PATH \
-	&& chmod 600 /root/.hg.conf
+RUN rsync -azvP ${UCSC_UTILS} /usr/local/bin/kentUtils \
+ 	&& export PATH=/usr/local/bin/kentUtils:$PATH \
+ 	&& chmod 600 /root/.hg.conf
 
 #--------------------------------------------------------------------------------
 # DESeq2, EdgeR, and CummeRbund
@@ -190,32 +144,14 @@ RUN /tmp/install_bioc.sh
 #--------------------------------------------------------------------------------
 # PROJECT REPOSITORY SETUP
 
-# Have ergatis.ini point to new project so we can quickly access it
-RUN sed -i.bak "s/CUSTOM/$PROJECT/g" /var/www/html/ergatis/cgi/ergatis.ini
-
-USER www-data
-
-COPY project.config /tmp/.
-RUN mkdir -p /opt/projects/$PROJECT \
-	&& mkdir -m 0777 /opt/projects/$PROJECT/output_repository \
-	&& mkdir -m 0777 /opt/projects/$PROJECT/workflow \
-	&& mkdir -m 0777 /opt/projects/$PROJECT/workflow/lock_files \
-	&& mkdir -m 0777 /opt/projects/$PROJECT/workflow/project_id_repository \
-	&& mkdir -m 0777 /opt/projects/$PROJECT/workflow/runtime \
-	&& mkdir -m 0777 /opt/projects/$PROJECT/workflow/runtime/pipeline \
-	&& touch /opt/projects/$PROJECT/workflow/project_id_repository/valid_id_repository \
-	&& chmod 0666 /opt/projects/$PROJECT/workflow/project_id_repository/valid_id_repository \
-	&& cp /tmp/project.config /opt/projects/$PROJECT/workflow/.
-
-# Making this as a volume in case we'd like to pass this data to another image
-#VOLUME /opt/projects/$PROJECT/output_repository
-
-# Run last bits as root
+# Change to root for last bits
 USER root
+RUN mkdir -m 0777 /mnt/input_data
+
 #--------------------------------------------------------------------------------
 # INSTALL PIPELINE
 COPY build_$PROJECT.pl /tmp/.
-RUN /usr/bin/perl /tmp/build_$PROJECT.pl /opt/ergatis \ 
+RUN /usr/bin/perl /tmp/build_$PROJECT.pl /opt/ergatis \
 	&& ln -s /opt/ergatis/pipeline_builder /var/www/html/pipeline_builder
 
 #--------------------------------------------------------------------------------
@@ -224,6 +160,7 @@ RUN /usr/bin/perl /tmp/build_$PROJECT.pl /opt/ergatis \
 # Set number of parallel runs for changed files
 RUN num_cores=$(grep -c ^processor /proc/cpuinfo) \
 	&& find /opt/ergatis/pipeline_templates -type f -exec /usr/bin/perl -pi -e 's/\$;NODISTRIB\$;\s?=\s?0/\$;NODISTRIB\$;='$num_cores'/g' {} \;
+
 #--------------------------------------------------------------------------------
 # SCRIPTS -- Any addition post-setup scripts that need to be run
 COPY execute_pipeline.sh /opt/scripts/execute_pipeline.sh
