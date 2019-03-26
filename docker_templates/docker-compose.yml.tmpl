@@ -53,9 +53,10 @@ services:
     image: apaala/bdbag_rabbit:latest
     networks:
       - rabbitmq
+    restart: always
     tty: true
     volumes:
-      - ./utils:/opt/wait
+      - ./utils:/opt/wait:Z
       - bdbag_out_vol:/tmp
       - projects_vol:/opt/projects/repository
 
@@ -97,9 +98,10 @@ services:
     image: apaala/report_rabbit:latest
     networks:
       - rabbitmq
+    restart: always
     tty: true
     volumes:
-      - ./utils:/opt/wait
+      - ./utils:/opt/wait:Z
       - bdbag_out_vol:/tmp
       - reports_out_vol:/tmp/reports
       - projects_vol:/opt/projects/repository
