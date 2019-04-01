@@ -17,11 +17,10 @@ ARG PROJECT=rnaseq
 
 # Installed via apt-get
 #ARG BOWTIE_VERSION=1.0.0-5
-#ARG FASTQC_VERSION=0.10.1+dfsg-2
 #ARG FASTX_TOOLKIT_VERSION=0.0.14-1
 #ARG HTSEQ_VERSION=0.5.4p3-2
 #ARG PYTHON_VERSION=2.7
-#ARG SAMTOOLS_VERSION=0.1.19.1 - For Tophat
+#ARG SAMTOOLS_VERSION=0.1.19c	# For Tophat use
 #ARG TOPHAT_VERSION=2.0.9-1ubuntu1
 
 # Installing via install_bioc.sh
@@ -36,6 +35,9 @@ ARG BEDTOOLS_DOWNLOAD_URL=https://github.com/arq5x/bedtools2.git
 
 ARG CUFFLINKS_VERSION=2.2.1
 ARG CUFFLINKS_DOWNLOAD_URL=http://cole-trapnell-lab.github.io/cufflinks/assets/downloads/cufflinks-${CUFFLINKS_VERSION}.Linux_x86_64.tar.gz
+
+ARG FASTQC_VERSION=0.11.8
+ARG FASTQC_DOWNLOAD_URL=https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v${FASTQC_VERSION}.zip
 
 ARG HISAT2_VERSION=2.1.0
 ARG HISAT2_DOWNLOAD_URL=ftp://ftp.ccb.jhu.edu/pub/infphilo/hisat2/downloads/hisat2-${HISAT2_VERSION}-Linux_x86_64.zip
@@ -55,7 +57,6 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 	automake \
 	autotools-dev \
 	bowtie \
-	fastqc \
 	fastx-toolkit \
 	libxml2 \
 	openssl \
@@ -106,6 +107,16 @@ RUN git clone $BEDTOOLS_DOWNLOAD_URL \
 	&& make \
 	&& ln -s /usr/src/bedtools2 /opt/packages/bedtools \
 	&& chmod 755 /opt/packages/bedtools/*
+
+#---------------------------------------------------------------------------------
+# FASTQC -- install in /opt/packages/fastqc
+WORKDIR /usr/src
+
+RUN curl -SL $FASTQC_DOWNLOAD_URL -o fastqc.zip \
+	&& unzip fastqc.zip \
+	&& rm fastqc.zip \
+	&& ln -s /usr/src/FastQC /opt/packages/fastqc \
+	&& chmod 755 /opt/packages/fastqc/*
 
 #--------------------------------------------------------------------------------
 # SAMTOOLS -- install in /opt/packages/samtools

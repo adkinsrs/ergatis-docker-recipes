@@ -15,7 +15,6 @@ while getopts "gi:o:p:" opt
 do
     case $opt in
         i) input_source=$OPTARG;;
-        o) output_source=$OPTARG;;
         p) ip_host=$OPTARG;;
     esac
 done
@@ -30,10 +29,6 @@ if [ -z "$input_source" ]; then
     print_usage
 fi
 
-# Not really used
-if [ -z "$output_source" ]; then
-    output_source=""
-fi
 #########################
 # MAIN
 #########################
@@ -53,9 +48,6 @@ cp $docker_compose_tmpl $docker_compose
 
 perl -i -pe "s|###INPUT_SOURCE###|$input_source|" $docker_compose
 perl -i -pe "s|###IP_HOST###|$ip_host|" $docker_compose
-if [[ -s $output_source ]]; then
-    perl -i -pe "s|###OUTPUT_SOURCE###|$output_source|" $docker_compose
-fi
 
 # Remove leftover template ### lines from compose file
 perl -i -ne 'print unless /###/;' $docker_compose
