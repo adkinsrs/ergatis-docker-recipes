@@ -117,6 +117,8 @@ RUN curl -SL $FASTQC_DOWNLOAD_URL -o fastqc.zip \
 	&& rm fastqc.zip \
 	&& ln -s /usr/src/FastQC /opt/packages/fastqc \
 	&& chmod 755 /opt/packages/fastqc/*
+# Kmer profile images are disabled by default so copy config file that enables them
+COPY fastqc_limits.txt /opt/packages/fastqc/Configuration/limits.txt
 
 #--------------------------------------------------------------------------------
 # SAMTOOLS -- install in /opt/packages/samtools

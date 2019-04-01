@@ -7,7 +7,6 @@ networks:
 volumes:
   bdbag_out_vol:
   projects_vol:
-  reports_out_vol:
   scratch_vol:
 
 services:
@@ -79,7 +78,6 @@ services:
       - scratch_vol:/usr/local/scratch
       - ###INPUT_SOURCE###:/mnt/input_data
       - bdbag_out_vol:/tmp/bdbag/
-      - reports_out_vol:/tmp/reports/
 
   rabbit:
     image: rabbitmq:3-alpine
@@ -103,5 +101,4 @@ services:
     volumes:
       - ./utils:/opt/wait:Z
       - bdbag_out_vol:/tmp
-      - reports_out_vol:/tmp/reports
       - projects_vol:/opt/projects/repository
