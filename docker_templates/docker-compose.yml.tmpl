@@ -57,9 +57,9 @@ services:
     tty: true
     volumes:
       - ./utils:/opt/wait:Z
-      - bdbag_out_vol:/tmp/bdbag/
+      - bdbag_out_vol:/tmp/bdbag/:Z
       - projects_vol:/opt/projects/repository
-      - reports_out_vol:/tmp/reports/
+      - reports_out_vol:/tmp/reports/:Z
 
 # Container with the pipeline configuration UI 
   grotto:
@@ -103,6 +103,6 @@ services:
     tty: true
     volumes:
       - ./utils:/opt/wait:Z
-      - bdbag_out_vol:/tmp/bdbag/
+      - bdbag_out_vol:/tmp/bdbag/:Z
       - projects_vol:/opt/projects/repository
-      - reports_out_vol:/tmp/reports/
+      - reports_out_vol:/tmp/reports/:Z
