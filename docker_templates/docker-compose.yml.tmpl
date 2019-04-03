@@ -50,7 +50,7 @@ services:
       - rabbit
     environment:
       - AMQP_ADDRESS=rabbit
-    image: apaala/bdbag_rabbit:latest
+    image: apaala/bdbag_rabbit:1.1a
     networks:
       - rabbitmq
     restart: always
@@ -96,7 +96,7 @@ services:
       - rabbit
     environment:
       - AMQP_ADDRESS=rabbit
-    image: apaala/report_rabbit:latest
+    image: apaala/report_rabbit:1.1a
     networks:
       - rabbitmq
     restart: always
