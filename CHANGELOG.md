@@ -2,6 +2,9 @@
 
 Note: This CHANGELOG is reflective of Docker versions, not the GitHub tags of the Ergatis-Docker repository
 
+## v1.9 (April 8, 2019)
+* Added component to concatenate BLAST-N pairwise output in addition to the m8 output.  The pairwise output can be fed into LGTView
+
 ## v1.8 (January 2, 2019)
 * Removed Ergatis repository root and scratch areas from the base Ergatis image and placed in a separate image.  The LGTSeek image will be based on adkinsrs/ergatis:1.3 and the "data" service will now run as a separate service in docker-compose.  This was done in an effort to allow users to suspend and resume pipeline runs with docker\-compose "stop" and "start" commands and not lose their data
 * Changed the build method of Samtools, Picard-tools, and the SRA Toolkit to build from binary instead of from source.  This saves a little bit of space, and allows for the use of the Java JRE instead of JDK.
