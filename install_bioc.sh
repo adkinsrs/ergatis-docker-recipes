@@ -17,8 +17,7 @@ apt-get -qq install -y --no-install-recommends r-base-dev
 
 # Install Bioconductor programs we need
 echo "install.packages(c(\"devtools\", \"gplots\", \"survival\"), repos=\"http://lib.stat.cmu.edu/R/CRAN/\")" | R --save --restore
-echo "source(\"http://bioconductor.org/biocLite.R\");
-biocLite(c(\"cummeRbund\", \"DESeq\", \"edgeR\"), ask=FALSE)" | R --save --restore
+echo "source(\"http://bioconductor.org/biocLite.R\"); biocLite(c(\"cummeRbund\", \"DESeq\", \"edgeR\"), ask=FALSE)" | R --save --restore
 
 # TODO - Eventually install  \"DESeq2\" as well
 

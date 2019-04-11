@@ -58,7 +58,7 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends softwar
 	autotools-dev \
 	bowtie \
 	fastx-toolkit \
-	libxml2 \
+	libxml2-dev \
 	openssl \
 	python2.7 \
 	python2.7-dev \
