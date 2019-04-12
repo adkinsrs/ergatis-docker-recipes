@@ -79,8 +79,8 @@ services:
       - projects_vol:/opt/projects/repository
       - scratch_vol:/usr/local/scratch
       - ###INPUT_SOURCE###:/mnt/input_data
-      - bdbag_out_vol:/tmp/bdbag/:z
-      - reports_out_vol:/tmp/reports/:z
+      - bdbag_out_vol:/tmp/bdbag/
+      - reports_out_vol:/tmp/reports/
 
   rabbit:
     image: rabbitmq:3-alpine
