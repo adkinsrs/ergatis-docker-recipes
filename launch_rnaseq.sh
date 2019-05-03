@@ -1,7 +1,6 @@
 #!/bin/bash
 
-print_usage()
-{
+function print_usage {
     progname=`basename $0`
     cat << END
 usage: $progname -i </path/to/input/dir> -p <HOST_IP>
@@ -9,9 +8,25 @@ END
     exit 1
 }
 
-grotto=0
+# Resolve relative directory path
+function abspath {
+    if [[ -d "$1" ]]
+    then
+        pushd "$1" >/dev/null
+        pwd
+        popd >/dev/null
+    else
+        if [[ -e $1 ]]
+        then
+            echo "$1" needs to be a directory! >&2
+        else
+            echo "$1" does not exist! >&2
+        fi
+        exit 127
+    fi
+}
 
-while getopts "gi:o:p:" opt
+while getopts "i:p:" opt
 do
     case $opt in
         i) input_source=$OPTARG;;
@@ -46,7 +61,9 @@ docker_compose_tmpl=${DIR}/docker_templates/docker-compose.yml.tmpl
 docker_compose=${DIR}/docker-compose.yml
 cp $docker_compose_tmpl $docker_compose
 
-perl -i -pe "s|###INPUT_SOURCE###|$input_source|" $docker_compose
+abs_input_source=$(abspath $input_source)
+
+perl -i -pe "s|###INPUT_SOURCE###|$abs_input_source|" $docker_compose
 perl -i -pe "s|###IP_HOST###|$ip_host|" $docker_compose
 
 # Remove leftover template ### lines from compose file
