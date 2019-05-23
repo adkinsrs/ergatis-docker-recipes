@@ -23,8 +23,8 @@ The first step is to use 'git' to clone the "ergatis-docker-recipes" GitHub repo
 cd ~
 mkdir git; cd git
 git clone https://github.com/adkinsrs/ergatis-docker-recipes.git
-git checkout rnaseq
 cd ergatis-docker-recipes
+git checkout rnaseq
 ```
 
 ### Setting up the input area
@@ -37,13 +37,15 @@ NOTE:  This step is important, as the Ergatis pipeline will fail if the input\_d
 mkdir ~/input_data
 ```
 
-At this point you should now move or copy the pipeline input\_data to the "~/input\_data" directory.
+At this point you should now move or copy the pipeline input\_data to the "~/input\_data" directory.  Input data consists of *any files* that would be used in the pipeline.  This includes any potential FASTQ, BAM, counts, GFF3/GTF, and reference files.
 
 ## Start the Docker containers
 
 Now it's time to start the Grotto and RNAseq Docker containers.  The following script will run docker-compose to set up both the Grotto and RNAseq containers.  This also mounts volumes from the local machine to the Docker container for passing in input data and for collecting output data.
 
-NOTE: for the -i and the -o options, make sure to specify the FULL PATH
+NOTE: for the -i option, it is recommended to specify the full (absolute) path to ensure that Docker mounts the correct area.
+
+NOTE: Before doing this step, make sure no other services are bound to ports 5000 or 8080 on your computer.  If other Docker containers are services are using those ports, either the Grotto site or the Ergatis site will not work.
 
 ```bash
 cd ~/git/ergatis-docker-recipes
