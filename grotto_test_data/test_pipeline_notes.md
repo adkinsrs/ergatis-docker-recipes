@@ -21,9 +21,9 @@ Hit Next when ready.
 ## Pipeline Options page
 Fill out the following fields.
 * Reference
-  * /mnt/input_data/grotto_test_files/reference/chr22_with_ERCC92.fa
+  * /mnt/input_data/reference/chr22_with_ERCC92.fa
 * GFF3/GTF
-  * /mnt/input_data/grotto_test_files/reference/chr22_with_ERCC92.gtf
+  * /mnt/input_data/reference/chr22_with_ERCC92.gtf
 * Annotation Format - GTF option
 
 Select the following pipeline options:

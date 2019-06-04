@@ -33,7 +33,8 @@ services:
       - apache2
     expose:
       - "22"
-    image: adkinsrs/rnaseq:latest
+    image: adkinsrs/rnaseq:devel
+    #image: adkinsrs/rnaseq:latest
     networks:
       - ergatis
     ports:
