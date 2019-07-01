@@ -72,7 +72,7 @@ perl -i -ne 'print unless /###/;' $docker_compose
 # Default docker_templates/docker-compose.yml was written to so no need to specify -f
 printf  "\nGoing to build and run the Docker containers now.....\n"
 dc=`which docker-compose`
-$dc -f $docker_compose up -d
+$dc up -d
 
 printf  "Docker container is done building!\n"
 printf  "In order to start using the Grotto UI, please point your browser to http://${ip_host}:5000\n"
