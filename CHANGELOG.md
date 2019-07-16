@@ -2,6 +2,9 @@
 
 Note: This CHANGELOG is reflective of Docker versions, not the GitHub tags of the Ergatis-Docker repository
 
+## v1.10 (July 15, 2019)
+* Combining download\_sra and sra2fastq components into one component
+
 ## v1.9 (April 8, 2019)
 * Added component to concatenate BLAST-N pairwise output in addition to the m8 output.  The pairwise output can be fed into LGTView
 
