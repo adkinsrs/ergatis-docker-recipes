@@ -44,7 +44,7 @@ services:
       - mongo_data:/data/db
     ports:
       - "27017:27017"
-    command: --smallfiles --rest
+    command: --smallfiles
 
 # Mongodata is necessary for persistent data storage
 # MongoDB normally wipes data when shut down
